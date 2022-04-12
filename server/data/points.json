@@ -1,0 +1,21 @@
+[
+    {
+        "_id": "23423 will be imdb ttid", 
+        "title": "The Matrix",
+        "type": "film",
+        "coverImgSrc": ".png",
+        "year": "1996", 
+        "by": "",
+        "country": "US"
+    },
+
+    {
+        "_id": "4523423454",
+        "title": "On Freedom",
+        "type": "book",
+        "coverImgSrc": ".png",
+        "year": "2021",
+        "by": "Maggie Nelson",
+        "country": "US"
+    }
+]

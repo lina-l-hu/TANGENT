@@ -1,0 +1,13 @@
+[
+    {
+        "uid": "1123123",
+        "username": "laszlo",
+        "name": "Laszlo Moniz",
+        "email": "laszlo@gmail.com",
+        "avatar": "imgfile or google or cloudinary",
+        "tagline": "I am a cloud.",
+        "tangents": ["tangentIds"],
+        "points": ["pointIds"],
+        "circle": ["userIds"]
+    }
+]

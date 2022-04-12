@@ -8,17 +8,14 @@ import Avatar from "./Avatar";
 const Header = ({children}) => {
 
     const pathname = window.location.pathname.slice(1).replace("-", " ");
-    
+
         //in profile, if profile is current user's, display header as me
 
     return (
         <Wrapper>
             <NavigationMenu />
             <Title>{pathname}</Title>
-            <ProfileLink to="/profile">
-                {/* <FaRegUser className="icon" color="white"/> */}
-                <Avatar userLetter="L" />
-            </ProfileLink>
+            <AddTangentLink to=""><div>+</div></AddTangentLink>
         </Wrapper>
     )
 }
@@ -41,12 +38,24 @@ const Title = styled.h1`
     color: white;
 `;
 
-const ProfileLink = styled(NavLink)`
+const AddTangentLink = styled(NavLink)`
     padding-right: 20px;
 
-    .icon {
-        font-size: 30px;
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-main);
+        background-color: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 40px;
+        font-style: bold;
+        font-family: var(--font-heading);
     }
+   
+
 `;
 
 export default Header; 

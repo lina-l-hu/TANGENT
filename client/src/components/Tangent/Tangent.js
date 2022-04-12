@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useReducer } from "react";
 import { NavLink } from "react-router-dom";
 import PageWrapper from "../PageWrapper";
 import Textbox from "./Textbox";
@@ -6,7 +7,10 @@ import Message from "./Message";
 import Header from "../Header";
 import PointPreview from "../PointPreview";
 
+
+//Each Tangent component is a chat thread
 const Tangent = () => {
+
     return (
         <PageWrapper>
             {/* <Header>tangent</Header> */}

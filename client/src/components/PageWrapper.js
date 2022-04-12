@@ -3,10 +3,18 @@ import Header from "./Header";
 
 //Each page is styled for iPhone 12/13 dimensions
 const PageWrapper = ({children}) => {
+    
     return (
-        <Wrapper>
-            <Header />
-            {children}</Wrapper>
+        <>
+        {(window.location.pathname === "/") ? (
+            <Wrapper></Wrapper>
+            ) : (
+            <Wrapper>
+                <Header />
+                {children}
+            </Wrapper>
+        )}
+        </>
     ) 
 }
 

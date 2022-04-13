@@ -44,13 +44,12 @@ const points = [
 
 const tangent1 = [   
     {
-        _id: "m000000001",
+        _id: "1",
         tangentName: "dilation of time",
         usersInTangent: ["u0000000001"],
         tangentPoints: [], 
         tangentLength: 1,
-        uid: "u0000000001", 
-        username: "laszlo",
+        userId: "u0000000001", 
         timestamp:  "04/11/2022 16:56",
         text: "I don't know about y'all, but this weather has got me thinking about the nature of time...been watching a lot of Tarkovsky lately"
     }, 
@@ -61,7 +60,6 @@ const tangent1 = [
         tangentPoints: ["tt18072646"], 
         tangentLength: 2,
         uid: "u0000000001", 
-        username: "laszlo",
         timestamp: "04/11/2022 16:59",
         pointId: "tt18072646", 
     },
@@ -72,7 +70,6 @@ const tangent1 = [
         tangentPoints: ["tt18072646"], 
         tangentLength: 3,
         uid: "u0000000001", 
-        username: "laszlo",
         timestamp:  "04/11/2022 17:01",
         text: "Rewatched this one recently."
     }, 
@@ -83,7 +80,6 @@ const tangent1 = [
         tangentPoints: ["tt18072646"], 
         tangentLength: 4,
         uid: "u0000000002",
-        username: "bessa",
         timestamp:  "04/11/2022 17:01",
         text: "Ya, the pacing of his films really distorts one's sense of time...not unlike 2 years (3 years??) of a global pandemic!"
     }, 

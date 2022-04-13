@@ -1,8 +1,14 @@
 const request = require('request-promise');
+const { MongoClient, Db } = require("mongodb");
 require("dotenv").config();
-const { REACT_APP_IMDB_KEY, REACT_APP_OMDB_KEY, REACT_APP_GOOGLE_KEY } = process.env;
+const { REACT_APP_IMDB_KEY, REACT_APP_OMDB_KEY, REACT_APP_GOOGLE_KEY, MONGO_URI } = process.env;
 
-//get film suggestions for the searchTerm from the IMDB API
+const options = { 
+  useNewURLParser: true,
+  useUnifiedTopology: true
+}
+
+//helper function get film suggestions for the searchTerm from the IMDB API
 const getFilmsFromAPI = async (searchTerm) => {
 
   try {
@@ -25,7 +31,7 @@ const getFilmsFromAPI = async (searchTerm) => {
   }
 }
 
-//get book suggestions for the searchTerm from the IMDB API
+//helper function to get book suggestions for the searchTerm from the Google Books API
 const getBooksFromAPI = async (searchTerm) => {
 
   try {
@@ -47,13 +53,17 @@ const getBooksFromAPI = async (searchTerm) => {
   }
 }
 
-
+//handler to get Point suggestions
 const getPointSuggestions = async (req, res) => {
 
     const searchTerm = req.query.searchTerm;
-
+ 
     try {
-    
+
+        //search point database for matches
+
+
+        //search APIs for matches
         const filmSuggestions = await getFilmsFromAPI(searchTerm);
         const bookSuggestions = await getBooksFromAPI(searchTerm);
 
@@ -69,8 +79,9 @@ const getPointSuggestions = async (req, res) => {
         if (!filmSuggestions) {
           return res.status(200).json({status: 200, message: "Matches found!", 
                 data: {films: filmSuggestions.results, books: "No book matches found."} });
-       }
+        }
 
+        //return API and point matches to front end to render
         res.status(200).json({status: 200, message: "Matches found!", data: {films: filmSuggestions.results, books: bookSuggestions.items} });
     }
 

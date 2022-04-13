@@ -10,11 +10,15 @@ import Tangent from "./Tangent";
 import PointsInTangent from "./PointsInTangent";
 import PointDetails from "./PointDetails";
 import MyCircle from "./MyCircle/MyCircle";
+import moment from 'moment';
 
 
 function App() {
 
   const [ displayNav, setDisplayNav ] = useState(false);
+  const [ displayAddTangentModal, setDisplayAddTangentModal] = useState(false);
+
+  console.log(moment().format("YYYY-MM-DD HH:mm"));
 
   return (
     <Main>

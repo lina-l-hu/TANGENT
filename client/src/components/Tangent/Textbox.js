@@ -110,6 +110,7 @@ const Textbox = () => {
 
         console.log("searchTerm in front", state.textAreaInput.slice(1))
             //from each API, return the top 3 results
+            //also search for an existing point with the same title
     //results stored in state
     //user sees all results in a dropup or tippy
     //user chooses one

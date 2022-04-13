@@ -5,11 +5,12 @@ const morgan = require("morgan");
 
 //import handlers
 const { getPointSuggestions } = require("./handlers/getPointSuggestions");
-const { addPoint, getPoint, getMostPopularPoint } = require("./handlers/pointHandlers");
+const { getPoint, getMostPopularPoint } = require("./handlers/pointHandlers");
 const { getTangent, getPointsInTangent, getMostPopularTangent, 
-    getMostRecentTangents, addPostToTangent, addTangent} = require("./handlers/tangentHandlers");
+    getMostRecentTangents } = require("./handlers/tangentHandlers");
 const { getUser, getUserTangents, getUserPoints, getUserCircle, 
-    addUser, addLikedPoint, removeUnlikedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
+    addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
+const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
 
 //server port
 const PORT = 8000;
@@ -28,29 +29,29 @@ express()
     .use(express.static("public"))
 
     //point endpoints
-    .get("/point-suggestions", getPointSuggestions)
-    .get("points/:pointId", getPoint)
-    .get("points/most-popular", getMostPopularPoint)
-    .post("/add-point", addPoint)
+    .get("/point-suggestions", getPointSuggestions)//T
+    .get("/points/:pointId", getPoint)
+    .get("/points/most-popular", getMostPopularPoint)//WT
     
     //tangent endpoints
     .get("/tangents/:tangentId", getTangent)
-    .get("/tangents/:tangentId/points", getPointsInTangent)
-    .get("/tangents/most-popular-tangent", getMostPopularTangent)
-    .get("/tangents/most-recent-tangents", getMostRecentTangents)
-    .post("/tangents/:tangentId/add-post", addPostToTangent)
+    .get("/tangents/most-popular-tangent", getMostPopularTangent)//WT
+    .get("/tangents/most-recent-tangents", getMostRecentTangents)//WT
     .post("/tangents/add-tangent", addTangent)
+    .get("/tangent/points", getPointsInTangent)
+    .post("/tangent/add-point", addPointToTangent)
+    .post("/tangent/add-message", addMessageToTangent)
 
     //user endpoints
-    .get("/users/:userId", getUser)
-    .get("/users/:userId/tangents", getUserTangents)
-    .get("/users/:userId/points", getUserPoints)
-    .get("/users/:userId/myCircle", getUserCircle)
-    .patch("/users/:userId/like-point", addLikedPoint)
-    .patch("/users/:userId/unlike-point", removeUnlikedPoint)
-    .patch("/users/:userId/add-user-to-circle", addUserToCircle)
-    .patch("/users/:userId/remove-user-from-circle", removeUserFromCircle)
-    .post("/users", addUser)
+    .get("/users/get-user", getUser)
+    .get("/users/get-user-tangents", getUserTangents)
+    .get("/users/get-user-points", getUserPoints)
+    .get("/users/get-user-circle", getUserCircle)
+    .patch("/users/bookmark-point", bookmarkPoint) 
+    .patch("/users/remove-bookmarked-point", removeBookmarkedPoint)
+    .patch("/users/add-user-to-circle", addUserToCircle)
+    .patch("/users/remove-user-from-circle", removeUserFromCircle)
+    .post("/users/add-user", addUser)
 
     //catch all endpoint
     .get("*", (req, res) => {

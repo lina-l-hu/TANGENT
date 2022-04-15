@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Header from "./Header";
+import NavigationFooter from "./NavigationFooter";
 
 //Each page is styled for iPhone 12/13 dimensions
 const PageWrapper = ({children}) => {
@@ -7,11 +8,20 @@ const PageWrapper = ({children}) => {
     return (
         <>
         {(window.location.pathname === "/") ? (
-            <Wrapper></Wrapper>
+            <Wrapper>{children}</Wrapper>
             ) : (
             <Wrapper>
+            {!(window.location.href.indexOf("profile") > -1) &&
+    
                 <Header />
+            }
                 {children}
+
+                {/* {!(window.location.href.indexOf("tangent") > -1) &&
+                <NavigationFooter />} */}
+
+                {(window.location.pathname !== "/tangent" &&
+                <NavigationFooter />)}
             </Wrapper>
         )}
         </>

@@ -29,7 +29,7 @@ const getTangent = async (req, res) => {
 
         const tangent = await db.collection(tangentId).find().toArray();
 
-        console.log("tang", tangent);
+        console.log("tang in get TAngent", tangent);
 
         if (tangent.length === 0) {
             return res.status(404).json({status: 404, message: "Tangent not found.", data: tangentId});
@@ -91,8 +91,65 @@ const getMostPopularTangent = async (req, res) => {
 //first post has most recent timestamp and one of the user's is a friend
 //get last N documents in database
 const getMostRecentTangents = async (req, res) => {
+    
+}
+
+//get latest post for each of the tangents in the provided array
+//used for the tangents (list of chats) page 
+const getLatestPosts = async (req, res) => {
+   
+    const { tangentids } = req.headers;
+
+    console.log("tangids in header", tangentids)
+    //array must be sent as a string in the header
+    const idArray = tangentids.split(",");
+    console.log("idarar", idArray);
+
+    if (!tangentids || tangentids.length === 0) {
+        return res.status(400).json({status: 400, message: "Bad request - no Tangent ids provided."});
+    }
+
+    const client = new MongoClient(MONGO_URI, options);
+
+    try {
+        await client.connect();
+        const db = client.db("TANGENTS");
+
+        console.log("connected")
+        const latestPosts = [];
+
+        await Promise.all (
+            idArray.map( async (tangent) => {
+                console.log('in here', tangent);
+                const latest = await db.collection(tangent).find().sort({_id:-1}).limit(1).toArray();
+                latestPosts.push(latest[0]);
+            })
+        )
+       
+        console.log("latestPO array", latestPosts)
+        if (!latestPosts || latestPosts.length === 0) {
+            return res.status(404).json({status: 404, message: "Could not find Tangents.", data: tangentids});
+        }
+
+        // sort the latestPosts array to make sure it is ordered with the most recent first
+        const sortedByTime = latestPosts.sort((a, b) => {
+            let da = new Date(a.timestamp);
+            let db = new Date(b.timestamp);
+            return db-da;
+        });
+ 
+        res.status(200).json({status: 200, message: "Points in Tangent retrieved successfully.", data: sortedByTime});
+    }
+
+    catch (err) {
+        res.status(500).json({status: 500, message: "Points in Tangent not retrieved due to unknown server error. Please try again.", data: tangentids})
+    }
+
+    finally {
+        client.close();
+    }
 
 }
 
 module.exports = { getTangent, getPointsInTangent, getMostPopularTangent, 
-    getMostRecentTangents};
+    getMostRecentTangents, getLatestPosts };

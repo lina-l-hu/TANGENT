@@ -11,36 +11,70 @@ const options = {
     useUnifiedTopology: true
 }
 
-//get user by id 
+//get user
 const getUser = async (req, res) => {
 
     const client = new MongoClient(MONGO_URI, options);
 
-    const { _id } = req.headers;
+    const { _id, email } = req.headers;
+    console.log("headers", _id, email)
 
-    if (!_id) {
-        return res.status(400).json({status: 400, message: "Bad request - missing userId for user."});
+    if (!_id && !email) {
+        return res.status(400).json({status: 400, message: "Bad request - missing identifier for user.", data: {_id: _id, email: email}});
     }
 
     try {
         await client.connect();
         const db = client.db("USERS");
-
-        const user = await db.collection("users").findOne({_id : _id})
-
-        !user ?
-            res.status(404).json({status: 404, message: "User not found.", data: _id})
-            : res.status(200).json({status: 200, message: "User retrieved successfully.", data: user});
+        // const user = await db.collection("users").findOne({email : email});
+       
+        const user = await db.collection("users").findOne({_id: _id});
+    
+        const user2 = await db.collection("users").findOne({email : email});
+        
+        (!user && !user2) ?
+            res.status(404).json({status: 404, message: "User not found.", data: {_id: _id, email: email}})
+            : res.status(200).json({status: 200, message: "User retrieved successfully.", data: (!user) ? user2 : user});
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "User not retrieved due to unknown server error. Please try again.", data: _id})
+        res.status(500).json({status: 500, message: "User not retrieved due to unknown server error. Please try again.", data: {_id: _id, email: email}})
     }
 
     finally {
         client.close();
     }
 }
+
+// const getUserByEmail = async (req, res) => {
+
+//     const client = new MongoClient(MONGO_URI, options);
+
+//     const { email } = req.headers;
+
+//     if (!email) {
+//         return res.status(400).json({status: 400, message: "Bad request - missing email for user."});
+//     }
+
+//     try {
+//         await client.connect();
+//         const db = client.db("USERS");
+
+//         const user = await db.collection("users").findOne({email : email})
+
+//         !user ?
+//             res.status(404).json({status: 404, message: "User not found.", data: email})
+//             : res.status(200).json({status: 200, message: "User retrieved successfully.", data: user});
+//     }
+
+//     catch (err) {
+//         res.status(500).json({status: 500, message: "User not retrieved due to unknown server error. Please try again.", data: _id})
+//     }
+
+//     finally {
+//         client.close();
+//     }
+// }
 
 //get all the Tangents the given user is a part of 
 const getUserTangents = async (req, res) => {
@@ -181,6 +215,7 @@ const addUser = async (req, res) => {
             avatar: avatar, 
             tagline: tagline, 
             tangents: [],
+            lastPosts: [],
             points: [],
             circle: []
         }

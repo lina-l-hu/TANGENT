@@ -10,15 +10,14 @@ import Tangent from "./Tangent";
 import PointsInTangent from "./PointsInTangent";
 import PointDetails from "./PointDetails";
 import MyCircle from "./MyCircle/MyCircle";
+import MyTangents from "./MyTangents";
 import moment from 'moment';
+import Search from "./Search";
 
 
 function App() {
 
-  const [ displayNav, setDisplayNav ] = useState(false);
-  const [ displayAddTangentModal, setDisplayAddTangentModal] = useState(false);
-
-  console.log(moment().format("YYYY-MM-DD HH:mm"));
+  const [currentUser, setCurrentUser] = useState(null);
 
   return (
     <Main>
@@ -32,16 +31,20 @@ function App() {
 
           <Route path="/feed" element={<FeedPage />} />
 
+          {/* <Route path="/tangents/:tangentId" element={<Tangent />} /> */}
           <Route path="/tangent" element={<Tangent />} />
 
-          <Route path="/points" element={<PointsInTangent />} />
+          <Route path="/tangents" element={<MyTangents />} />
 
-          <Route path="/point" element={<PointDetails />} />
+          <Route path="/:tangentId/points" element={<PointsInTangent />} />
+
+          <Route path="/point/:pointId" element={<PointDetails />} />
 
           <Route path="/profile" element={<Profile />} />
 
           <Route path="/my-circle" element={<MyCircle />} />
 
+          <Route path="/search" element={<Search />} />
         </Routes>
 
     </BrowserRouter>

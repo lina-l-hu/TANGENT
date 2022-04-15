@@ -1,20 +1,29 @@
 import styled from "styled-components";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import PageWrapper from "./PageWrapper";
 import NavigationMenu from "./NavigationMenu";
-import { FaRegUser } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import Avatar from "./Avatar";
+import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
 const Header = ({children}) => {
 
-    const pathname = window.location.pathname.slice(1).replace("-", " ");
+    const { currentUsername } = useContext(CurrentUserContext);
+    
+    const navigate = useNavigate();
+    
+    if (!(window.location.href.indexOf("profile") > -1)) {
+        children = window.location.pathname.slice(1).replace("-", " ");
+    }
 
-        //in profile, if profile is current user's, display header as me
 
     return (
         <Wrapper>
-            <NavigationMenu />
-            <Title>{pathname}</Title>
+            <button onClick={() => navigate(-1)}>
+                <FaArrowLeft className="icon"/>
+            </button>
+            <Title>{children}</Title>
             <AddTangentLink to=""><div>+</div></AddTangentLink>
         </Wrapper>
     )
@@ -27,6 +36,15 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 20px;
+
+    button {
+        background-color: transparent;
+    }
+
+    .icon {
+        font-size: 30px;
+    }
 `;
 
 const Title = styled.h1`
@@ -39,7 +57,7 @@ const Title = styled.h1`
 `;
 
 const AddTangentLink = styled(NavLink)`
-    padding-right: 20px;
+    /* padding-right: 20px; */
 
     div {
         display: flex;

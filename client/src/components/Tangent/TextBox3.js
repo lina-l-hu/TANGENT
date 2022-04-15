@@ -2,10 +2,10 @@ import styled from "styled-components";
 import { useRef, useReducer, useEffect, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
 import { CurrentTangentContext } from "./CurrentTangentContext";
-import PointInput from "./PointInput";
 
 const initialState = {
     textAreaInput: "",
+    searchTermInput: "",
     pointSuggestionsFetchStatus: "idle",
     pointSuggestions: null,
     pointPostStatus: "idle",
@@ -20,6 +20,13 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 textAreaInput: action.text,
+            }
+        }
+
+        case ("update-searchTerm-input") : {
+            return {
+                ...state,
+                searchTermInput: action.searchTerm,
             }
         }
         
@@ -105,10 +112,12 @@ const Textbox = () => {
     const [ selectedMatch, setSelectedMatch ] = useState(null);
     const [ suggestionMode, setSuggestionMode ] = useState(false);
     const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
-    const [ displaySuggestionsDropup, setDisplaySuggestionsDropup ] = useState(false);
     const textRef = useRef();
     const searchTermRef = useRef();
-    // const { displaySuggestionsDropup, setDisplaySuggestionsDropup } = useContext(CurrentTangentContext);
+    const { displaySuggestionsDropup, setDisplaySuggestionsDropup } = useContext(CurrentTangentContext);
+    const [textAreaMode, setTextAreaMode] = useState("text");
+    const [ searchTerm, setSearchTerm ] = useState("");
+    const [ text, setText ] = useState("");
 
     useEffect(() => {
         const updateInput = () => {
@@ -118,8 +127,20 @@ const Textbox = () => {
             })
         }
 
-        textRef.current.addEventListener("keyup", updateInput);
+        // const updateSearchInput = () => {
+        //     dispatch ({
+        //         type: "update-searchTerm-input",
+        //         searchTerm: searchTermRef.current.value
+        //     })
+        // }
 
+        if (textAreaMode === "text") {
+            textRef.current.addEventListener("keyup", updateInput);
+        }
+
+        // else if (textAreaMode === "findPoint") {
+        //     searchTermRef.current.addEventListener("keyup", updateSearchInput);
+        // }
         // return () => {
         //     textRef.current.removeEventListener("keyup", updateInput);
         // }
@@ -164,14 +185,14 @@ const Textbox = () => {
     const handleFindPoint = () => {
 
         //if the searchTerm is not changed from when we last called a search fetch
-        // if (lastSearchTerm === state.textAreaInput.slice(1).trim()) {
+        // if (lastSearchTerm === state.searchTermInput.slice(1).trim()) {
         //     setDisplaySuggestionsDropup(true);
         //     console.log("last search", lastSearchTerm);
         //     //display the results from the last search
         //     console.log("display", displaySuggestionsDropup);
         //     return;
         // }
-        
+        console.log("searchTerm", searchTerm);
         console.log("calling fetch")
 
         dispatch ({
@@ -179,12 +200,12 @@ const Textbox = () => {
         })
 
         //save the search term in state
-        setLastSearchTerm(state.textAreaInput.slice(1));
+        setLastSearchTerm(searchTerm.slice(1));
 
-        console.log("searchTerm in front", state.textAreaInput.slice(1))
+        console.log("searchTerm in front", searchTerm.slice(1))
 
         //fetch Point suggestions from both the Points database and from the external movie and book APIs
-        fetch(`/point-suggestions/?searchTerm=${state.textAreaInput.slice(1)}`, {
+        fetch(`/point-suggestions/?searchTerm=${searchTerm.slice(1)}`, {
             method: "GET", 
             headers: {
                 "Content-Type": "application/json",
@@ -217,96 +238,127 @@ const Textbox = () => {
         })
     }
 
-    // const handleAddPoint = () => {
-    //     dispatch ({
-    //         type: "posting-point"
-    //     })
+    const handleAddPoint = () => {
+        dispatch ({
+            type: "posting-point"
+        })
 
-    //     //close dropup
-    //     setDisplaySuggestionsDropup(false);
+        //close dropup
+        setDisplaySuggestionsDropup(false);
 
-    //          //NEED TO ADD TANGENTID AND CURRENTUSERID
+             //NEED TO ADD TANGENTID AND CURRENTUSERID
 
-    //     fetch("/tangent/add-point", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Accept': 'application/json',
-    //         },
-    //         body: JSON.stringify(selectedMatch)
+        fetch("/tangent/add-point", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(selectedMatch)
             
-    //         })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //            if (data.status === 200) {
-    //                dispatch ({
-    //                    type: "sucessfully-posted-point"
-    //                })
+            })
+            .then(res => res.json())
+            .then(data => {
+               if (data.status === 200) {
+                   dispatch ({
+                       type: "sucessfully-posted-point"
+                   })
 
-    //                //reset???
-    //            }
-    //            else {
-    //                 //if error, open dropup again
-    //             setDisplaySuggestionsDropup(true);
-    //            }
-    //         })
-    //         .catch((err) => {
-    //             dispatch({
-    //                 type: "error-posting-point",
-    //                 error: err
-    //             })
+                   //reset???
+               }
+               else {
+                    //if error, open dropup again
+                setDisplaySuggestionsDropup(true);
+               }
+            })
+            .catch((err) => {
+                dispatch({
+                    type: "error-posting-point",
+                    error: err
+                })
 
-    //             //if error, open dropup again
-    //             setDisplaySuggestionsDropup(true);
+                //if error, open dropup again
+                setDisplaySuggestionsDropup(true);
                
-    //         })
+            })
 
-    // }
+    }
 
-    // const onSomething = (e) => {
-    //     e.preventDefault();
-    //     setDisplaySuggestionsDropup(true);
-    //     console.log("HUKLLL");
+    const onSomething = (e) => {
+        e.preventDefault();
+        setDisplaySuggestionsDropup(true);
+        console.log("HUKLLL");
 
-    // }
+    }
 
-    // const onChangeSuggestionMode = (e) => {
-    //     setSuggestionMode(false);
-    //     // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
-    //     e.target.value = selectedMatch.title;
-    //     // textRef.current.value="";
-    // }
+    const onChangeSuggestionMode = () => {
+        setSuggestionMode(false);
+        // textRef.current.value="";
+    }
 
     return (
         <Wrapper>
 
-            {(state.pointSuggestionsFetchStatus === "success" && 
+            {(state.pointSuggestionsFetchStatus === "success" && displaySuggestionsDropup &&
                 <PointSuggestionDropup suggestedMatches={state.pointSuggestions} suggestionMode={suggestionMode} setSuggestionMode={setSuggestionMode}
-                selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} searchTermRef={searchTermRef} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}
-                displaySuggestionsDropup={displaySuggestionsDropup}/>
+                selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} />
             )}
 
-            {(suggestionMode) ? (
-                <PointInput setSuggestionMode={setSuggestionMode} selectedMatch={selectedMatch} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}/>
-                // <TextContainer>
-                //     <Textarea ref={searchTermRef} rows="1"
-                //         onClick={onSomething} onChange={onChangeSuggestionMode}>
-                //             {"#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year} 
-                //     </Textarea>
-                //     <button 
-                //         onClick={handleAddPoint}>
-                //         add point
-                //     </button>
-                // </TextContainer>
-            ) : (
+            {( textAreaMode === "text" && 
                 <TextContainer>
-                    <textarea ref={textRef} rows="1"></textarea>
-                    <button disabled={(state.textAreaInput.length === 0)}
-                        onClick={(state.textAreaInput[0] === "#") ? handleFindPoint : handleSendText}>
-                        {(state.textAreaInput[0] === "#") ? "find point" : "send msg"}
+                        <textarea ref={textRef} autoFocus rows="1" onChange={(e) => {
+                                if (state.textAreaInput[0] === "#") {
+                                    setTextAreaMode("findPoint");
+                                    textRef.current.value = "";
+                                }
+                                else {
+                                    setText(e.target.value);
+                                }
+                            }}
+                        ></textarea>
+                        <button disabled={(state.textAreaInput.length === 0)}
+                            onClick={handleSendText}>
+                            send msg
+                        </button>
+                </TextContainer>
+            )}
+
+            {( textAreaMode === "findPoint" &&
+                <TextContainer>
+                    <Textarea ref={searchTermRef} autoFocus rows="1" defaultValue="#"
+                    onChange={(e) => {
+                        if (e.target.value.length === 1 && e.target.value[0] !== "#") {
+                            searchTermRef.setSelectionRange(1, 1);
+                            searchTermRef.focus();
+                        }
+                        setSearchTerm(e.target.value);
+                        if (e.target.value[0] !== "#") {
+                            setTextAreaMode("text");
+                            setText("");
+                        }
+                    }}>
+                    </Textarea>
+                    <button 
+                        onClick={handleFindPoint}>
+                        find point
                     </button>
                 </TextContainer>
             )}
+
+            {( textAreaMode === "addPoint" &&
+                <TextContainer>
+                    <Textarea autoFocus rows="1" defaultValue={"#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year} 
+                        onClick={onSomething} onChange={onChangeSuggestionMode}>
+                    </Textarea>
+                    <button 
+                        onClick={handleAddPoint}>
+                        add point
+                    </button>
+                </TextContainer>
+            )}
+            
+
+  
 
         </Wrapper>
     )

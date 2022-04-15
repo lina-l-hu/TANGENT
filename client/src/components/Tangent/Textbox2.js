@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { useRef, useReducer, useEffect, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
 import { CurrentTangentContext } from "./CurrentTangentContext";
-import PointInput from "./PointInput";
 
 const initialState = {
     textAreaInput: "",
@@ -105,10 +104,8 @@ const Textbox = () => {
     const [ selectedMatch, setSelectedMatch ] = useState(null);
     const [ suggestionMode, setSuggestionMode ] = useState(false);
     const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
-    const [ displaySuggestionsDropup, setDisplaySuggestionsDropup ] = useState(false);
     const textRef = useRef();
-    const searchTermRef = useRef();
-    // const { displaySuggestionsDropup, setDisplaySuggestionsDropup } = useContext(CurrentTangentContext);
+    const { displaySuggestionsDropup, setDisplaySuggestionsDropup } = useContext(CurrentTangentContext);
 
     useEffect(() => {
         const updateInput = () => {
@@ -164,13 +161,13 @@ const Textbox = () => {
     const handleFindPoint = () => {
 
         //if the searchTerm is not changed from when we last called a search fetch
-        // if (lastSearchTerm === state.textAreaInput.slice(1).trim()) {
-        //     setDisplaySuggestionsDropup(true);
-        //     console.log("last search", lastSearchTerm);
-        //     //display the results from the last search
-        //     console.log("display", displaySuggestionsDropup);
-        //     return;
-        // }
+        if (lastSearchTerm === state.textAreaInput.slice(1).trim()) {
+            setDisplaySuggestionsDropup(true);
+            console.log("last search", lastSearchTerm);
+            //display the results from the last search
+            console.log("display", displaySuggestionsDropup);
+            return;
+        }
         
         console.log("calling fetch")
 
@@ -217,90 +214,102 @@ const Textbox = () => {
         })
     }
 
-    // const handleAddPoint = () => {
-    //     dispatch ({
-    //         type: "posting-point"
-    //     })
+    const handleAddPoint = () => {
+        dispatch ({
+            type: "posting-point"
+        })
 
-    //     //close dropup
-    //     setDisplaySuggestionsDropup(false);
+        //close dropup
+        setDisplaySuggestionsDropup(false);
 
-    //          //NEED TO ADD TANGENTID AND CURRENTUSERID
+             //NEED TO ADD TANGENTID AND CURRENTUSERID
 
-    //     fetch("/tangent/add-point", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Accept': 'application/json',
-    //         },
-    //         body: JSON.stringify(selectedMatch)
+        fetch("/tangent/add-point", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(selectedMatch)
             
-    //         })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //            if (data.status === 200) {
-    //                dispatch ({
-    //                    type: "sucessfully-posted-point"
-    //                })
+            })
+            .then(res => res.json())
+            .then(data => {
+               if (data.status === 200) {
+                   dispatch ({
+                       type: "sucessfully-posted-point"
+                   })
 
-    //                //reset???
-    //            }
-    //            else {
-    //                 //if error, open dropup again
-    //             setDisplaySuggestionsDropup(true);
-    //            }
-    //         })
-    //         .catch((err) => {
-    //             dispatch({
-    //                 type: "error-posting-point",
-    //                 error: err
-    //             })
+                   //reset???
+               }
+               else {
+                    //if error, open dropup again
+                setDisplaySuggestionsDropup(true);
+               }
+            })
+            .catch((err) => {
+                dispatch({
+                    type: "error-posting-point",
+                    error: err
+                })
 
-    //             //if error, open dropup again
-    //             setDisplaySuggestionsDropup(true);
+                //if error, open dropup again
+                setDisplaySuggestionsDropup(true);
                
-    //         })
+            })
 
-    // }
+    }
 
-    // const onSomething = (e) => {
-    //     e.preventDefault();
-    //     setDisplaySuggestionsDropup(true);
-    //     console.log("HUKLLL");
+    const onSomething = (e) => {
+        e.preventDefault();
+        setDisplaySuggestionsDropup(true);
+        console.log("HUKLLL");
 
-    // }
+    }
 
-    // const onChangeSuggestionMode = (e) => {
-    //     setSuggestionMode(false);
-    //     // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
-    //     e.target.value = selectedMatch.title;
-    //     // textRef.current.value="";
-    // }
+    const onChangeSuggestionMode = () => {
+        setSuggestionMode(false);
+        // textRef.current.value="";
+    }
 
+
+    //if textarea -- or the displayed option bubble chosen is clicked and suggestion mode is on, show dropup
+
+    //if user clicks outside of the dropup, it disappears and textbox is in focus with original #text
+
+    //when user clicks on one of them, suggestion mode is true
+    //overlay a whole new text area!! 
+    //suggestion mode -- selected item is shown: 
+    //overlay chosen suggestion with white background on textbox as button
+    //--onclick all other suggestions are shown
+    //keep original text in state so when suggestion mode is off, it shows again in old component
+
+    //when user clicks add point, dispatch reset of the text box
+
+    //figure how to trigger rerender of the entire tangent (original fetch dependency array in Tangent)
+
+    //onchange if backsapce then suggestion mode off
     return (
         <Wrapper>
 
-            {(state.pointSuggestionsFetchStatus === "success" && 
+            {(state.pointSuggestionsFetchStatus === "success" && displaySuggestionsDropup &&
                 <PointSuggestionDropup suggestedMatches={state.pointSuggestions} suggestionMode={suggestionMode} setSuggestionMode={setSuggestionMode}
-                selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} searchTermRef={searchTermRef} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}
-                displaySuggestionsDropup={displaySuggestionsDropup}/>
+                selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} />
             )}
 
             {(suggestionMode) ? (
-                <PointInput setSuggestionMode={setSuggestionMode} selectedMatch={selectedMatch} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}/>
-                // <TextContainer>
-                //     <Textarea ref={searchTermRef} rows="1"
-                //         onClick={onSomething} onChange={onChangeSuggestionMode}>
-                //             {"#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year} 
-                //     </Textarea>
-                //     <button 
-                //         onClick={handleAddPoint}>
-                //         add point
-                //     </button>
-                // </TextContainer>
+                <TextContainer>
+                    <Textarea autoFocus rows="1" defaultValue={"#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year} 
+                        onClick={onSomething} onChange={onChangeSuggestionMode}>
+                    </Textarea>
+                    <button 
+                        onClick={handleAddPoint}>
+                        add point
+                    </button>
+                </TextContainer>
             ) : (
                 <TextContainer>
-                    <textarea ref={textRef} rows="1"></textarea>
+                    <textarea ref={textRef} autoFocus rows="1"></textarea>
                     <button disabled={(state.textAreaInput.length === 0)}
                         onClick={(state.textAreaInput[0] === "#") ? handleFindPoint : handleSendText}>
                         {(state.textAreaInput[0] === "#") ? "find point" : "send msg"}

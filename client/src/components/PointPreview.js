@@ -14,7 +14,7 @@ const PointPreview = ({coverImgSrc, title, type, creator, year, country, format}
                 <p>film</p>
                 <p><span>Director:</span></p>
                 <p><span>Year:</span></p>
-                <p><span>Country:</span></p>
+                <p><span>Language:</span></p>
                 {(format === "full" && 
                 <LinkDiv>
                     <DetailsLink to="">see more details</DetailsLink>

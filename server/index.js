@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const { getPointSuggestions } = require("./handlers/getPointSuggestions");
 const { getPoint, getMostPopularPoint } = require("./handlers/pointHandlers");
 const { getTangent, getPointsInTangent, getMostPopularTangent, 
-    getMostRecentTangents } = require("./handlers/tangentHandlers");
+    getMostRecentTangents, getLatestPosts } = require("./handlers/tangentHandlers");
 const { getUser, getUserTangents, getUserPoints, getUserCircle, 
     addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
 const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
@@ -34,13 +34,14 @@ express()
     .get("/points/most-popular", getMostPopularPoint)//WT
     
     //tangent endpoints
-    .get("/tangents/:tangentId", getTangent)
     .get("/tangents/most-popular-tangent", getMostPopularTangent)//WT
     .get("/tangents/most-recent-tangents", getMostRecentTangents)//WT
-    .post("/tangents/add-tangent", addTangent)
+    .get("/tangents/latest-posts", getLatestPosts)
+    .get("/tangents/:tangentId", getTangent)
+    .post("/tangents/add-tangent", addTangent) //RT for tangentId added in post object
     .get("/tangent/points", getPointsInTangent)
-    .post("/tangent/add-point", addPointToTangent)
-    .post("/tangent/add-message", addMessageToTangent)
+    .post("/tangent/add-point", addPointToTangent) //RT for tangentId added in post object
+    .post("/tangent/add-message", addMessageToTangent) //RT for tangentId added in post object
 
     //user endpoints
     .get("/users/get-user", getUser)

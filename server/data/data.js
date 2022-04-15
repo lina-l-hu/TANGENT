@@ -45,6 +45,7 @@ const points = [
 const tangent1 = [   
     {
         _id: "1",
+        tangentId: "", //ADDED
         tangentName: "dilation of time",
         usersInTangent: ["u0000000001"],
         tangentPoints: [], 
@@ -106,6 +107,7 @@ const users = [
         avatar: null,
         tagline: "Always falling for Fellini.",
         tangents: [ "tangent1" ],
+        lastPosts: [], //LATEST POSTS ARRAY OF MESSAGES by user
         points: [ "9780292776241" ],
         circle: [ "u0000000001" ]
     }

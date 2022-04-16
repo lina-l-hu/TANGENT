@@ -105,7 +105,7 @@ const getLatestPosts = async (req, res) => {
     const idArray = tangentids.split(",");
     console.log("idarar", idArray);
 
-    if (!tangentids || tangentids.length === 0) {
+    if (!tangentids) {
         return res.status(400).json({status: 400, message: "Bad request - no Tangent ids provided."});
     }
 
@@ -127,7 +127,7 @@ const getLatestPosts = async (req, res) => {
         )
        
         console.log("latestPO array", latestPosts)
-        if (!latestPosts || latestPosts.length === 0) {
+        if (!latestPosts) {
             return res.status(404).json({status: 404, message: "Could not find Tangents.", data: tangentids});
         }
 

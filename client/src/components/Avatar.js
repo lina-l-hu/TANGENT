@@ -3,7 +3,7 @@ import styled from "styled-components";
 const Avatar = ({avatarImgSrc, userLetter, format}) => {
     
     //if format large, larger width, use props
-
+    
     return (
         <>
         { avatarImgSrc ? (
@@ -24,11 +24,17 @@ const Wrapper = styled.div`
     border-radius: 50%;
     font-family: var(--font-heading);
     font-weight: bold;
-    font-size: 30px;
+    font-size: ${props => (props.large ? "60px" : "30px")};
     background-color: white;
     width: ${props => (props.large ? "100px" : "40px")};
     height: ${props => (props.large ? "100px" : "40px")};
     color: var(--color-main);
+
+    img {
+        border-radius: 50%;
+        width: ${props => (props.large ? "100px" : "40px")};
+        height: ${props => (props.large ? "100px" : "40px")};
+    }
 `;
 
 export default Avatar;

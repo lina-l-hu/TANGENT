@@ -1,20 +1,23 @@
 import styled from "styled-components";
+import { useContext } from "react";
+import { CurrentUserContext } from "./CurrentUserContext";
 import Avatar from "../Avatar";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const ProfileHeader = ({username, tagline}) => {
+const ProfileHeader = ({isCurrentUser, username, status, avatarImgSrc, tagline}) => {
 
-    const { user, isLoading } = useAuth0();
-    console.log("user", user);
+    const { user, isLoading } = useAuth0;
+    console.log("user in header", user)
+
+    const { state: { authProfile }} = useContext(CurrentUserContext);
 
     //only render if not loading
     return (
         <Wrapper>
-            {( !isLoading &&
+            {( status === "idle" && !isLoading && 
             <>
-            <Avatar format="large" />
-            <img src={user.picture} />
-            <h3>{user.name}</h3>
+            <Avatar avatarImgSrc={(isCurrentUser) ? authProfile.picture : avatarImgSrc} userLetter={username.charAt(0).toUpperCase()} format="large" />
+            <h3>{username}</h3>
             <p>{tagline}</p>
             </>
             )}

@@ -6,7 +6,7 @@ import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
 const NavigationFooter = () => {
 
-    const { currentUserId } = useContext(CurrentUserContext);
+    const { state: {currentUser} } = useContext(CurrentUserContext);
     return (
         <Wrapper>
             <NavLink to="/feed">
@@ -25,7 +25,7 @@ const NavigationFooter = () => {
                 <FaSearch className="icon"/>
             </NavLink>
             
-            <NavLink to={`/profile/${currentUserId}`}>
+            <NavLink to={`/profile/${currentUser._id}`}>
                 <FaRegUserCircle className="icon"/>
             </NavLink>
         </Wrapper>

@@ -6,7 +6,6 @@ const ProfileTabs = ({tab, setTab}) => {
 
     const handleTabClick = (e) => {
         const className = e.target.className;
-        console.log("clasNmae after click", className); 
         setTab(className);
     }
 

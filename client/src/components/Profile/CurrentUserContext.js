@@ -4,6 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 export const CurrentUserContext = createContext(null);
 
 const initialState = {
+    authProfile: null,
     currentUser: null, 
     currentUserStatus: "loading",
     currentUserError: null,
@@ -11,6 +12,13 @@ const initialState = {
 
 const reducer = (state, action) => {
     switch (action.type) {
+        case ("logged-in"): {
+            return {
+                ...state, 
+                authProfile: action.profile,
+            }
+        }
+
         case ("receive-profile-data-from-server"): {
             return {
                 ...state, 
@@ -37,15 +45,19 @@ export const CurrentUserProvider = ({children}) => {
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     useEffect(() => {
-        // if (!isLoading) {
+        if (!isLoading) {
 
-            console.log("helloWWWW")
+            dispatch({ 
+                type: "logged-in",
+                profile: user,
+            })
+
             fetch("/users/get-user", {
                 method: "GET", 
                 headers: {
                     "Content-Type": "application/json",
-                    // "email": `${user.email}`
-                    "email": "laszlo@gmail.com"
+                    "email": `${user.email}`
+                   
                 },
             })
             .then((res) => res.json())
@@ -70,7 +82,7 @@ export const CurrentUserProvider = ({children}) => {
                     error: err
                 })
             })
-        // }
+        }
     }, [user])
         
 

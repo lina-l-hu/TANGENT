@@ -5,7 +5,7 @@ const morgan = require("morgan");
 
 //import handlers
 const { getPointSuggestions } = require("./handlers/getPointSuggestions");
-const { getPoint, getMostPopularPoint } = require("./handlers/pointHandlers");
+const { getPointsByIds, getMostPopularPoint } = require("./handlers/pointHandlers");
 const { getTangent, getPointsInTangent, getMostPopularTangent, 
     getMostRecentTangents, getLatestPosts } = require("./handlers/tangentHandlers");
 const { getUser, getUserTangents, getUserPoints, getUserCircle, 
@@ -30,16 +30,16 @@ express()
 
     //point endpoints
     .get("/point-suggestions", getPointSuggestions)//T
-    .get("/points/:pointId", getPoint)
     .get("/points/most-popular", getMostPopularPoint)//WT
+    .get("/points", getPointsByIds)
     
     //tangent endpoints
     .get("/tangents/most-popular-tangent", getMostPopularTangent)//WT
     .get("/tangents/most-recent-tangents", getMostRecentTangents)//WT
     .get("/tangents/latest-posts", getLatestPosts)
     .get("/tangents/:tangentId", getTangent)
-    .post("/tangents/add-tangent", addTangent) //RT for tangentId added in post object
     .get("/tangent/points", getPointsInTangent)
+    .post("/tangents/add-tangent", addTangent) //RT for tangentId added in post object
     .post("/tangent/add-point", addPointToTangent) //RT for tangentId added in post object
     .post("/tangent/add-message", addMessageToTangent) //RT for tangentId added in post object
 

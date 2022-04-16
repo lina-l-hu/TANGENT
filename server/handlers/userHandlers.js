@@ -16,11 +16,12 @@ const getUser = async (req, res) => {
 
     const client = new MongoClient(MONGO_URI, options);
 
-    const { _id, email } = req.headers;
-    console.log("headers", _id, email)
+    // const { userId } = req.params;
+    const { userid, email } = req.headers;
+    console.log("headers and params", userid, email)
 
-    if (!_id && !email) {
-        return res.status(400).json({status: 400, message: "Bad request - missing identifier for user.", data: {_id: _id, email: email}});
+    if (!userid && !email) {
+        return res.status(400).json({status: 400, message: "Bad request - missing identifier for user.", data: {_id: userid, email: email}});
     }
 
     try {
@@ -28,17 +29,17 @@ const getUser = async (req, res) => {
         const db = client.db("USERS");
         // const user = await db.collection("users").findOne({email : email});
        
-        const user = await db.collection("users").findOne({_id: _id});
+        const user = await db.collection("users").findOne({_id: userid});
     
         const user2 = await db.collection("users").findOne({email : email});
         
         (!user && !user2) ?
-            res.status(404).json({status: 404, message: "User not found.", data: {_id: _id, email: email}})
+            res.status(404).json({status: 404, message: "User not found.", data: {_id: userid, email: email}})
             : res.status(200).json({status: 200, message: "User retrieved successfully.", data: (!user) ? user2 : user});
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "User not retrieved due to unknown server error. Please try again.", data: {_id: _id, email: email}})
+        res.status(500).json({status: 500, message: "User not retrieved due to unknown server error. Please try again.", data: {_id: userid, email: email}})
     }
 
     finally {

@@ -40,7 +40,7 @@ function App() {
 
           <Route path="/point/:pointId" element={<PointDetails />} />
 
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
 
           <Route path="/my-circle" element={<MyCircle />} />
 

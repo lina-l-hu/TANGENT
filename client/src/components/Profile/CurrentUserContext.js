@@ -29,7 +29,7 @@ const reducer = (state, action) => {
 
         case ("failure-loading-profile-data-from-server"): {
             return {
-                ...initialState, 
+                ...state, 
                 currentUserStatus: "failed",
                 currentUserError: action.error,
             }

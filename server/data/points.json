@@ -17,5 +17,19 @@
         "year": "2021",
         "by": "Maggie Nelson",
         "country": "US"
+    },
+
+    { 
+        "currentUserId":"8745fe00-eaf8-452d-8a6e-9f00dda90cff",
+        "currentTangentId": "4de70a11-9e15-440d-83a5-5650504e5351",
+        "id": "tt0060959",
+        "title": "Daisies", 
+        "type": "film", 
+        "coverImgSrc": "https://m.media-amazon.com/images/M/MV5BMmUxMjkxZGUtMmUyOC00ODY0LTgwMTktMTBhNTdkODMxYWE3XkEyXkFqcGdeQXVyNjg3MTIwODI@._V1_SX300.jpg",
+        "year": "1966", 
+        "by": "Vera Chytilová", 
+        "description": "After realizing that all world is spoiled, Marie and Marie are committed to be spoiled themselves. They rip off older men, feast in lavish meals and do all kinds of mischief. But what is all this leading to?",
+        "link": "https://www.imdb.com/title/tt0060959" 
     }
+
 ]

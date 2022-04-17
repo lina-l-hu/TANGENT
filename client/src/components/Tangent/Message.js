@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Avatar from "../Avatar";
 
-const Message = ({msg}) => {
+const Message = ({text}) => {
 
     //different styling depending on if the message is from the signed-in user 
     return (
@@ -9,11 +9,7 @@ const Message = ({msg}) => {
             <div>
                 <Avatar />
             </div>
-            <Text>
-            Inherits this property from its parent element. 
-            Inherits this property from its parent element.
-            Inherits this property from its parent element.
-            </Text>
+            <Text>{text}</Text>
             
         </Wrapper>
     )

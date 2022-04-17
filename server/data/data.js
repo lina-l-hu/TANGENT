@@ -6,7 +6,6 @@ const points = [
         coverImgSrc: "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
         year: "1999", 
         by: "Lana Wachowski, Lilly Wachowski",
-        country: "US",
         description: "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.",
         link: "https://www.imdb.com/title/tt0133093", 
         mentionedIn: []
@@ -18,7 +17,6 @@ const points = [
         coverImgSrc: 'https://imdb-api.com/images/original/MV5BOGRiNDc0ZmMtZWVmNS00ZmRkLWEwNjQtODdmYTIyZGJjMjc5XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_Ratio0.7273_AL_.jpg',
         year: "1975", 
         by: "Andrei Tarkovsky",
-        country: "Soviet Union",
         description: "A dying man in his forties remembers his past. His childhood, his mother, the war, personal moments and things that tell of the recent history of all the Russian nation.",
         link: "https://www.imdb.com/title/tt18072646", 
         mentionedIn: ["0000000001"]
@@ -30,11 +28,11 @@ const points = [
         coverImgSrc: "http://books.google.com/books/content?id=u-HRWkL6vnAC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
         year: "1989", 
         by: "Andrei Tarkovsky",
-        country: "Soviet Union",
         description: "A director reveals the original inspirations for his films, their history, his methods of work, and the problems of visual creativity",
         link: "http://books.google.ca/books?id=u-HRWkL6vnAC&dq=sculpting+in+time&hl=&source=gbs_api", 
         mentionedIn: []
     }
+
 
 ];
 
@@ -112,3 +110,4 @@ const users = [
         circle: [ "u0000000001" ]
     }
 ];
+

@@ -19,12 +19,6 @@ const addPointToTangent = async (req, res) => {
         return res.status(400).json({status: 400, message: "Incomplete information -- cannot create Point.", data: req.body});
     }
 
-    //if point is a film, we will be getting values for the following from an API
-    let newBy = null;
-    let newLanguage = null;
-    let newDescription = null;
-    let newLink = null;
-
     const pointsClient = new MongoClient(MONGO_URI, options);
     const tangentsClient = new MongoClient(MONGO_URI, options);
     const usersClient = new MongoClient(MONGO_URI, options);
@@ -42,47 +36,22 @@ const addPointToTangent = async (req, res) => {
         
         //if so, update the tangents array of this Point
         if (existingPoint) {
-            const updatedTangents = [...existingPoint.mentionedIn, currentTangentId];
-            console.log("updatedTangents", updatedTangents);
-            const pointUpdate = await pointsDb.collection(type).updateOne({_id: id}, {$set: {mentionedIn: updatedTangents}});
-            console.log("pointupdate", pointUpdate);
-            if (pointUpdate.matchedCount !== 1 || pointUpdate.modifiedCount !== 1) {
-                return res.status(500).json({ status: 500, message: "Could not update Point due to server error. Please try your request again.", data: req.body});
+            //only add the tangentId if it isn't already in the tangents array (points may be mentioned more than once in a Tangent)
+            if (existingPoint.mentionedIn.indexOf(currentTangentId) === -1) {
+                const updatedTangents = [...existingPoint.mentionedIn, currentTangentId];
+                console.log("updatedTangents", updatedTangents);
+                
+                const pointUpdate = await pointsDb.collection(type).updateOne({_id: id}, {$set: {mentionedIn: updatedTangents}});
+                console.log("pointupdate", pointUpdate);
+               
+                if (pointUpdate.matchedCount !== 1 || pointUpdate.modifiedCount !== 1) {
+                    return res.status(500).json({ status: 500, message: "Could not update Point due to server error. Please try your request again.", data: req.body});
+                }
             }
+           
         }
         //else create a new Point
         else {
-            //if point type is film, we have to pull more information from an API because the imdb title search doesn't provide
-            //all the information we want. For this second request, we will pull from OMDB to limit our calls to the imdb API
-            if (type === "film") {
-                var options = {
-                    uri: `http://www.omdbapi.com/?i=${id}&apikey=${REACT_APP_OMDB_KEY}`, 
-                    headers: {
-                    "Accept": "application/json"
-                    }, 
-                    json: true
-                };
-            
-                const data = await request(options);
-                console.log("api returned data", data.Director);
-                
-                //set values with data returned from this request
-                if (data.Response) {
-                    console.log("hi")
-                    newBy = data.Director;
-                    console.log("newby", newBy);
-                    newLanguage = data.Language;
-                    newDescription = data.Plot;
-                    //imdb link is always in this format
-                    newLink = `https://www.imdb.com/title/${id}`;
-
-                    console.log(newBy, newLanguage, newDescription, newLink);
-                }
-                //if we cannot get this additional data, then do not create this Point
-                else {
-                    return res.status(404).json({status: 404, message: "Could get information from API to create Point.", data: req.body});
-                }
-            }
         
             //create new Point, adding the currentTangentId to its list of mentions
             const newPoint = {
@@ -91,14 +60,14 @@ const addPointToTangent = async (req, res) => {
                 type: type, 
                 coverImgSrc: coverImgSrc,
                 year: year, 
-                by: (type === "film") ? newBy : by, 
-                language: (type === "film") ? newLanguage : language,
-                description: (type === "film") ? newDescription : description,
-                link: (type === "film") ? newLink : link, 
+                by: by, 
+                // language: language,
+                description: description,
+                link: link, 
                 mentionedIn: [currentTangentId]
             }
 
-            console.log("newPoint", newPoint)
+            console.log("newPoint", newPoint);
             const addPoint = await pointsDb.collection(type).insertOne(newPoint);
             console.log("addPoint", addPoint)
             //if Point is not added to the Points database
@@ -118,20 +87,22 @@ const addPointToTangent = async (req, res) => {
 
         //if the current user is not already in the usersInTangent array (i.e. this is their first post in this Tangent)
         //then add their id to this array, then update the tangents array for the user in the USERS database
-        const updatedUsersInTangent = latestPost[0].usersInTangent;
+        let updatedUsersInTangent = latestPost[0].usersInTangent;
         console.log("updatedusers to set", updatedUsersInTangent);
-      
+        
+        await usersClient.connect();
+        const usersDb = usersClient.db("USERS");
+        
+        //update user in USERS database
         if (!latestPost[0].usersInTangent.includes(currentUserId)) {
             console.log("hi")
             updatedUsersInTangent.push(currentUserId);
             console.log("updatedUsersTang", updatedUsersInTangent);
             
-            //update user in USERS database
-            await usersClient.connect();
-            const usersDb = usersClient.db("USERS");
 
             //update the user's Tangent list
-            const userTangents = await usersDb.collection("users").find({_id: currentUserId}, {tangents: 1}).toArray();
+            const user = await usersDb.collection("users").findOne({_id: currentUserId});
+            const userTangents = user.tangents;
             console.log("userTangents", userTangents);
 
             const updatedTangents = [...userTangents, currentTangentId];
@@ -139,8 +110,14 @@ const addPointToTangent = async (req, res) => {
             console.log("updatedUserTangent result", update1);
         }
         
-        //add the new Point id to the tangentPoints array
-        const updatedTangentPoints = [...latestPost[0].tangentPoints, id];
+        //add the Point id to the tangentPoints array (if it is not there already)
+        let updatedTangentPoints = null;
+        if (latestPost[0].tangentPoints.indexOf(id) === -1) {
+            updatedTangentPoints = [...latestPost[0].tangentPoints, id];
+        }
+        else {
+            updatedTangentPoints = latestPost[0].tangentPoints;
+        }
         console.log("updated points", updatedTangentPoints);
         
         //increment the tangentLength by 1
@@ -170,7 +147,8 @@ const addPointToTangent = async (req, res) => {
         //In the user's database, also add this post to the user's latestPosts array 
         //(list of the user's most recent posts in all the Tangents they are a part of)
  
-        const userLastPosts = await usersDb.collection("users").find({_id: currentUserId}, {lastPosts: 1}).toArray();
+        const user = await usersDb.collection("users").findOne({_id: currentUserId});
+        let userLastPosts = user.lastPosts;
         console.log("userlatts", userLastPosts);
 
         //replace the latest post listed for the current Tangent Id in the array with this post just made
@@ -186,7 +164,7 @@ const addPointToTangent = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Point not added to Tangent due to unknown server error. Please try again.", data: req.body})
+        res.status(500).json({status: 500, message: `Point not added to Tangent due to unknown server error: ${err}. Please try again.`, data: req.body})
     }
 
     finally {
@@ -199,8 +177,8 @@ const addPointToTangent = async (req, res) => {
 //add text post to Tangent
 const addMessageToTangent = async (req, res) => {
 
-    const { currentTangentId } = req.params;
-    const { currentUserId, text } = req.body;
+    // const { currentTangentId } = req.params;
+    const { currentUserId, text, currentTangentId } = req.body;
 
     if (!text || !currentTangentId || !currentUserId) {
         return res.status(400).json({status: 400, message: "Incomplete information -- cannot create post.", data: req.body});
@@ -221,17 +199,19 @@ const addMessageToTangent = async (req, res) => {
 
         //if the current user is not already in the usersInTangent array (i.e. this is their first post in this Tangent)
         //then add their id to this array, then update the tangents array for the user in the USERS database
+        
+        await usersClient.connect();
+        const usersDb = usersClient.db("USERS");
 
-        const updatedUsersInTangent = latestPost[0].usersInTangent;
+        let updatedUsersInTangent = latestPost[0].usersInTangent;
     
         if (!latestPost[0].usersInTangent.includes(currentUserId)) {
             updatedUsersInTangent.push(currentUserId);
             
             //update user in USERS database
-            await usersClient.connect();
-            const usersDb = usersClient.db("USERS");
 
-            const userTangents = await usersDb.collection("users").find({_id: currentUserId}, {tangents: 1}).toArray();
+            const user = await usersDb.collection("users").findOne({_id: currentUserId});
+            const userTangents = user.tangents;
             
             const updatedTangents = [...userTangents, currentTangentId];
             const update = await usersDb.collection("users").updateOne({_id: currentUserId}, { $set: { tangents: updatedTangents}});
@@ -262,7 +242,8 @@ const addMessageToTangent = async (req, res) => {
         //In the user's database, also add this post to the user's latestPosts array 
         //(list of the user's most recent posts in all the Tangents they are a part of)
  
-        const userLastPosts = await usersDb.collection("users").find({_id: currentUserId}, {lastPosts: 1}).toArray();
+        const user = await usersDb.collection("users").findOne({_id: currentUserId});
+        const userLastPosts = user.lastPosts;
         console.log("userlatts", userLastPosts);
 
         //replace the latest post listed for the current Tangent Id in the array with this post just made
@@ -278,8 +259,8 @@ const addMessageToTangent = async (req, res) => {
 
     }
 
-    catch {
-        res.status(500).json({status: 500, message: "Post not added to Tangent due to unknown server error. Please try again.", data: req.body})
+    catch (err) {
+        res.status(500).json({status: 500, message: `Post not added to Tangent due to unknown server error: ${err}. Please try again.`, data: req.body})
     }
 
     finally {

@@ -34,6 +34,28 @@ const getFilmsFromAPI = async (searchTerm) => {
   }
 }
 
+
+//helper function get details for a single film from the OMDB API
+const getFilmFromOMDB = async (filmId) => {
+
+  try {
+    var options = {
+      uri: `http://www.omdbapi.com/?i=${filmId}&apikey=${REACT_APP_OMDB_KEY}`, 
+      headers: {
+        "Accept": "application/json"
+      }, 
+      json: true
+    };
+
+    const data = await request(options);
+    return data;
+  }
+  catch (err) {
+    console.log("error fetching from omdb", err)
+    return null;
+  }
+}
+
 //helper function to get book suggestions for the searchTerm from the Google Books API
 const getBooksFromAPI = async (searchTerm) => {
 
@@ -124,18 +146,46 @@ const getPointSuggestions = async (req, res) => {
             let topFilmSuggestions = filteredFilmSuggestions.slice(0, NUM_MATCHES);
             // console.log("topFilmsugg", topFilmSuggestions);
 
-            topFilmSuggestions.forEach((suggestion) => {
+            //since imdb doesn't provide us all the data we want, we have to request additional data
+            //from the omdb for each of the 3 matches we are returning
+            
+            await Promise.all (
+              topFilmSuggestions.map(async(suggestion) => {
+
+                let omdbResult = await getFilmFromOMDB(suggestion.id);
+                // console.log("omdb", omdbResult);
+
                 const film = {
                     _id: suggestion.id,
                     title: suggestion.title,
                     type: "film", 
                     coverImgSrc: suggestion.image,
-                    year: suggestion.description.slice(1, 5)
+                    year: omdbResult.Year,
+                    by: omdbResult.Director,
+                    language: omdbResult.Language,
+                    description: omdbResult.Plot,
+                    link: `https://www.imdb.com/title/${suggestion.id}`,
                 }
 
                 // console.log("film b4 push", film);
                 formattedFilmSuggestions.push(film);
             })
+            )
+            
+            
+            // topFilmSuggestions.forEach((suggestion) => {
+
+            //     const film = {
+            //         _id: suggestion.id,
+            //         title: suggestion.title,
+            //         type: "film", 
+            //         coverImgSrc: suggestion.image,
+            //         year: suggestion.description.slice(1, 5)
+            //     }
+
+            //     // console.log("film b4 push", film);
+            //     formattedFilmSuggestions.push(film);
+            // })
         }
         
       

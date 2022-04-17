@@ -36,9 +36,11 @@ function App() {
 
           <Route path="/tangents" element={<MyTangents />} />
 
-          <Route path="/:tangentId/points" element={<PointsInTangent />} />
+          {/* <Route path="/:tangentId/points" element={<PointsInTangent />} /> */}
 
-          <Route path="/point/:pointId" element={<PointDetails />} />
+          <Route path="/points" element={<PointsInTangent />} />
+
+          <Route path="/points/:pointId" element={<PointDetails />} />
 
           <Route path="/profile/:userId" element={<Profile />} />
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useContext, useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, NavLink } from "react-router-dom";
 import PageWrapper from "../PageWrapper";
 import Header from "../Header";
 import ProfileHeader from "./ProfileHeader";
@@ -8,6 +8,7 @@ import ProfileTabs from "./ProfileTabs";
 import TangentPreview from "../TangentPreview";
 import PointPreview from "../PointPreview";
 import { CurrentUserContext } from "./CurrentUserContext";
+import ToggleInCircleButton from "./ToggleInCircleButton";
 
 const initialState = {
     profile: null, 
@@ -214,8 +215,9 @@ const Profile = () => {
     else {
         console.log("nothing in points")
     }
+
     //sort list of last Posts for the tangents tab before dipslaing
-    
+    let sortedLastPosts = state.profile.lastPosts;
 
     if (currentUserStatus === "loading" || state.profileStatus === "loading" ) {
         console.log("curuserstat", currentUserStatus, "profilestat", state.profileStatus)
@@ -235,28 +237,46 @@ const Profile = () => {
             {( isFriend || isCurrentUser ) ? (
             <>
             <ProfileTabs tab={tab} setTab={setTab}/>
-            {( tab === "tangents") && 
-                <TangentPreview />
+            {( tab === "tangents") && (state.pointsStatus === "idle") &&
+                <>
+                {sortedLastPosts.map((post) => {
+                    let text = "";
+                    if (post.pointId) {
+                        const point = state.points.find((item) => item._id === post.pointId);
+                        text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
+                    }
+                    else {
+                        text = post.text;
+                    }
+                    <TangentPreview key={post._id} tangentId={post._id} text={text}
+                    imgSrc={state.profile.avatar} timestamp={post.timestamp}/>
+                })}
+                </>
             }
             
             {( tab === "points" && (state.pointsStatus === "idle") &&
                 <>
                     {state.points.map((point) => {
                         console.log(point.type, "pointype");
-                        return <PointPreview key={point._id} _id={point._id} coverImgSrc={point.coverImgSrc} title={point.title} 
-                        type={point.type} by={point.by} year={point.year} language={point.language} 
-                        description={point.description} link={point.link} />
+                        return (
+                            <NavLink to={`points/${point._id}`}>
+                                <PointPreview key={point._id} tangentId={point._id} coverImgSrc={point.coverImgSrc} title={point.title} 
+                                type={point.type} by={point.by} year={point.year} language={point.language} 
+                                description={point.description} link={point.link} />
+                            </NavLink>
+                        )
                         })
                     }  
                 </>
             )}  
             </> 
             ) : (
-                <button>add to circle</button>
+                <ToggleInCircleButton friendId={state.profile._id}/>
             )
         }     
         </PageWrapper>
     )
 }
+
 
 export default Profile;

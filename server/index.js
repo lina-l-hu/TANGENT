@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const { getPointSuggestions } = require("./handlers/getPointSuggestions");
 const { getPointsByIds, getMostPopularPoint } = require("./handlers/pointHandlers");
 const { getTangent, getPointsInTangent, getMostPopularTangent, 
-    getMostRecentTangents, getLatestPosts } = require("./handlers/tangentHandlers");
+    getMostRecentTangents, getLatestPosts, getUsersInTangent } = require("./handlers/tangentHandlers");
 const { getUser, getUserTangents, getUserPoints, getUserCircle, 
     addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
 const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
@@ -29,29 +29,39 @@ express()
     .use(express.static("public"))
 
     //point endpoints
-    .get("/point-suggestions", getPointSuggestions)//T
-    .get("/points/most-popular", getMostPopularPoint)//WT
+    .get("/point-suggestions", getPointSuggestions)
+    
+    //T with actual data
+    .get("/points/most-popular", getMostPopularPoint)
+
     .get("/points", getPointsByIds)
     
     //tangent endpoints
-    .get("/tangents/most-popular-tangent", getMostPopularTangent)//WT
-    .get("/tangents/most-recent-tangents", getMostRecentTangents)//WT
+
+    // T with actual data
+    .get("/tangents/most-popular-tangent", getMostPopularTangent)
+    // T with actual data
+    .get("/tangents/most-recent-tangents", getMostRecentTangents)
+    
     .get("/tangents/latest-posts", getLatestPosts)
     .get("/tangents/:tangentId", getTangent)
-    .get("/tangent/points", getPointsInTangent)
-    .post("/tangents/add-tangent", addTangent) //RT for tangentId added in post object
-    .post("/tangent/add-point", addPointToTangent) //RT for tangentId added in post object
-    .post("/tangent/add-message", addMessageToTangent) //RT for tangentId added in post object
+    .get("/tangent/points", getPointsInTangent) 
+    .get("/tangent/users", getUsersInTangent)
+    .post("/tangents/add-tangent", addTangent)
+    .post("/tangent/add-point", addPointToTangent) 
+    .post("/tangent/add-message", addMessageToTangent) 
 
     //user endpoints
     .get("/users/get-user", getUser)
     .get("/users/get-user-tangents", getUserTangents)
     .get("/users/get-user-points", getUserPoints)
-    .get("/users/get-user-circle", getUserCircle)
+    .get("/users/get-user-circle", getUserCircle) 
     .patch("/users/bookmark-point", bookmarkPoint) 
     .patch("/users/remove-bookmarked-point", removeBookmarkedPoint)
     .patch("/users/add-user-to-circle", addUserToCircle)
     .patch("/users/remove-user-from-circle", removeUserFromCircle)
+    
+    //M figure out how to do with auth0 too? 
     .post("/users/add-user", addUser)
 
     //catch all endpoint

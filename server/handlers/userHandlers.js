@@ -11,7 +11,7 @@ const options = {
     useUnifiedTopology: true
 }
 
-//get user
+//change to get users!! 
 const getUser = async (req, res) => {
 
     const client = new MongoClient(MONGO_URI, options);
@@ -46,36 +46,6 @@ const getUser = async (req, res) => {
         client.close();
     }
 }
-
-// const getUserByEmail = async (req, res) => {
-
-//     const client = new MongoClient(MONGO_URI, options);
-
-//     const { email } = req.headers;
-
-//     if (!email) {
-//         return res.status(400).json({status: 400, message: "Bad request - missing email for user."});
-//     }
-
-//     try {
-//         await client.connect();
-//         const db = client.db("USERS");
-
-//         const user = await db.collection("users").findOne({email : email})
-
-//         !user ?
-//             res.status(404).json({status: 404, message: "User not found.", data: email})
-//             : res.status(200).json({status: 200, message: "User retrieved successfully.", data: user});
-//     }
-
-//     catch (err) {
-//         res.status(500).json({status: 500, message: "User not retrieved due to unknown server error. Please try again.", data: _id})
-//     }
-
-//     finally {
-//         client.close();
-//     }
-// }
 
 //get all the Tangents the given user is a part of 
 const getUserTangents = async (req, res) => {
@@ -112,25 +82,49 @@ const getUserTangents = async (req, res) => {
     }
 }
 
-//get all the Points the given user has bookmarked
+//get all the Point objects the given user has bookmarked
 const getUserPoints = async (req, res) => {
-    const client = new MongoClient(MONGO_URI, options);
-
+    
     const { _id } = req.headers;
-
+    
     if (!_id) {
         return res.status(400).json({status: 400, message: "Bad request - missing _id for user."});
     }
 
+    const usersClient = new MongoClient(MONGO_URI, options);
+    const pointsClient = new MongoClient(MONGO_URI, options);
+
     try {
-        await client.connect();
-        const db = client.db("USERS");
+        await usersClient.connect();
+        const usersDb = usersClient.db("USERS");
 
-        const user = await db.collection("users").findOne({_id : _id})
+        const user = await usersDb.collection("users").findOne({_id : _id});
+        
+        if (!user) {
+            return res.status(404).json({status: 404, message: "User not found.", data: _id});
+        }
+        
+        //get list of point ids
+        const pointsList = user.points;
 
-        !user ?
-            res.status(404).json({status: 404, message: "User not found.", data: _id})
-            : res.status(200).json({status: 200, message: "User Points retrieved successfully.", data: user.points});
+        //retrieve each id from the POINTS database
+        await pointsClient.connect();
+        const pointsDb = pointsClient.db("POINTS");
+
+        const userPoints = []; 
+        await Promise.all (
+            pointsList.map( async (id) => {
+                let type = (id.charAt(0) === "t") ? "film" : "book";
+                console.log('in here', id, type);
+                const point = await pointsDb.collection(type).findOne({_id : id});
+                userPoints.push(point);
+            })
+        )
+
+        console.log("userPoints", userPoints);
+        (!userPoints) ? 
+            res.status(404).json({status: 404, message: "Could not find Points for user.", data: _id})
+        :   res.status(200).json({status: 200, message: "User Points retrieved successfully.", data: userPoints});
     }
 
     catch (err) {
@@ -138,11 +132,12 @@ const getUserPoints = async (req, res) => {
     }
 
     finally { 
-        client.close();
+        usersClient.close();
+        pointsClient.close();
     }
 }
 
-//get all userIds in the given user's circle (i.e. list of friends)
+//get all the Users in the given user's circle 
 const getUserCircle = async (req, res) => {
     const client = new MongoClient(MONGO_URI, options);
 
@@ -156,11 +151,28 @@ const getUserCircle = async (req, res) => {
         await client.connect();
         const db = client.db("USERS");
 
-        const user = await db.collection("users").findOne({_id : _id})
+        const user = await db.collection("users").findOne({_id : _id});
 
-        !user ?
-            res.status(404).json({status: 404, message: "User not found.", data: _id})
-            : res.status(200).json({status: 200, message: "User Circle retrieved successfully.", data: user.circle});
+        if (!user) {
+            res.status(404).json({status: 404, message: "User not found.", data: _id});
+        }
+        //get list of friend ids
+        const circleIds = user.circle;
+
+        const userCircle = []; 
+        await Promise.all (
+            circleIds.map( async (id) => {
+                console.log('in here', id);
+                const user = await db.collection("users").findOne({_id : id});
+                userCircle.push(user);
+            })
+        )
+
+        console.log("userCircls", userCircle);
+
+        !userCircle ?
+            res.status(404).json({status: 404, message: "Could not find user Circle.", data: _id})
+            : res.status(200).json({status: 200, message: "User Circle retrieved successfully.", data: userCircle});
     }
 
     catch (err) {
@@ -361,6 +373,11 @@ const addUserToCircle = async (req, res) => {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
         }
 
+        //check to see if friendId is already in the user's Circle
+        if (user.circle.indexOf(friendId) !== -1) {
+            return res.status(400).json({status: 400, message: "User is already in Circle!", data: req.body});
+        }
+
         const updatedCircle = [...user.circle, friendId];
 
         console.log ("updatedCircle", updatedCircle);
@@ -407,6 +424,11 @@ const removeUserFromCircle = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
+        }
+
+        //check to see if friendId is already not in the user's Circle
+        if (user.circle.indexOf(friendId) === -1) {
+            return res.status(400).json({status: 400, message: "User already not in Circle!", data: req.body});
         }
 
         const updatedCircle = user.points.filter((friend) => friend._id !== friendId);

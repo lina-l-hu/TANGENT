@@ -91,21 +91,29 @@ const getMostPopularPoint = async (req, res) => {
 
         const circleIds = user.circle;
         console.log("circleIds", circleIds);
+
+        if (circleIds.length === 0) {
+            return res.status(404).json({status: 404, message: "No users in circle.", data: []});
+        }
         
         const allPointIdsInCircle = []; 
         await Promise.all (
             //for each of the users in the Circle, get their lastPosts array
             circleIds.map( async (id) => {
                 const friend = await usersDb.collection("users").findOne({_id : id});
-                console.log("friend", friend)
-                const friendLastPosts = friend.lastPosts;
-                console.log("friend lastPosts", friend.LastPosts)
+
+                if (friend) {
+                    console.log("friend", friend)
+                    const friendLastPosts = friend.lastPosts;
+                    console.log("friend lastPosts", friend.LastPosts)
+                    
+                    //for each of the lastPosts, get the tangentPoints array and merge into one 
+                    //array for all users in the Circle
+                    friendLastPosts.forEach((post) => {
+                        allPointIdsInCircle.push(...post.tangentPoints);
+                    })
+                }
                 
-                //for each of the lastPosts, get the tangentPoints array and merge into one 
-                //array for all users in the Circle
-                friendLastPosts.forEach((post) => {
-                    allPointIdsInCircle.push(...post.tangentPoints);
-                })
             })
         )
 
@@ -152,7 +160,7 @@ const getMostPopularPoint = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Most popular Point not retrieved due to unknown server error. Please try again.", data: _id})
+        res.status(500).json({status: 500, message: `Most popular Point not retrieved due to unknown server error: ${err}. Please try again.`, data: _id})
     }
 
     finally {

@@ -187,15 +187,23 @@ const getMostPopularTangent = async (req, res) => {
         const circleIds = user.circle;
         console.log("circleIds", circleIds);
 
+        if (circleIds.length === 0) {
+            return res.status(404).json({status: 404, message: "No users in circle.", data: []});
+        }
+
         //for each of the users in the Circle, get their lastPosts array and merge into one array
         const allCircleLastPosts = []; 
         await Promise.all (
             circleIds.map( async (id) => {
                 const friend = await db.collection("users").findOne({_id : id});
                 console.log("friend", friend)
-                const friendLastPosts = friend.lastPosts;
-                console.log("friend lastPosts", friendLastPosts)
-                allCircleLastPosts.push(...friendLastPosts);
+
+                if (friend) {
+                    const friendLastPosts = friend.lastPosts;
+                    console.log("friend lastPosts", friendLastPosts)
+                    allCircleLastPosts.push(...friendLastPosts);
+                }
+                
             })
         )
 
@@ -218,7 +226,7 @@ const getMostPopularTangent = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Most popular Tangent not retrieved due to unknown server error. Please try again.", data: _id})
+        res.status(500).json({status: 500, message: `Most popular Tangent not retrieved due to unknown server error: ${err}. Please try again.`, data: _id})
     }
 
     finally {
@@ -250,15 +258,22 @@ const getMostRecentTangents = async (req, res) => {
         const circleIds = user.circle;
         console.log("circleIds", circleIds);
 
+        if (circleIds.length === 0) {
+            return res.status(404).json({status: 404, message: "No users in circle.", data: []});
+        }
+
         //for each of the users in the Circle, get their lastPosts array and merge into one array
         const allCircleLastPosts = []; 
         await Promise.all (
             circleIds.map( async (id) => {
                 const friend = await db.collection("users").findOne({_id : id});
                 console.log("friend", friend)
-                const friendLastPosts = friend.lastPosts;
-                console.log("friend lastPosts", friendLastPosts)
-                allCircleLastPosts.push(...friendLastPosts);
+                
+                if (friend) {
+                    const friendLastPosts = friend.lastPosts;
+                    console.log("friend lastPosts", friendLastPosts)
+                    allCircleLastPosts.push(...friendLastPosts);
+                }
             })
         )
 
@@ -299,7 +314,7 @@ const getMostRecentTangents = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Latest Tangents not retrieved due to unknown server error. Please try again.", data: _id})
+        res.status(500).json({status: 500, message: `Latest Tangents not retrieved due to unknown server error: ${err}. Please try again.`, data: _id})
     }
 
     finally {

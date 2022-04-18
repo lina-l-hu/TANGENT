@@ -213,10 +213,12 @@ const getUserCircle = async (req, res) => {
         )
 
         console.log("userCircls", userCircle);
+        //filter out any users not found
+        const filteredCircle = userCircle.filter((el) => el !== null);
 
         !userCircle ?
             res.status(404).json({status: 404, message: "Could not find user Circle.", data: _id})
-            : res.status(200).json({status: 200, message: "User Circle retrieved successfully.", data: userCircle});
+            : res.status(200).json({status: 200, message: "User Circle retrieved successfully.", data: filteredCircle});
     }
 
     catch (err) {

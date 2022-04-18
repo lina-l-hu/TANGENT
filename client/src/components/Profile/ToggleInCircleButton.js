@@ -61,12 +61,14 @@ const ToggleInCircleButton = ({friendId}) => {
 }
 
 const Wrapper = styled.div`
-
+    margin: 0 auto;
     button {
         font-size: 20px;
         border: 2px solid var(--color-secondary);
-        background-color: ${props => props.inCircle ? "var(--color-main)" : "white"};
+        background-color: ${props => props.inCircle ? "var(--color-secondary)" : "white"};
         color: ${props => props.inCircle ? "white" : "var(--color-main)"};
+        padding: 10px;
+        border-radius: 15px;
     }
 
 `;

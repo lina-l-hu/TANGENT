@@ -25,6 +25,7 @@ const ProfileTabs = ({tab, setTab}) => {
 const Wrapper = styled.div`
     display: flex;
     margin: 0 auto;
+    margin-bottom: 10px;
     width: 85%;
 `;
 
@@ -48,7 +49,7 @@ const Tab = styled.div`
 
     &:hover {
         color: var(--color-secondary);
-        border-bottom: 4px solid white;
+        /* border-bottom: 4px solid white; */
         cursor: pointer;
     }
     

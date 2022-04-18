@@ -245,7 +245,7 @@ const MyTangents = () => {
             }
         })();
 
-    }, [currentUser])
+    }, [currentUser]);
 
 
     if (currentUserStatus === "loading" || state.pointsStatus === "loading" || state.usersStatus === "loading") {

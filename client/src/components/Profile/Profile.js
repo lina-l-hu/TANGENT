@@ -14,9 +14,12 @@ const initialState = {
     profile: null, 
     profileStatus: "loading",
     profileError: null,
-    points: null,
-    pointsStatus: "loading",
-    pointsError: null
+    bookmarkedPoints: null,
+    bookmarkedPointsStatus: "loading",
+    bookmarkedPointsError: null,
+    tangentPoints: null, 
+    tangentPointsStatus: "loading", 
+    tangentPointsError: null,
 }
 
 const reducer = (state, action) => {
@@ -37,19 +40,35 @@ const reducer = (state, action) => {
             }
         }
 
-        case ("receive-user-points-from-server"): {
+        case ("receive-bookmarked-points-from-server"): {
             return {
                 ...state, 
-                points: action.points, 
-                pointsStatus: "idle", 
+                bookmarkedPoints: action.points, 
+                bookmarkedPointsStatus: "idle", 
             }
         }
 
-        case ("failure-profile-user-points-from-server"): {
+        case ("failure-loading-bookmarked-points-from-server"): {
             return {
                 ...state,
-                pointStatus: "failed",
-                pointsError: action.error,
+                bookmarkedPointsStatus: "failed",
+                bookmarkedPointsError: action.error,
+            }
+        }
+
+        case ("receive-tangent-points-from-server"): {
+            return {
+                ...state, 
+                tangentPoints: action.points, 
+                tangentPointsStatus: "idle", 
+            }
+        }
+
+        case ("failure-loading-tangent-points-from-server"): {
+            return {
+                ...state,
+                tangentPointsStatus: "failed",
+                tangentPointsError: action.error,
             }
         }
     }
@@ -66,24 +85,26 @@ const Profile = () => {
     //get current user info
     const { state: { currentUserStatus, currentUser} } = useContext(CurrentUserContext);
 
-    //load profile into state
-    useEffect(() => {
-        fetch("/users/get-user", {
-            method: "GET", 
-            headers: {
-                "Content-Type": "application/json",
-                "userid": `${userId}`,
-                // "email": "bessa@gmail.com"
-            },
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("profile data", data)
+    //fetch profile function
+    const fetchProfile = async () => {
+        try {
+            const response = await fetch("/users/get-user", {
+                method: "GET", 
+                headers: {
+                    "Content-Type": "application/json",
+                    "userid": `${userId}`,
+                    // "email": "bessa@gmail.com"
+                },
+            })
+
+            const data = await response.json();
             if (data.status === 200) {
+                console.log(data)
                 dispatch({
-                type: "receive-profile-data-from-server",
-                profile: data.data
+                    type: "receive-profile-data-from-server",
+                    profile: data.data
                 })
+                return data.data;
             }
             else (
                 dispatch ({
@@ -91,63 +112,129 @@ const Profile = () => {
                     error: data.message
                 })
             )
-        })
-        .catch((err) => {
+            return;
+        }
+
+        catch (err) {
             dispatch ({
                 type: "failure-loading-profile-data-from-server",
                 error: err
             })
-        })
-    }, [])
+        }
+    }
+    //fetch user's bookmarked points
+    const fetchBookmarkedPoints = async () => {
+        try {
+            const response = await fetch("/users/get-user-points", {
+                method: "GET", 
+                headers: {
+                    "Content-Type": "application/json",
+                    "_id": `${userId}`
+                    
+                },
+            })
 
-    useEffect(() => {
-         //if loaded, then fetch user points, ids in headers as string
-         if (state.profileStatus === "idle") {
+            const data = await response.json();
+            if (data.status === 200) {
+                console.log(data)
+                dispatch({
+                    type: "receive-bookmarked-points-from-server",
+                    points: data.data
+                })
+                return data.data;
+            }
+            else (
+                dispatch ({
+                    type: "failure-loading-bookmarked-points-from-server",
+                    error: data.message
+                })
+            )
+            return;
+        }
 
-            if (state.profile.points.length > 0) {
-                console.log("here")
-                const pointids = state.profile.points.toString();
-                console.log(pointids, "pointids before fetch")
-                
-                fetch("/points", {
+        catch (err) {
+            dispatch ({
+                type: "failure-loading-bookmarked-points-from-server",
+                error: err
+            })
+        }
+    }
+
+    //fetch Points from user's latest Tangent posts
+    const fetchLatestPostPoints = async (pointids) => {
+        try {
+            const response = await fetch("/points", {
                 method: "GET", 
                 headers: {
                     "Content-Type": "application/json",
                     "pointids": `${pointids}`
                     
                 },
+            })
+
+            const data = await response.json();
+            if (data.status === 200) {
+                console.log(data)
+                dispatch({
+                    type: "receive-tangent-points-from-server",
+                    points: data.data
                 })
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log("points data", data)
-                    if (data.status === 200) {
-                        dispatch({
-                        type: "receive-user-points-from-server",
-                        points: data.data
-                        })
-                    }
-                    else (
-                        dispatch ({
-                            type: "failure-profile-user-points-from-server",
-                            error: data.message
-                        })
-                    )
-                })
-                .catch((err) => {
-                    dispatch ({
-                        type: "failure-profile-user-points-from-server",
-                        error: err
-                    })
-                })
+                return data.data;
             }
-            else {
+            else (
                 dispatch ({
-                    type: "receive-user-points-from-server", 
+                    type: "failure-loading-tangent-points-from-server",
+                    error: data.message
+                })
+            )
+            return;
+        }
+
+        catch (err) {
+            dispatch ({
+                type: "failure-loading-tangent-points-from-server",
+                error: err
+            })
+        }
+    }
+
+    useEffect(() => {
+
+        (async () => {
+           
+                const profile = await fetchProfile();
+                console.log("profile in asyn", profile);
+
+                //create array of Points referenced in the user's last posts
+                let pointsReferenced = [];
+                
+                profile.lastPosts.forEach((post) => {
+                    if (post.pointId) {
+                        pointsReferenced.push(post.pointId);
+                    }
+                })
+                console.log(pointsReferenced, "points refed");
+
+                //get rid of duplicates in both arrays
+                const points = [...new Set(pointsReferenced)];
+               
+                console.log("points uniqe", points);
+
+                if (points.length > 0) {
+                    console.log("fetching points");
+                    fetchLatestPostPoints(points);
+                }
+                else {
+                    dispatch({
+                    type: "receive-bookmarked-points-from-server", 
                     points: []
                 })
-            }
-        }
-    }, [state.profile])
+                }
+
+                fetchBookmarkedPoints();
+        })();
+
+    }, [currentUser]);
 
     let isCurrentUser = false;
     let isFriend = false;
@@ -161,15 +248,8 @@ const Profile = () => {
 
     }
 
-    if (state.points) {
-        console.log("points", state.points);
-    }
-    else {
-        console.log("nothing in points")
-    }
-
-    //sort list of last Posts for the tangents tab before dipslaing
-    let sortedLastPosts = state.profile.lastPosts;
+    // //sort list of last Posts for the tangents tab before dipslaing
+    // let sortedLastPosts = state.profile.lastPosts;
 
     if (currentUserStatus === "loading" || state.profileStatus === "loading" ) {
         console.log("curuserstat", currentUserStatus, "profilestat", state.profileStatus)
@@ -189,33 +269,34 @@ const Profile = () => {
             {( isFriend || isCurrentUser ) ? (
             <>
             <ProfileTabs tab={tab} setTab={setTab}/>
-            {( tab === "tangents") && (state.pointsStatus === "idle") &&
+            {( tab === "tangents") && (state.tangentPointsStatus === "idle") &&
                 <>
-                {sortedLastPosts.map((post) => {
+                {state.profile.lastPosts.map((post) => {
                     let text = "";
-                    if (post.pointId) {
-                        const point = state.points.find((item) => item._id === post.pointId);
+                    if (Object.keys(post).indexOf("pointId") > -1) {
+                        const point = state.tangentPoints.find((item) => item._id === post.pointId);
+                        console.log("point in render", point);
                         text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
                     }
                     else {
                         text = post.text;
                     }
-                    return <TangentPreview key={post._id} tangentId={post._id} text={text}
+                    return <TangentPreview key={post._id} tangentId={post.tangentId} text={text}
                     imgSrc={state.profile.avatar} timestamp={post.timestamp}/>
                 })}
                 </>
             }
             
-            {( tab === "points" && (state.pointsStatus === "idle") &&
+            {( tab === "points" && (state.bookmarkedPointsStatus === "idle") &&
                 <>
-                    {state.points.map((point) => {
+                    {state.bookmarkedPoints.map((point) => {
                         console.log(point.type, "pointype");
                         return (
-                            <NavLink to={`points/${point._id}`}>
+                            <a href={`/points/${point._id}`}>
                                 <PointPreview key={point._id} tangentId={point._id} coverImgSrc={point.coverImgSrc} title={point.title} 
                                 type={point.type} by={point.by} year={point.year} language={point.language} 
                                 description={point.description} link={point.link} />
-                            </NavLink>
+                            </a>
                         )
                         })
                     }  

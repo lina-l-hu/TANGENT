@@ -5,23 +5,19 @@ import NavigationFooter from "./NavigationFooter";
 //Each page is styled for iPhone 12/13 dimensions
 const PageWrapper = ({children}) => {
     
+    //if the pathname has tangent, profile or point in the name, do not include generic header
+    
     return (
         <>
         {(window.location.pathname === "/") ? (
             <Wrapper>{children}</Wrapper>
             ) : (
             <Wrapper>
-            {!(window.location.href.indexOf("profile") > -1) &&
-    
-                <Header />
-            }
+
                 {children}
 
-                {/* {!(window.location.href.indexOf("tangent") > -1) &&
-                <NavigationFooter />} */}
-
-                {(window.location.pathname !== "/tangent" &&
-                <NavigationFooter />)}
+                {(window.location.pathname !== `/tangents/:tangentId`) &&
+                <NavigationFooter />}
             </Wrapper>
         )}
         </>

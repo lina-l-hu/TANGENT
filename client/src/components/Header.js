@@ -7,15 +7,11 @@ import { FaArrowLeft } from "react-icons/fa";
 import Avatar from "./Avatar";
 import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
-const Header = ({children}) => {
+const Header = ({children, titleSize}) => {
 
     const { currentUsername } = useContext(CurrentUserContext);
     
     const navigate = useNavigate();
-    
-    if (!(window.location.href.indexOf("profile") > -1)) {
-        children = window.location.pathname.slice(1).replace("-", " ");
-    }
 
 
     return (
@@ -23,7 +19,7 @@ const Header = ({children}) => {
             <button onClick={() => navigate(-1)}>
                 <FaArrowLeft className="icon"/>
             </button>
-            <Title>{children}</Title>
+            <Title smaller={(titleSize === "smaller")}>{children}</Title>
             <AddTangentLink to=""><div>+</div></AddTangentLink>
         </Wrapper>
     )
@@ -52,8 +48,8 @@ const Title = styled.h1`
     text-align: center;
     left: 95px;
     position: absolute;
-
     color: white;
+    font-size: ${props => (props.smaller) ? "26px" : "33px"};
 `;
 
 const AddTangentLink = styled(NavLink)`

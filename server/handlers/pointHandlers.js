@@ -16,13 +16,15 @@ const getPointsByIds = async (req, res) => {
     console.log("pointids", pointids);
     
     console.log("pointids in header", pointids)
-    //array must be sent as a string in the header
-    const idArray = pointids.split(",");
-    console.log("idArray", idArray);
-
+    
     if (!pointids) {
         return res.status(400).json({status: 400, message: "Bad request - no Point id provided."});
     }
+    
+    //array sent as a string in the header, so convert it back to an array
+    const idArray = pointids.split(",");
+    console.log("idArray", idArray);
+
 
     const client = new MongoClient(MONGO_URI, options);
     try {
@@ -45,8 +47,8 @@ const getPointsByIds = async (req, res) => {
         console.log("pointtoreturnarr", pointsToReturn);
 
         (!pointsToReturn) ?
-            res.status(404).json({status: 404, message: "Point not found.", data: pointids})
-            : res.status(200).json({status: 200, message: "Point retrieved successfully.", data: pointsToReturn});
+            res.status(404).json({status: 404, message: "Point(s) not found.", data: pointids})
+            : res.status(200).json({status: 200, message: "Point(s) retrieved successfully.", data: pointsToReturn});
     }
 
     catch (err) {

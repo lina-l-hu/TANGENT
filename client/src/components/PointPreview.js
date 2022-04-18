@@ -31,7 +31,7 @@ import { CurrentUserContext } from "./Profile/CurrentUserContext";
 //     }
 //   }
 
-const PointPreview = ({_id, coverImgSrc, title, type, by, year, language, description, link, format}) => {
+const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, link, format}) => {
     
     // const [ savedState, dispatch ] = useReducer(reducer, initialState);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
@@ -103,7 +103,6 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, language, descri
                     <Type>{type}</Type>
                     <p><span>Director: </span>{by}</p>
                     <p><span>Year: </span>{year}</p>
-                    <p><span>Language: </span>{language}</p>
                 </div>
             </ShortDisplay>
 

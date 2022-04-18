@@ -7,7 +7,7 @@ import PointPreview from "./PointPreview";
 const FeedPage = () => {
     return (
     <PageWrapper>
-        {/* <Header>feed</Header> */}
+        <Header>feed</Header>
         <Body>
             <MostPopularPoint className="section">
                 <h3>Talk of the day</h3>

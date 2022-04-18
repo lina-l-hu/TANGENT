@@ -304,7 +304,7 @@ const Profile = () => {
             )}  
             </> 
             ) : (
-                <ToggleInCircleButton friendId={state.profile._id}/>
+                <ToggleInCircleButton friendId={state.profile._id} format="large"/>
             )
         }     
         </PageWrapper>

@@ -36,7 +36,14 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
     // const [ savedState, dispatch ] = useReducer(reducer, initialState);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
 
-    const [ saved, setSaved ] = useState(currentUser.points.some((point) => point === _id));
+    const [ saved, setSaved ] = useState(false);
+
+    if (currentUserStatus === "idle") {
+        if (currentUser.points.some((point) => point === _id)) {
+            setSaved(true);
+        }
+    }
+
     
     const toggleSave = () => {
 
@@ -110,7 +117,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
             <FullDisplay>
                 <p><span>Description: </span>{description}</p>
                 <LinkDiv>
-                    <DetailsLink to={link}>{(type === "film") ? "imdb" : "google books"}</DetailsLink>
+                    <DetailsLink href={link} target="_blank">{(type === "film") ? "imdb" : "google books"}</DetailsLink>
                 </LinkDiv>
             </FullDisplay>
             )}
@@ -178,6 +185,7 @@ const FullDisplay = styled.div`
 
 const Type = styled.p`
     font-style: italic;
+    padding-bottom: 5px;
 `;
 
 const LinkDiv = styled.div`
@@ -191,7 +199,7 @@ const LinkDiv = styled.div`
     }
 `;
 
-const DetailsLink = styled(NavLink)`
+const DetailsLink = styled.a`
     margin: 0 auto;
     margin-top: 15px;
     padding: 1px 10px;

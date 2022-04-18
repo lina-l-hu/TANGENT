@@ -22,7 +22,14 @@ const getPointsByIds = async (req, res) => {
     }
     
     //array sent as a string in the header, so convert it back to an array
-    const idArray = pointids.split(",");
+    let idArray = [];
+    if (pointids.indexOf(",") === -1) {
+        idArray = [pointids];
+    }
+    else {
+        idArray = pointids.split(",");
+    }
+  
     console.log("idArray", idArray);
 
 

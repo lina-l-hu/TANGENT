@@ -30,6 +30,7 @@ const Wrapper = styled.div`
     height: ${props => (props.large ? "100px" : "40px")};
     color: var(--color-main);
 
+
     img {
         border-radius: 50%;
         width: ${props => (props.large ? "100px" : "40px")};

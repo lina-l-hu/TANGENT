@@ -8,68 +8,37 @@ import Header from "../Header";
 import PointPreview from "../PointPreview";
 
 const initialState = {
-    tangentStatus: "loading", 
-    tangent: null,
-    usersStatus: "loading", 
-    users: null, 
-    pointsStatus: "loading", 
-    points: null, 
-    error: null, 
+    status: "loading",
+    tangentFetchStatus: null,
+    tangent: null, 
+    points: null,
+    users: null,
+    error: null,
 }
 
 const reducer = (state, action) => {
     switch (action.type) {
 
-        case ("receive-tangent-data-from-server"): {
+        case ("successfully-fetched-all-data") : {
             return {
                 ...state, 
+                status: "idle",
+                tangentFetchStatus: action.tangentFetchStatus,
                 tangent: action.tangent, 
-                tangentStatus: "idle", 
+                points: action.points,
+                users: action.users
             }
         }
 
-        case ("failure-loading-tangent-data-from-server"): {
-            return {
-                ...state,  
-                tangentStatus: "failed",
-                error: action.error,
-            }
-        }
-
-        case ("receive-users-data-from-server"): {
+        case ("failure-fetching-all-data") : {
             return {
                 ...state, 
-                users: action.users, 
-                usersStatus: "idle", 
+                status: "failed-fetch",
+                error: action.error
             }
-        }
-
-        case ("failure-loading-users-data-from-server"): {
-            return {
-                ...state,  
-                usersStatus: "failed",
-                error: action.error,
-            }
-        }
-
-        case ("receive-points-data-from-server"): {
-            return {
-                ...state, 
-                points: action.points, 
-                pointsStatus: "idle", 
-            }
-        }
-
-        case ("failure-loading-points-data-from-server"): {
-            return {
-                ...state,  
-                pointsStatus: "failed",
-                error: action.error,
-            }
-        }
+        }    
     }
 }
-
 //Each Tangent component is a chat thread
 const Tangent = () => {
 
@@ -79,120 +48,142 @@ const Tangent = () => {
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     useEffect(() => {
-        fetch(`/tangents/${tangentId}`, {
-            method: "GET", 
-            headers: {
-                "Content-Type": "application/json",        
-            },
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("tangent", data)
-            if (data.status === 200) {
-                dispatch({
-                    type: "receive-tangent-data-from-server",
-                    tangent: data.data
-                })
-            }
-            else (
-                dispatch ({
-                    type: "failure-loading-tangent-data-from-server",
-                    error: data.message
-                })
-            )
-        })
-        .catch((err) => {
-            dispatch ({
-                type: "failure-loading-tangent-data-from-server",
-                error: err
-            })
-        })
-    }, []);
 
-    //have to fetch all the users in the chat so we have their profile picture and name
-    //to display -- change handler to allow multiple fetch
-    useEffect(() => {
-        if (state.tangentStatus === "idle") {
+        Promise.all([
 
-        }
-    })
-
-    //have to fetch all the Points in the Tangent too
-    useEffect(() => {
-        if (state.tangentStatus === "idle") {
-            
-            fetch(`/tangent/points`, {
+            //fetch all the posts in the Tangent
+            fetch(`/tangents/${tangentId}`, {
                 method: "GET", 
                 headers: {
-                    "Content-Type": "application/json", 
-                    "_id": `${tangentId}`       
+                    "Content-Type": "application/json",
+                },
+            }),
+
+            //fetch all the points in the Tangent
+            fetch("/tangent/points", {
+                method: "GET", 
+                headers: {
+                    "Content-Type": "application/json",
+                    "_id": `${tangentId}`
+                },
+            }),
+
+            //fetch all the users in the Tangent
+            fetch("/tangent/users", {
+                method: "GET", 
+                headers: {
+                    "Content-Type": "application/json",
+                    "_id": `${tangentId}`
                 },
             })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("tangent", data)
-                if (data.status === 200) {
-                    dispatch({
-                        type: "receive-points-data-from-server",
-                        points: data.data
-                    })
-                }
-                else (
-                    dispatch ({
-                        type: "failure-loading-points-data-from-server",
-                        error: data.message
-                    })
-                )
-            })
-            .catch((err) => {
-                dispatch ({
-                    type: "failure-loading-points-data-from-server",
-                    error: err
-                })
-            })
-        }
-    }, [state.tangent])
 
-    if (state.tangentStatus === "loading") {
+        ]).then((responses) =>  {
+            return Promise.all(responses.map((response) => {
+                return response.json();
+            }));
+        }).then((data) => {
+            console.log("all fetch data", data);
+            dispatch({
+                type: "successfully-fetched-all-data",
+                tangentFetchStatus: data[0].status, 
+                tangent: data[0].data,
+                points: data[1].data,
+                users: data[2].data
+            })
+        }).catch((err) => {
+            console.log(err);
+            dispatch({
+                type: "failure-fetching-all-data",
+                error: err
+            })
+        });
+    }, [])
+
+    if (state.status === "loading") {
         return <PageWrapper>
             <Header>tangent</Header>
         </PageWrapper>
     }
 
+    if (state.tangentFetchStatus !== 200) {
+        return <PageWrapper>
+        <Header>tangent</Header>
+        <Error>Tangent not found!</Error>
+    </PageWrapper>
+    }
+
     return (
         <PageWrapper>
-            <Header>{state.tangent.tangentName}</Header>
-            <AllPointsLink to={`/${tangentId}/points`}>all Points mentioned</AllPointsLink>
-            <Messages>
-                {state.tangent.map((post) => {
-                    if (post.text) {
-                        <Message key={post._id} text={post.text} username avatar 
-                        timestamp={post.timestamp}/>
-                    }
-                    else {
-                        //find point in the points array and display
-                        <PointPreview />
-
-                    }
-                })}
-            </Messages>
-            <Textbox />
+            <Header titleSize="smaller">{state.tangent[0].tangentName}</Header>
+            <Body>
+                <LinkDiv>
+                    <AllPointsLink to={`/${tangentId}/points`}>all Points mentioned</AllPointsLink>
+                </LinkDiv>
+                <Messages>
+                    {state.tangent.map((post) => {
+                        //find user associated with this message by id
+                        const user = state.users.find((user) => user._id === post.userId);
+                        if (post.text) {
+                            return <Message key={post._id} text={post.text} avatarImgSrc={user.avatar} username={user.username} 
+                            timestamp={post.timestamp}/>
+                        }
+                        else {
+                            //find point in the points array and display
+                            const point = state.points.find((item) => item._id === post.pointId);
+                            return (
+                                <StyledNavLink to={`/points/${post.pointId}`} key={point._id}>
+                                    <PointPreview coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
+                                    by={point.by} year={point.year} format="short"/>
+                                </StyledNavLink>
+                            )
+                        }
+                    })}
+                </Messages>
+                <Spacer></Spacer>
+            </Body>
+                <Textbox />
         </PageWrapper>
     )
 }
 
+const LinkDiv = styled.div`
+    display: flex;
+    justify-content: center;
+    margin: 15px 0 10px;
+`;
 const AllPointsLink = styled(NavLink)`
     margin: 0 auto;
-    margin-top: 15px;
+    /* margin-top: 15px; */
     padding: 5px 10px;
     background-color: rgba(255, 255, 255, 0.5);
     color: var(--color-main);
     border-radius: 20px;
 `;
 
+const Body = styled.div`
+    overflow: scroll;
+`;
+
 const Messages = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+`;
+
+const StyledNavLink=styled(NavLink)`
+    width: 100%;
+`;
+
+const Error = styled.div`
+    text-align: center;
+    font-style: italic;
+    font-family: var(--font-body);
+    font-size: 30px;
+    margin: 30px auto;
+    color: white;
+`
+
+const Spacer = styled.div`
+    height: 69.33px;
 `;
 export default Tangent;

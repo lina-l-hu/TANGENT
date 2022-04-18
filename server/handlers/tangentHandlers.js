@@ -17,7 +17,7 @@ const getTangent = async (req, res) => {
     const client = new MongoClient(MONGO_URI, options);
 
     const { tangentId } = req.params;
-    console.log(tangentId);
+    console.log("get Tangent handler", tangentId);
 
     if (!tangentId) {
         return res.status(400).json({status: 400, message: "Bad request - missing Tangent id."});
@@ -95,7 +95,7 @@ const getPointsInTangent = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Points in Tangent not retrieved due to unknown server error. Please try again.", data: req.headers})
+        res.status(500).json({status: 500, message: `Points in Tangent not retrieved due to unknown server error: ${err}. Please try again.`, data: req.headers})
     }
 
     finally {
@@ -153,7 +153,7 @@ const getUsersInTangent = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Points in Tangent not retrieved due to unknown server error. Please try again.", data: req.headers})
+        res.status(500).json({status: 500, message: `Users in Tangent not retrieved due to unknown server error: ${err}. Please try again.`, data: req.headers})
     }
 
     finally {
@@ -314,9 +314,9 @@ const getLatestPosts = async (req, res) => {
    
     const { tangentids } = req.headers;
 
-    console.log("tangids in header", tangentids)
+    // console.log("tangids in header", tangentids)
     //array must be sent as a string in the header
-    const idArray = null;
+    let idArray = null;
     if (tangentids.indexOf(",") === -1) {
         idArray = [tangentids];
     }
@@ -324,7 +324,7 @@ const getLatestPosts = async (req, res) => {
         idArray = tangentids.split(",");
     }
 
-    console.log("idarar", idArray);
+    // console.log("idarar", idArray);
 
     if (!tangentids) {
         return res.status(400).json({status: 400, message: "Bad request - no Tangent ids provided."});
@@ -336,18 +336,20 @@ const getLatestPosts = async (req, res) => {
         await client.connect();
         const db = client.db("TANGENTS");
 
-        console.log("connected")
+        // console.log("connected")
         const latestPosts = [];
 
         await Promise.all (
             idArray.map( async (tangent) => {
-                console.log('in here', tangent);
                 const latest = await db.collection(tangent).find().sort({_id:-1}).limit(1).toArray();
-                latestPosts.push(latest[0]);
+                console.log('latest', latest);
+                if (latest[0]) {
+                    latestPosts.push(latest[0]);
+                }
             })
         )
        
-        console.log("latestPO array", latestPosts)
+        // console.log("latestPO array", latestPosts)
         if (!latestPosts) {
             return res.status(404).json({status: 404, message: "Could not find Tangents.", data: tangentids});
         }
@@ -359,11 +361,11 @@ const getLatestPosts = async (req, res) => {
             return db-da;
         });
  
-        res.status(200).json({status: 200, message: "Points in Tangent retrieved successfully.", data: sortedByTime});
+        res.status(200).json({status: 200, message: "Latest Tangent posts retrieved successfully.", data: sortedByTime});
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "Points in Tangent not retrieved due to unknown server error. Please try again.", data: tangentids})
+        res.status(500).json({status: 500, message: "Latest Tangent posts not retrieved due to unknown server error. Please try again.", data: tangentids})
     }
 
     finally {

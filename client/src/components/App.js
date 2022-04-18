@@ -31,14 +31,11 @@ function App() {
 
           <Route path="/feed" element={<FeedPage />} />
 
-          {/* <Route path="/tangents/:tangentId" element={<Tangent />} /> */}
-          <Route path="/tangent" element={<Tangent />} />
+          <Route path="/tangents/:tangentId" element={<Tangent />} />
 
           <Route path="/tangents" element={<MyTangents />} />
 
-          {/* <Route path="/:tangentId/points" element={<PointsInTangent />} /> */}
-
-          <Route path="/points" element={<PointsInTangent />} />
+          <Route path="/:tangentId/points" element={<PointsInTangent />} />
 
           <Route path="/points/:pointId" element={<PointDetails />} />
 

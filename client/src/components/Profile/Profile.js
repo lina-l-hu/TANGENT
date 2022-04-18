@@ -67,7 +67,6 @@ const Profile = () => {
     const { state: { currentUserStatus, currentUser} } = useContext(CurrentUserContext);
 
     //load profile into state
-    //change hardcode
     useEffect(() => {
         fetch("/users/get-user", {
             method: "GET", 
@@ -99,53 +98,6 @@ const Profile = () => {
                 error: err
             })
         })
-
-        // //if loaded, then fetch user points, ids in headers as string
-        // if (state.profileStatus === "idle") {
-
-        //     if (state.profile.points.length > 0) {
-        //         console.log("here")
-        //         const pointids = state.profile.points.toString();
-        //         console.log(pointids, "pointids before fetch")
-                
-        //         fetch("/points", {
-        //         method: "GET", 
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "pointids": `${pointids}`
-                    
-        //         },
-        //         })
-        //         .then((res) => res.json())
-        //         .then((data) => {
-        //             console.log("points data", data)
-        //             if (data.status === 200) {
-        //                 dispatch({
-        //                 type: "receive-user-points-from-server",
-        //                 points: data.data
-        //                 })
-        //             }
-        //             else (
-        //                 dispatch ({
-        //                     type: "failure-profile-user-points-from-server",
-        //                     error: data.message
-        //                 })
-        //             )
-        //         })
-        //         .catch((err) => {
-        //             dispatch ({
-        //                 type: "failure-profile-user-points-from-server",
-        //                 error: err
-        //             })
-        //         })
-        //     }
-        //     else {
-        //         dispatch ({
-        //             type: "receive-user-points-from-server", 
-        //             points: []
-        //         })
-        //     }
-        // }
     }, [])
 
     useEffect(() => {
@@ -248,7 +200,7 @@ const Profile = () => {
                     else {
                         text = post.text;
                     }
-                    <TangentPreview key={post._id} tangentId={post._id} text={text}
+                    return <TangentPreview key={post._id} tangentId={post._id} text={text}
                     imgSrc={state.profile.avatar} timestamp={post.timestamp}/>
                 })}
                 </>

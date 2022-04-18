@@ -8,7 +8,7 @@ const { getPointSuggestions } = require("./handlers/getPointSuggestions");
 const { getPointsByIds, getMostPopularPoint } = require("./handlers/pointHandlers");
 const { getTangent, getPointsInTangent, getMostPopularTangent, 
     getMostRecentTangents, getLatestPosts, getUsersInTangent } = require("./handlers/tangentHandlers");
-const { getUser, getUserTangents, getUserPoints, getUserCircle, 
+const { getUser, getMultipleUsers, getUserTangents, getUserPoints, getUserCircle, 
     addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
 const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
 
@@ -53,6 +53,7 @@ express()
 
     //user endpoints
     .get("/users/get-user", getUser)
+    .get("/users/get-users", getMultipleUsers)
     .get("/users/get-user-tangents", getUserTangents)
     .get("/users/get-user-points", getUserPoints)
     .get("/users/get-user-circle", getUserCircle) 

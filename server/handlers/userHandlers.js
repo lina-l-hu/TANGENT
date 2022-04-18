@@ -11,12 +11,10 @@ const options = {
     useUnifiedTopology: true
 }
 
-//change to get users!! 
 const getUser = async (req, res) => {
 
     const client = new MongoClient(MONGO_URI, options);
 
-    // const { userId } = req.params;
     const { userid, email } = req.headers;
     console.log("headers and params", userid, email)
 
@@ -46,6 +44,52 @@ const getUser = async (req, res) => {
         client.close();
     }
 }
+
+const getMultipleUsers = async (req, res) => {
+
+    const client = new MongoClient(MONGO_URI, options);
+
+    const { userids } = req.headers;
+    console.log("userids", userids)
+
+    if (!userids) {
+        return res.status(400).json({status: 400, message: "Bad request - missing identifier for user.", data: {userids: userids}});
+    }
+
+    //array sent as a string in the header, so convert it back to an array
+    const idArray = userids.split(",");
+    console.log("idArray", idArray);
+
+    try {
+        await client.connect();
+        const db = client.db("USERS");
+       
+        const usersToReturn = [];
+    
+        await Promise.all (
+            idArray.map( async (id) => {
+                let user = await db.collection("users").findOne({_id : id});
+                console.log("user", user)
+                usersToReturn.push(user);
+            })
+        )
+        
+        console.log("users to retrr", usersToReturn);
+
+        (!usersToReturn) ?
+            res.status(404).json({status: 404, message: "Users not found.", data: {userids: userids}})
+            : res.status(200).json({status: 200, message: "Users retrieved successfully.", data: usersToReturn});
+    }
+
+    catch (err) {
+        res.status(500).json({status: 500, message: `User not retrieved due to unknown server error:${err}. Please try again.`, data: {userids: userids}})
+    }
+
+    finally {
+        client.close();
+    }
+}
+
 
 //get all the Tangents the given user is a part of 
 const getUserTangents = async (req, res) => {
@@ -455,4 +499,4 @@ const removeUserFromCircle = async (req, res) => {
 
 }
 
-module.exports = { getUser, getUserTangents, getUserPoints, getUserCircle, addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle };
+module.exports = { getUser, getMultipleUsers, getUserTangents, getUserPoints, getUserCircle, addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle };

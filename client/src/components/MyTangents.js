@@ -217,11 +217,14 @@ const MyTangents = () => {
                     }
                 })
 
-                console.log("usersin", usersInLatestPosts, pointsReferenced);
+                //get rid of duplicates in both arrays
+                const points = [...new Set(pointsReferenced)];
+                const users = [...new Set(usersInLatestPosts)];
+                console.log("usersin", points, users);
 
-                if (pointsReferenced.length > 0) {
+                if (points.length > 0) {
                     console.log("fetching points");
-                    fetchPoints(pointsReferenced);
+                    fetchPoints(points);
                 }
                 else {
                     dispatch({
@@ -229,9 +232,9 @@ const MyTangents = () => {
                 })
                 }
 
-                if (usersInLatestPosts.length > 0) {
+                if (users.length > 0) {
                     console.log("fetching users");
-                    fetchUsers(usersInLatestPosts);
+                    fetchUsers(users);
                 }
                 else {
                     dispatch({

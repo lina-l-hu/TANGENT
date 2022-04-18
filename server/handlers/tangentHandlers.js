@@ -314,9 +314,10 @@ const getLatestPosts = async (req, res) => {
    
     const { tangentids } = req.headers;
 
-    // console.log("tangids in header", tangentids)
+    console.log(tangentids, "tangentids");
+
     //array must be sent as a string in the header
-    let idArray = null;
+    let idArray = [];
     if (tangentids.indexOf(",") === -1) {
         idArray = [tangentids];
     }
@@ -324,7 +325,7 @@ const getLatestPosts = async (req, res) => {
         idArray = tangentids.split(",");
     }
 
-    // console.log("idarar", idArray);
+    console.log("idarr", idArray);
 
     if (!tangentids) {
         return res.status(400).json({status: 400, message: "Bad request - no Tangent ids provided."});
@@ -349,7 +350,7 @@ const getLatestPosts = async (req, res) => {
             })
         )
        
-        // console.log("latestPO array", latestPosts)
+        console.log("latestPO array", latestPosts)
         if (!latestPosts) {
             return res.status(404).json({status: 404, message: "Could not find Tangents.", data: tangentids});
         }

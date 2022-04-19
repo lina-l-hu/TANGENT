@@ -142,7 +142,7 @@ const PointDetails = () => {
                     by={state.point.by} year={state.point.year} description={state.point.description} link={state.point.link} format="full"/>
             <MentionedDiv>mentioned in these Tangents</MentionedDiv>
             {state.tangents.map((post) => {
-                <NavLink to={`/tangents/${post.tangentId}`} key={post._id}>
+                <NavLink to={`/tangent/${post.tangentId}`} key={post._id}>
                     <h4>{post.tangentName}</h4>
                     <TangentPreview tangentId={post.tangentId} text={text}
                     imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>

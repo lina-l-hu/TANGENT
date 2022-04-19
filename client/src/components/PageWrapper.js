@@ -16,7 +16,7 @@ const PageWrapper = ({children}) => {
 
                 {children}
 
-                {(window.location.pathname !== `/tangents/:tangentId`) &&
+                {!(window.location.pathname.includes('/tangent/')) &&
                 <NavigationFooter />}
             </Wrapper>
         )}
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     flex-direction: column;
     background-color: var(--color-background);
     position: relative;
-    overflow: scroll;
+    overflow: hidden;
 `
 
 export default PageWrapper;

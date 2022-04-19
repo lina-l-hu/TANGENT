@@ -264,6 +264,7 @@ const Profile = () => {
     return (
         <PageWrapper>
             <Header>{(isCurrentUser) ? "me" : state.profile.name}</Header>
+            <Body>
             <ProfileHeader isCurrentUser={(isCurrentUser)} username={state.profile.username} tagline={state.profile.tagline} status={state.profileStatus}/>
             
             {( isFriend || isCurrentUser ) ? (
@@ -292,11 +293,13 @@ const Profile = () => {
                     {state.bookmarkedPoints.map((point) => {
                         console.log(point.type, "pointype");
                         return (
-                            <a href={`/points/${point._id}`}>
-                                <PointPreview key={point._id} tangentId={point._id} coverImgSrc={point.coverImgSrc} title={point.title} 
-                                type={point.type} by={point.by} year={point.year} language={point.language} 
-                                description={point.description} link={point.link} />
-                            </a>
+                            // <a href={`/points/${point._id}`}>
+                                <PointPreview key={point._id} _id={point._id}  
+                                coverImgSrc={point.coverImgSrc} title={point.title} 
+                                type={point.type} by={point.by} year={point.year} 
+                                description={point.description} link={point.link}
+                                userPoints={currentUser.points} />
+                            // </a>
                         )
                         })
                     }  
@@ -307,9 +310,12 @@ const Profile = () => {
                 <ToggleInCircleButton friendId={state.profile._id} format="large"/>
             )
         }     
+        </Body>
         </PageWrapper>
     )
 }
 
-
+const Body = styled.div`
+    overflow: scroll;
+`;
 export default Profile;

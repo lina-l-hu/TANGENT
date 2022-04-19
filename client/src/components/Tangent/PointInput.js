@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useReducer, useContext } from "react";
-import { CurrentTangentContext } from "./CurrentTangentContext";
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
@@ -41,26 +40,21 @@ const reducer = (state, action) => {
 }
 
 
-const PointInput = ({selectedMatch, setSuggestionMode}) => {
+const PointInput = ({currentUserId, currentTangentId, selectedMatch, setDisplaySuggestionsDropup, 
+    reset, mode, setMode}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    const { setDisplaySuggestionsDropup, displaySuggestionsDropup } = useContext(CurrentTangentContext);
-    let navigate = useNavigate();
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-    function handleClick() {
-      forceUpdate();
-    }
-  
     const handleAddPoint = () => {
+        //close dropup
+        setDisplaySuggestionsDropup(false);
+
         dispatch ({
             type: "posting-point"
         })
 
-        //close dropup
-        setDisplaySuggestionsDropup(false);
-
-             //NEED TO ADD TANGENTID AND CURRENTUSERID
+        //add currentTangentId and currentUserId to the object posted to server
+        const pointPost = {...selectedMatch, currentTangentId: currentTangentId, currentUserId: currentUserId};
 
         fetch("/tangent/add-point", {
             method: "POST",
@@ -68,17 +62,19 @@ const PointInput = ({selectedMatch, setSuggestionMode}) => {
                 "Content-Type": "application/json",
                 'Accept': 'application/json',
             },
-            body: JSON.stringify(selectedMatch)
+            body: JSON.stringify(pointPost)
             
             })
             .then(res => res.json())
             .then(data => {
                if (data.status === 200) {
                    dispatch ({
-                       type: "sucessfully-posted-point"
+                       type: "successfully-posted-point"
                    })
 
                    //reset???
+                   setMode("text");
+                   reset();
                }
                else {
                     //if error, open dropup again
@@ -103,12 +99,10 @@ const PointInput = ({selectedMatch, setSuggestionMode}) => {
         <Wrapper>
             <Overlay>
                 <CloseButton onClick={() => {
-                    setSuggestionMode(false);
-                    navigate("/tangent");
+                    setMode("text");
                 }}>x</CloseButton>
                 <PointButton onClick={() => {
                     setDisplaySuggestionsDropup(true);
-                    handleClick();
                 }}>
                     {"#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year} </PointButton>
             </Overlay>

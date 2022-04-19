@@ -31,7 +31,7 @@ function App() {
 
           <Route path="/feed" element={<FeedPage />} />
 
-          <Route path="/tangents/:tangentId" element={<Tangent />} />
+          <Route path="/tangent/:tangentId" element={<Tangent />} />
 
           <Route path="/tangents" element={<MyTangents />} />
 

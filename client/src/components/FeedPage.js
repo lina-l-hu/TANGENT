@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useContext, useReducer, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import Header from "./Header";
 import TangentPreview from "./TangentPreview";
@@ -9,7 +10,7 @@ import { CurrentUserContext } from "./Profile/CurrentUserContext";
 const initialState = {
     status: "loading",
     popularPoint: null,
-    popularTangents: null, 
+    popularTangent: null, 
     recentTangents: null,
     error: null,
 }
@@ -22,7 +23,7 @@ const reducer = (state, action) => {
                 ...state, 
                 status: "idle",
                 popularPoint: action.popularPoint, 
-                popularTangents: action.popularTangents,
+                popularTangent: action.popularTangent,
                 recentTangents: action.recentTangents
             }
         }
@@ -84,7 +85,7 @@ const FeedPage = () => {
             dispatch({
                 type: "successfully-fetched-all-data",
                 popularPoint: data[0].data,
-                popularTangents: data[1].data,
+                popularTangent: data[1].data,
                 recentTangents: data[2].data
             })
         }).catch((err) => {
@@ -108,22 +109,24 @@ const FeedPage = () => {
         <Header>feed</Header>
         <Body>
             <MostPopularPoint className="section">
-                <h3>Talk of the day</h3>
-                <PointPreview />
+                <SectionTitle>Talk of the day</SectionTitle>
+                    <PointPreview _id={state.popularPoint._id} coverImgSrc={state.popularPoint.coverImgSrc} 
+                    title={state.popularPoint.title} by={state.popularPoint.by} year={state.popularPoint.year} 
+                    format="short" userPoints={currentUser.points}/>
             </MostPopularPoint>
 
-            <MostPopularTangents className="section">
-                <h3>Major discussions</h3>
-                {/* get top 3 tangents and map over them to display */}
-                <TangentPreview />
-                <TangentPreview />
-            </MostPopularTangents>
+            <MostPopularTangent className="section">
+                <SectionTitle>Major discussions</SectionTitle>
+                <TangentPreview key={state.popularTangent._id} tangentId={state.popularTangent._id} timestamp={state.popularTangent.timestamp} 
+                username={state.popularTangent.username} avatar={state.popularTangent} text={state.popularTangent.text}/>
+            </MostPopularTangent>
 
             <NewTangents className="section">
-                <h3>Something to add?</h3>
-                {/* get 2 most recent tangents from friends and map over them to display */}
-                <TangentPreview />
-                <TangentPreview />
+                <SectionTitle>Something to add?</SectionTitle>
+                {state.recentTangents.map((post) => {
+                    return <TangentPreview key={post._id} tangentId={post._id} timestamp={post.timestamp}
+                    username={post.username} avatar={post.avatar} text={post.text}/>
+                })}
             </NewTangents>
         </Body>
         
@@ -138,18 +141,18 @@ const Body = styled.div`
         margin: 30px 0;
         color: white;
     }
-
-    h3 {
-        text-align: center;
-        font-style: italic;
-    }
     
+`;
+
+const SectionTitle = styled.h3`
+    text-align: center;
+    font-style: italic;
 `;
 
 const MostPopularPoint = styled.div`
 `;
 
-const MostPopularTangents = styled.div`
+const MostPopularTangent = styled.div`
 
 `;
 

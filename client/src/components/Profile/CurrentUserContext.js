@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export const CurrentUserContext = createContext(null);
@@ -43,6 +43,7 @@ export const CurrentUserProvider = ({children}) => {
     console.log("logged in user", user)
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
+    const [ changeCount, setChangeCount ] = useState(0);
 
     useEffect(() => {
         if (!isLoading) {

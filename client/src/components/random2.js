@@ -117,7 +117,7 @@ const MyTangents = () => {
                     text = post.text;
                 }
                 return (
-                    <NavLink to={`/tangents/${post.tangentId}`}>
+                    <NavLink to={`/tangent/${post.tangentId}`}>
                         <TangentPreview key={post._id} tangentId={post._id} text={text}
                         imgSrc={currentUser.avatar} username={currentUser.username} timestamp={post.timestamp}/>
                     </NavLink>
@@ -129,3 +129,65 @@ const MyTangents = () => {
 }
 
 export default MyTangents;
+
+
+
+
+        // //for each of the users in the Circle, get their lastPosts array and merge into one array
+        // const allCircleLastPosts = []; 
+        // await Promise.all (
+        //     circleIds.map( async (id) => {
+        //         const friend = await db.collection("users").findOne({_id : id});
+        //         console.log("friend", friend)
+
+        //         if (friend) {
+        //             const friendLastPosts = friend.lastPosts;
+        //             console.log("friend lastPosts", friendLastPosts)
+        //             allCircleLastPosts.push(...friendLastPosts);
+        //         }
+                
+        //     })
+        // )
+
+        // //merge the current user's lastPosts array into the array as well
+        // allCircleLastPosts.push(...user.lastPosts);
+
+        // console.log("all circle last posts", allCircleLastPosts);
+       
+        // //sort this array by descending tangentLength
+        // let sorted  = allCircleLastPosts.sort((a, b) => {
+        //     return b.tangentLength - a.tangentLength;
+        // })
+
+        // console.log("sorted", sorted);
+
+        //get the user object associated with the post to return
+        // const postUser = await db.collection("users").findOne({_id : sorted[0].userId});
+        
+        // const objectToReturn = {...sorted[0], username: postUser.username, avatar: postUser.avatar}
+
+        // console.log("postswith users", objectToReturn);
+
+
+        // const latestThreePosts = [sorted[0]];
+
+        // for (let i = 1; i < sorted.length; i++) {
+        //     if (latestThreePosts.length === 3) {
+        //         break;
+        //     }
+
+        //     let tangentIdsInThree = latestThreePosts.map((post) => post.tangentId);
+        //     console.log("tangentsonly", tangentIdsInThree);
+
+        //     if (tangentIdsInThree.indexOf(sorted[i].tangentId) === -1) {
+        //         latestThreePosts.push(sorted[i]);
+        //     }
+        // }
+        
+        // console.log("latest3", latestThreePosts);
+
+
+        // <button disabled={(state.textAreaInput.length === 0)}
+        //                 onClick={(state.textAreaInput[0] === "#") ? handleFindPoint : handleSendText}>
+        //                 {(state.textAreaInput[0] === "#") ? "find point" : "send msg"}
+        //             </button>

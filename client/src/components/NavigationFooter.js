@@ -54,7 +54,7 @@ const Wrapper = styled.div`
         color: var(--color-secondary);
 
         &:hover {
-            color: var(--color-main);
+            color: #7A729F;
         }
     }
 `;

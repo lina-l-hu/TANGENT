@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useContext, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import PageWrapper from "../PageWrapper";
 import Textbox from "./Textbox";
 import Message from "./Message";
 import Header from "../Header";
 import PointPreview from "../PointPreview";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
 const initialState = {
     status: "loading",
@@ -44,6 +45,7 @@ const Tangent = () => {
 
     const { tangentId } = useParams();
     console.log("tangentId", tangentId);
+    const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
@@ -99,7 +101,7 @@ const Tangent = () => {
         });
     }, [])
 
-    if (state.status === "loading") {
+    if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
             <Header>tangent</Header>
         </PageWrapper>
@@ -131,17 +133,17 @@ const Tangent = () => {
                             //find point in the points array and display
                             const point = state.points.find((item) => item._id === post.pointId);
                             return (
-                                <StyledNavLink to={`/points/${post.pointId}`} key={point._id}>
-                                    <PointPreview coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
-                                    by={point.by} year={point.year} format="short"/>
-                                </StyledNavLink>
+                                <PointDiv key={point._id}>
+                                    <PointPreview key={point._id} _id={point._id} coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
+                                    by={point.by} year={point.year} format="short" userPoints={currentUser.points}/>
+                                </PointDiv>
                             )
                         }
                     })}
                 </Messages>
                 <Spacer></Spacer>
             </Body>
-                <Textbox />
+                <Textbox currentTangentId={tangentId} currentUserId={currentUser._id} />
         </PageWrapper>
     )
 }
@@ -170,7 +172,7 @@ const Messages = styled.div`
     align-items: center;
 `;
 
-const StyledNavLink=styled(NavLink)`
+const PointDiv = styled.div`
     width: 100%;
 `;
 

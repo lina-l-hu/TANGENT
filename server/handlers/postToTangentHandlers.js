@@ -13,9 +13,11 @@ const options = {
 //add Point post to Tangent
 const addPointToTangent = async (req, res) => {
 
-    const { id, title, type, coverImgSrc, year, by, language, description, link, currentUserId, currentTangentId } = req.body;
+    const { _id, title, type, coverImgSrc, year, by, description, link, currentUserId, currentTangentId } = req.body;
 
-    if (!id || !title || !type || !currentUserId || !currentTangentId) {
+    console.log("body", req.body);
+
+    if (!_id || !title || !type || !currentUserId || !currentTangentId) {
         return res.status(400).json({status: 400, message: "Incomplete information -- cannot create Point.", data: req.body});
     }
 
@@ -28,9 +30,9 @@ const addPointToTangent = async (req, res) => {
         await pointsClient.connect();
 
         const pointsDb = pointsClient.db("POINTS");
-
+        console.log("connected");
         //first check if Point already exists in database -- 
-        const existingPoint = await pointsDb.collection(type).findOne({_id: id});
+        const existingPoint = await pointsDb.collection(type).findOne({_id: _id});
 
         console.log("existing", existingPoint);
         
@@ -41,7 +43,7 @@ const addPointToTangent = async (req, res) => {
                 const updatedTangents = [...existingPoint.mentionedIn, currentTangentId];
                 console.log("updatedTangents", updatedTangents);
                 
-                const pointUpdate = await pointsDb.collection(type).updateOne({_id: id}, {$set: {mentionedIn: updatedTangents}});
+                const pointUpdate = await pointsDb.collection(type).updateOne({_id: _id}, {$set: {mentionedIn: updatedTangents}});
                 console.log("pointupdate", pointUpdate);
                
                 if (pointUpdate.matchedCount !== 1 || pointUpdate.modifiedCount !== 1) {
@@ -55,7 +57,7 @@ const addPointToTangent = async (req, res) => {
         
             //create new Point, adding the currentTangentId to its list of mentions
             const newPoint = {
-                _id: id, 
+                _id: _id, 
                 title: title, 
                 type: type, 
                 coverImgSrc: coverImgSrc,
@@ -94,7 +96,7 @@ const addPointToTangent = async (req, res) => {
         const usersDb = usersClient.db("USERS");
         
         //update user in USERS database
-        if (!latestPost[0].usersInTangent.includes(currentUserId)) {
+        if (!(latestPost[0].usersInTangent.includes(currentUserId))) {
             console.log("hi")
             updatedUsersInTangent.push(currentUserId);
             console.log("updatedUsersTang", updatedUsersInTangent);
@@ -110,12 +112,16 @@ const addPointToTangent = async (req, res) => {
             console.log("updatedUserTangent result", update1);
         }
         
+        console.log("before adding point to the tangent points");
         //add the Point id to the tangentPoints array (if it is not there already)
         let updatedTangentPoints = null;
-        if (latestPost[0].tangentPoints.indexOf(id) === -1) {
-            updatedTangentPoints = [...latestPost[0].tangentPoints, id];
+        console.log("latest.tangentP", latestPost[0].tangentPoints);
+        if (latestPost[0].tangentPoints.indexOf(_id) === -1) {
+            console.log("here?")
+            updatedTangentPoints = [...latestPost[0].tangentPoints, _id];
         }
         else {
+            console.log("there")
             updatedTangentPoints = latestPost[0].tangentPoints;
         }
         console.log("updated points", updatedTangentPoints);
@@ -133,7 +139,7 @@ const addPointToTangent = async (req, res) => {
             tangentLength: newTangentLength, 
             userId: currentUserId, 
             timestamp: moment().format("YYYY-MM-DD HH:mm"), 
-            pointId: id
+            pointId: _id
         }
 
         console.log("newPOst", newPost);
@@ -160,7 +166,7 @@ const addPointToTangent = async (req, res) => {
         const update2 = await usersDb.collection("users").updateOne({_id: currentUserId}, { $set: { lastPosts: newLasts}});
         console.log("updatedUserTangent result", update2);
 
-        res.status(200).json({status: 200, message: "Point added successfully to Tangent", data: result.insertedId});
+        return res.status(200).json({status: 200, message: "Point added successfully to Tangent", data: result.insertedId});
     }
 
     catch (err) {

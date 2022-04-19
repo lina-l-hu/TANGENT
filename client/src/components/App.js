@@ -13,7 +13,7 @@ import MyCircle from "./MyCircle/MyCircle";
 import MyTangents from "./MyTangents";
 import moment from 'moment';
 import Search from "./Search";
-
+import AddTangentModal from "../components/Tangent/AddTangentModal";
 
 function App() {
 
@@ -24,6 +24,8 @@ function App() {
       <GlobalStyles />
      
       <BrowserRouter>
+
+        <AddTangentModal />
 
         <Routes>
 

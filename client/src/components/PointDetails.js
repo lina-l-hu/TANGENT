@@ -49,15 +49,7 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 tangentsStatus: "failed",
-                tangentError: action.error,
-            }
-        }
-
-        case ("no-tangents-data-to-receive-from-server"): {
-            return {
-                ...state, 
-                tangents: [],
-                tangentsStatus: "idle", 
+                tangentsError: action.error,
             }
         }
 
@@ -65,14 +57,6 @@ const reducer = (state, action) => {
             return {
                 ...state, 
                 users: action.users, 
-                usersStatus: "idle", 
-            }
-        }
-
-        case ("no-users-data-to-receive-from-server"): {
-            return {
-                ...state, 
-                users: [],
                 usersStatus: "idle", 
             }
         }
@@ -217,18 +201,23 @@ const PointDetails = () => {
         console.log("hullo");
         (async () => {
             
+            //first fetch to get the Point
             const point = await fetchPoint();
             console.log("point", point);
 
             if (point.mentionedIn.length === 0) {
+
                 dispatch({
-                    type: "no-tangents-data-to-receive-from-server"
+                    type: "receive-tangents-from-server",
+                    tangents: []
                 })
                 dispatch({
-                    type: "no-users-data-to-receive-from-server"
+                    type: "receive-users-data-from-server", 
+                    users: []
                 })
             }
             else {
+                //second fetch to get the latest posts of every tangent in the Point mentionedIn array
                 const tangents = await fetchLatestTangentPosts(point.mentionedIn);
                 console.log("tangents in async", tangents);
 
@@ -242,11 +231,13 @@ const PointDetails = () => {
 
                 if (users.length > 0) {
                     console.log("fetching users");
-                    await fetchUsers(users);
+                    //third fetch to get all the users in the tangents array fetched above
+                    fetchUsers(users);
                 }
                 else {
                     dispatch({
-                        type: "no-users-data-to-receive-from-server"
+                        type: "receive-users-data-from-server", 
+                        users: []
                     })
                 }
             }
@@ -255,33 +246,41 @@ const PointDetails = () => {
 
    
     // if (!state.point || !state.tangents || !state.users) {
-    if (currentUserStatus === "loading" || state.pointStatus === "loading" || state.tangentsStatus === "loading" || state.usersStatus === "loading") {
+    if (currentUserStatus !== "idle" || state.pointStatus !== "idle" || state.tangentsStatus !== "idle" || state.usersStatus !== "idle") {
         return (
             <PageWrapper>
-                <Header>point</Header>
+                {/* <Header>point</Header> */}
             </PageWrapper>
         )
     }
     return (
         <PageWrapper>
-            <Header>{state.point.title}</Header>
+            {/* <Header>{state.point.title}</Header> */}
+            
             <PointPreview _id={state.point._id} coverImgSrc={state.point.coverImgSrc} title={state.point.title} 
             type={state.point.type} by={state.point.by} year={state.point.year} description={state.point.description} 
             link={state.point.link} format="full" userPoints={currentUser.points}/>
+            
             <MentionedDiv>mentioned in these Tangents</MentionedDiv>
+            
             {state.tangents.map((post) => {
                 let text = "";
+                console.log("here");
+                
                 if (Object.keys(post).indexOf("pointId") > -1) {
                     const point = state.points.find((item) => item._id === post.pointId);
                     text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
                 }
+                
                 else {
                     text = post.text;
                 }
+                
                 console.log("state.users", state.users)
                 const user = state.users.find((user) => user._id === post.userId)
+                
                 return (
-                    <Wrapper>
+                    <Wrapper key={post._id}>
                         <h4>{post.tangentName}</h4>
                         <TangentPreview tangentId={post.tangentId} text={text}
                         imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>

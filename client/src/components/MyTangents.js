@@ -250,13 +250,14 @@ const MyTangents = () => {
 
     if (currentUserStatus === "loading" || state.pointsStatus === "loading" || state.usersStatus === "loading") {
         return <PageWrapper>
-            <Header>my tangents</Header>
+            {/* <Header>my tangents</Header> */}
         </PageWrapper>
     }
 
     return (
         <PageWrapper>
-            <Header>my tangents</Header>
+            {/* <Header>my tangents</Header> */}
+            <Body>
             {state.tangents.map((post) => {
                 let text = "";
                 if (Object.keys(post).indexOf("pointId") > -1) {
@@ -279,6 +280,8 @@ const MyTangents = () => {
                 )
             })
             }
+            <Spacer></Spacer>
+            </Body>
         </PageWrapper>
     )
 }
@@ -291,6 +294,14 @@ const Wrapper = styled.div`
     h4 { 
         margin-left: 25px;
     }
+`;
+
+const Body = styled.div`
+    overflow: scroll;
+`;
+
+const Spacer = styled.div`
+    height: 70px;
 `;
 
 export default MyTangents;

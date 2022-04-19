@@ -226,9 +226,10 @@ const Profile = () => {
                 }
                 else {
                     dispatch({
-                    type: "receive-bookmarked-points-from-server", 
+                    type: "receive-tangent-points-from-server", 
                     points: []
                 })
+                console.log("here after dispatch empty")
                 }
 
                 fetchBookmarkedPoints();
@@ -254,7 +255,7 @@ const Profile = () => {
     if (currentUserStatus === "loading" || state.profileStatus === "loading" ) {
         console.log("curuserstat", currentUserStatus, "profilestat", state.profileStatus)
         return <PageWrapper>
-            <Header></Header>
+            {/* <Header></Header> */}
         </PageWrapper>
     }
 
@@ -263,7 +264,7 @@ const Profile = () => {
     
     return (
         <PageWrapper>
-            <Header>{(isCurrentUser) ? "me" : state.profile.name}</Header>
+            {/* <Header>{(isCurrentUser) ? "me" : state.profile.name}</Header> */}
             <Body>
             <ProfileHeader isCurrentUser={(isCurrentUser)} username={state.profile.username} tagline={state.profile.tagline} status={state.profileStatus}/>
             
@@ -273,6 +274,7 @@ const Profile = () => {
             {( tab === "tangents") && (state.tangentPointsStatus === "idle") &&
                 <>
                 {state.profile.lastPosts.map((post) => {
+                    console.log("HUKLKO lastposts", state.profile.lastPosts);
                     let text = "";
                     if (Object.keys(post).indexOf("pointId") > -1) {
                         const point = state.tangentPoints.find((item) => item._id === post.pointId);
@@ -283,7 +285,7 @@ const Profile = () => {
                         text = post.text;
                     }
                     return <TangentPreview key={post._id} tangentId={post.tangentId} text={text}
-                    imgSrc={state.profile.avatar} timestamp={post.timestamp}/>
+                    username={currentUser.username} imgSrc={state.profile.avatar} timestamp={post.timestamp}/>
                 })}
                 </>
             }
@@ -310,6 +312,7 @@ const Profile = () => {
                 <ToggleInCircleButton friendId={state.profile._id} format="large"/>
             )
         }     
+        <Spacer></Spacer>
         </Body>
         </PageWrapper>
     )
@@ -318,4 +321,9 @@ const Profile = () => {
 const Body = styled.div`
     overflow: scroll;
 `;
+
+const Spacer = styled.div`
+    height: 70px;
+`;
+
 export default Profile;

@@ -7,6 +7,7 @@ import Message from "./Message";
 import Header from "../Header";
 import PointPreview from "../PointPreview";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     status: "loading",
@@ -46,7 +47,8 @@ const Tangent = () => {
     const { tangentId } = useParams();
     console.log("tangentId", tangentId);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
-
+    const { changeCount, setChangeCount } = useContext(GlobalContext);
+    
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     useEffect(() => {
@@ -99,26 +101,27 @@ const Tangent = () => {
                 error: err
             })
         });
-    }, [])
+    }, [changeCount])
 
     if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
-            <Header>tangent</Header>
+            {/* <Header>tangent</Header> */}
         </PageWrapper>
     }
 
     if (state.tangentFetchStatus !== 200) {
         return <PageWrapper>
-        <Header>tangent</Header>
+        {/* <Header>tangent</Header> */}
         <Error>Tangent not found!</Error>
     </PageWrapper>
     }
 
     return (
         <PageWrapper>
-            <Header titleSize="smaller">{state.tangent[0].tangentName}</Header>
+            {/* <Header titleSize="smaller">{state.tangent[0].tangentName}</Header> */}
             <Body>
                 <LinkDiv>
+                    <h4>{state.tangent[0].tangentName}</h4>
                     <AllPointsLink to={`/${tangentId}/points`}>all Points mentioned</AllPointsLink>
                 </LinkDiv>
                 <Messages>
@@ -150,8 +153,17 @@ const Tangent = () => {
 
 const LinkDiv = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin: 15px 0 10px;
+
+    h4 {
+        font-size: 24px;
+        font-family: var(--font-body);
+        font-style: italic;
+        margin: 10px 0;
+    }
 `;
 const AllPointsLink = styled(NavLink)`
     margin: 0 auto;

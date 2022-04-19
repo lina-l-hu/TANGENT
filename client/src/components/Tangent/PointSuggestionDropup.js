@@ -5,7 +5,7 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
     displaySuggestionsDropup, setDisplaySuggestionsDropup, setMode, mode}) => {
     
     const nodeRef = useRef();
-    
+    console.log("displaysuggest", displaySuggestionsDropup);
     const handleSelect = (event) => {
 
         //identify which element has been clicked

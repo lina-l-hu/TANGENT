@@ -46,8 +46,8 @@ const Content = styled(NavLink)`
     display: flex;
     width: 85%;
     margin: 0 auto;
-    border: 4px solid white;
-    background-color: rgba(255, 255, 255, 0.5);
+    border: 4px solid rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.3);
     color: white;
     padding: 10px;
     border-radius: 15px;

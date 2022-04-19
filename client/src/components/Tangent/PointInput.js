@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useReducer, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     pointPostStatus: "idle",
@@ -40,10 +41,11 @@ const reducer = (state, action) => {
 }
 
 
-const PointInput = ({currentUserId, currentTangentId, selectedMatch, setDisplaySuggestionsDropup, 
-    reset, mode, setMode}) => {
+const PointInput = ({currentUserId, currentTangentId, selectedMatch, 
+    reset, mode, setMode, setDisplaySuggestionsDropup}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
+    const {changeCount, setChangeCount} = useContext(GlobalContext);
 
     const handleAddPoint = () => {
         //close dropup
@@ -72,7 +74,8 @@ const PointInput = ({currentUserId, currentTangentId, selectedMatch, setDisplayS
                        type: "successfully-posted-point"
                    })
 
-                   //reset???
+                   setChangeCount(changeCount+1);
+
                    setMode("text");
                    reset();
                }
@@ -127,7 +130,7 @@ const Overlay = styled.div`
     left: 15px;
 
     button {
-        background-color: #B2CAF6;
+        background-color: var(--color-highlight);
         font-family: var(--font-body);
         font-size: 16px;
         margin: 0 5px;

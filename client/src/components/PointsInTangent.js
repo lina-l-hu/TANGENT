@@ -79,13 +79,13 @@ const PointsInTangent = () => {
 
     if (state.pointStatus === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
-        <Header titleSize="smaller">points in tangent</Header>
+        {/* <Header titleSize="smaller">points in tangent</Header> */}
     </PageWrapper>
     }
 
     return (
         <PageWrapper>
-            <Header titleSize="smaller">points in tangent</Header>
+            {/* <Header titleSize="smaller">points in tangent</Header> */}
             {state.points.map((point) => {
                 return (
                     <PointDiv>

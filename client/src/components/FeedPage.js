@@ -100,13 +100,13 @@ const FeedPage = () => {
 
     if (state.status === "loading") {
         return <PageWrapper>
-            <Header>feed</Header>
+            {/* <Header>feed</Header> */}
         </PageWrapper>
     }
 
     return (
     <PageWrapper>
-        <Header>feed</Header>
+        {/* <Header>feed</Header> */}
         <Body>
             <MostPopularPoint className="section">
                 <SectionTitle>Talk of the day</SectionTitle>
@@ -128,6 +128,8 @@ const FeedPage = () => {
                     username={post.username} avatar={post.avatar} text={post.text}/>
                 })}
             </NewTangents>
+
+        <Spacer></Spacer>
         </Body>
         
     </PageWrapper>
@@ -142,6 +144,10 @@ const Body = styled.div`
         color: white;
     }
     
+`;
+
+const Spacer = styled.div`
+    height: 70px;
 `;
 
 const SectionTitle = styled.h3`

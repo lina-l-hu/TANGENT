@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useRef, useReducer, useEffect, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
 import PointInput from "./PointInput";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     textAreaInput: "",
@@ -110,7 +111,9 @@ const Textbox = ({currentUserId, currentTangentId}) => {
     
     const [ displaySuggestionsDropup, setDisplaySuggestionsDropup ] = useState(false);
     const [ selectedMatch, setSelectedMatch ] = useState(null);
-    
+    const { changeCount, setChangeCount } = useContext(GlobalContext);
+
+    const textAreaRef = useRef();
     const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
 
     const handleInput = (e) => {
@@ -159,8 +162,8 @@ const Textbox = ({currentUserId, currentTangentId}) => {
                    dispatch({ 
                        type: "reset"
                    })
-
-                   console.log(state);
+                   textAreaRef.current.value = "";
+                   setChangeCount(changeCount+1);
 
                }
             })
@@ -251,7 +254,7 @@ const Textbox = ({currentUserId, currentTangentId}) => {
 
             {(mode !== "suggestion") && 
                 <TextContainer>
-                    <textarea rows="1"
+                    <textarea ref={textAreaRef} rows="1"
                      onChange={handleInput}>
                      </textarea>
 

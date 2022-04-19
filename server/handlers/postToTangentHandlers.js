@@ -325,14 +325,17 @@ const addTangent = async (req, res) => {
 
         const usersDb = usersClient.db("USERS");
 
-        //get tangents array for the current user
+        //get tangents and lastPosts arrays for the current user
         const user = await usersDb.collection("users").findOne({_id: currentUserId});
         console.log("user", user)
 
         const updatedTangents = [...user.tangents, tangentId];
         console.log("updatedTang", updatedTangents)
 
-        const updatedResult = await usersDb.collection("users").updateOne({_id: currentUserId}, { $set: {tangents: updatedTangents}});
+        const updatedLastPosts = [...user.lastPosts, newPost];
+        console.log("updated last posts", updatedLastPosts);
+
+        const updatedResult = await usersDb.collection("users").updateOne({_id: currentUserId}, { $set: {tangents: updatedTangents, lastPosts: updatedLastPosts}});
 
         console.log("updatedRestul", updatedResult);
         if (updatedResult.matchedCount !== 1) {

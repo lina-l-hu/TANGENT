@@ -81,13 +81,13 @@ const MyCircle = () => {
 
     if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
-        <Header>my circle</Header>
+        {/* <Header>my circle</Header> */}
         </PageWrapper>
     }
 
     return (
         <PageWrapper>
-            <Header>my circle</Header>
+            {/* <Header>my circle</Header> */}
             <Body>
                 {(state.circle.length === 0) ? (
                     <h4>no one in your circle!</h4>
@@ -98,6 +98,7 @@ const MyCircle = () => {
                     )}
                     </>
                 )}
+            <Spacer></Spacer>
             </Body>
         </PageWrapper>
     )
@@ -115,4 +116,9 @@ const Body = styled.div`
 
     }
 `;
+
+const Spacer = styled.div`
+    height: 70px;
+`;
+
 export default MyCircle;

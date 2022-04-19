@@ -16,6 +16,7 @@ export default createGlobalStyle`
     /* --color-secondary: RGB(242, 120, 75); */
     --color-background: #998FC7; 
     --color-text: #FFFFFF; 
+    --color-highlight: #B2CAF6;
     --font-heading: 'Advent Pro', Arial, Helvetica, sans-serif;
     --font-subheading: 'Ubuntu', Arial, Helvetica, sans-serif;
     --font-body: 'Abel', Arial, Helvetica, sans-serif;

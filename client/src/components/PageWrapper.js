@@ -13,6 +13,7 @@ const PageWrapper = ({children}) => {
             <Wrapper>{children}</Wrapper>
             ) : (
             <Wrapper>
+            <Header />
 
                 {children}
 

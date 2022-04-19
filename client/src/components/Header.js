@@ -6,13 +6,40 @@ import NavigationMenu from "./NavigationMenu";
 import { FaArrowLeft } from "react-icons/fa";
 import Avatar from "./Avatar";
 import { CurrentUserContext } from "./Profile/CurrentUserContext";
+import { GlobalContext } from "./GlobalContext";
 
 const Header = ({children, titleSize}) => {
 
     const { currentUsername } = useContext(CurrentUserContext);
-    
+    const { showNewTangentModal, setShowNewTangentModal } = useContext(GlobalContext);
     const navigate = useNavigate();
+    console.log("show maodal", showNewTangentModal);
+    
+    if (window.location.pathname.includes('/tangent/')) {
+        children = "tangent";
+    }
+    else if (window.location.pathname.includes('/tangents/')) {
+        children = "my tangents";
+    }
+    else if (window.location.pathname.includes('/points/')) {
+        children = "point";
+    }
+    else if (window.location.pathname.includes('/profile/')) {
+        children = "profile";
+    }
+    else if (window.location.pathname.includes('/my-circle')) {
+        children = "my circle"
+    }
+    else if (window.location.pathname.includes('/points')) {
+        children = "points in tangent"
+    }
+    else {
+        children = window.location.pathname.slice(1);
+    }
 
+    const handleClick = () => {
+        setShowNewTangentModal(true);
+    }
 
     return (
         <Wrapper>
@@ -20,14 +47,14 @@ const Header = ({children, titleSize}) => {
                 <FaArrowLeft className="icon"/>
             </button>
             <Title smaller={(titleSize === "smaller")}>{children}</Title>
-            <AddTangentLink to=""><div>+</div></AddTangentLink>
+            <AddTangentDiv><button onClick={handleClick}>+</button></AddTangentDiv>
         </Wrapper>
     )
 }
 
 const Wrapper = styled.div`
     position: relative;
-    height: 76px;
+    min-height: 76px;
     background-color: var(--color-secondary);
     display: flex;
     justify-content: space-between;
@@ -49,13 +76,13 @@ const Title = styled.h1`
     left: 95px;
     position: absolute;
     color: white;
-    font-size: ${props => (props.smaller) ? "26px" : "33px"};
+    font-size: ${props => (props.smaller) ? "26px" : "30px"};
 `;
 
-const AddTangentLink = styled(NavLink)`
+const AddTangentDiv = styled.div`
     /* padding-right: 20px; */
 
-    div {
+    button {
         display: flex;
         justify-content: center;
         align-items: center;

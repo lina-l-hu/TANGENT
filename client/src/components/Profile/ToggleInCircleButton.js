@@ -55,8 +55,8 @@ const ToggleInCircleButton = ({friendId, format}) => {
 
     return (
         <Wrapper>
-            <button large={(format === "large")} onClick={toggleInCircle} 
-            inCircle={inCircle}>{(inCircle) ? "remove from circle" : "add to circle"}</button>
+            <button large={(format === "large") ? "large" : undefined} onClick={toggleInCircle} 
+            className={(inCircle) ? "isFriend" : ""}>{(inCircle) ? "remove from circle" : "add to circle"}</button>
         </Wrapper>
     )
 }
@@ -66,11 +66,16 @@ const Wrapper = styled.div`
     button {
         font-size: ${props => (props.large) ? "20px" : "14px"};
         /* border: 2px solid var(--color-secondary); */
-        background-color: ${props => props.inCircle ? "var(--color-secondary)" : "white"};
-        color: ${props => props.inCircle ? "white" : "var(--color-main)"};
+        background-color: white;
+        color: var(--color-main);
         padding: 5px;
         border-radius: 15px;
         width: ${props => (props.large) ? "300px" : "110px"};
+    }
+
+    .isFriend {
+        background-color: var(--color-secondary);
+        color: white;
     }
 
 `;

@@ -314,7 +314,7 @@ const getPointSuggestions = async (req, res) => {
     }
 
     catch (err) {
-        res.status(500).json({status: 500, message: "An unknown error occurred during search. Please try again.", data: searchTerm})
+        res.status(500).json({status: 500, message: `An unknown error occurred during search: ${err}. Please try again.`, data: searchTerm})
     }
 
 }

@@ -270,11 +270,11 @@ const MyTangents = () => {
                 const user = state.users.find((user) => user._id === post.userId)
                 return (
                     <Wrapper>
-                    <NavLink to={`/tangents/${post.tangentId}`} key={post._id}>
+                    {/* <NavLink to={`/tangents/${post.tangentId}`} key={post._id}> */}
                     <h4>{post.tangentName}</h4>
-                        <TangentPreview tangentId={post.tangentId} text={text}
+                        <TangentPreview key={post._id} tangentId={post.tangentId} text={text}
                         imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
-                    </NavLink>
+                    {/* </NavLink> */}
                     </Wrapper>
                 )
             })

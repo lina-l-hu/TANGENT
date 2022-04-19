@@ -169,15 +169,16 @@ const getMostPopularTangent = async (req, res) => {
     const { _id } = req.headers;
     console.log ("id", _id);
 
-    const client = new MongoClient(MONGO_URI, options);
+    const usersClient = new MongoClient(MONGO_URI, options);
+    const tangentsClient = new MongoClient(MONGO_URI, options);
 
     try {
-        await client.connect();
-        const db = client.db("USERS");
+        await usersClient.connect();
+        const usersDb = usersClient.db("USERS");
         console.log("connected");
 
         //get the user's circle ids
-        const user = await db.collection("users").findOne({_id : _id});
+        const user = await usersDb.collection("users").findOne({_id : _id});
         
         console.log("user", user);
         if (!user) {
@@ -191,37 +192,70 @@ const getMostPopularTangent = async (req, res) => {
             return res.status(404).json({status: 404, message: "No users in circle.", data: []});
         }
 
-        //for each of the users in the Circle, get their lastPosts array and merge into one array
-        const allCircleLastPosts = []; 
+        //get all the tangents arrays and merge into one array
+        const allCircleTangentIds = []; 
         await Promise.all (
             circleIds.map( async (id) => {
-                const friend = await db.collection("users").findOne({_id : id});
+                const friend = await usersDb.collection("users").findOne({_id : id});
                 console.log("friend", friend)
 
                 if (friend) {
-                    const friendLastPosts = friend.lastPosts;
-                    console.log("friend lastPosts", friendLastPosts)
-                    allCircleLastPosts.push(...friendLastPosts);
+                    const tangentIds = friend.tangents;
+                    console.log("friend tangents", tangentIds)
+                    allCircleTangentIds.push(...tangentIds);
                 }
                 
             })
         )
 
-        //merge the current user's lastPosts array into the array as well
-        allCircleLastPosts.push(...user.lastPosts);
+        console.log("all tangets", allCircleTangentIds);
 
-        console.log("all circle last posts", allCircleLastPosts);
-       
-        //sort this array by descending tangentLength
-        let sorted  = allCircleLastPosts.sort((a, b) => {
+        //merge the current user's tangents array into this array as well
+        allCircleTangentIds.push(...user.tangents);
+
+        //reduce set to only unique tangent ids
+        const uniqueTangentIds = [...new Set(allCircleTangentIds)];
+        console.log("unique", uniqueTangentIds);
+
+        //get the latest post for each tangent
+        await tangentsClient.connect();
+        const tangentsDb = tangentsClient.db("TANGENTS");
+
+        const latestPostArray = [];
+        await Promise.all (
+            uniqueTangentIds.map( async (id) => {
+                //this is an array so need to access [0]
+                const latestPost = await tangentsDb.collection(id).find().sort({_id:-1}).limit(1).toArray();
+                console.log("latest", latestPost[0]);
+
+                if (latestPost !== undefined ) {
+                    latestPostArray.push(latestPost[0]);
+                }
+            })
+        )
+        console.log("lattest array", latestPostArray);
+
+        //sort all the latest posts by descending tangentLength
+        let sorted  = latestPostArray.sort((a, b) => {
             return b.tangentLength - a.tangentLength;
         })
 
         console.log("sorted", sorted);
+
+        //take the last post that is not a point post
+        const firstMessagePost = sorted.find((post) => (Object.keys(post).indexOf("text") > -1));
+        console.log("first text", firstMessagePost);
+
+        //get the user object associated with the post to return
+        const postUser = await usersDb.collection("users").findOne({_id : firstMessagePost.userId});
+        
+        const objectToReturn = {...firstMessagePost, username: postUser.username, avatar: postUser.avatar}
+
+        console.log("postswith users", objectToReturn);
         
         //return the post with greatest tangentLength
-        (sorted) ? 
-            res.status(200).json({status: 200, message: "Successfully retrieved most popular Tangent.", data: sorted[0]})
+        (objectToReturn) ? 
+            res.status(200).json({status: 200, message: "Successfully retrieved most popular Tangent.", data: objectToReturn})
             : res.status(404).json({status: 404, message: "Could not find the most popular Tangent.", data: _id});
     }
 
@@ -230,7 +264,8 @@ const getMostPopularTangent = async (req, res) => {
     }
 
     finally {
-        client.close();
+        usersClient.close();
+        tangentsClient.close();
     }
 }
 
@@ -240,15 +275,16 @@ const getMostRecentTangents = async (req, res) => {
     const { _id } = req.headers;
     console.log ("id", _id);
 
-    const client = new MongoClient(MONGO_URI, options);
+    const usersClient = new MongoClient(MONGO_URI, options);
+    const tangentsClient = new MongoClient(MONGO_URI, options);
 
     try {
-        await client.connect();
-        const db = client.db("USERS");
+        await usersClient.connect();
+        const usersDb = usersClient.db("USERS");
         console.log("connected");
 
         //get the user's circle ids
-        const user = await db.collection("users").findOne({_id : _id});
+        const user = await usersDb.collection("users").findOne({_id : _id});
         
         console.log("user", user);
         if (!user) {
@@ -262,53 +298,102 @@ const getMostRecentTangents = async (req, res) => {
             return res.status(404).json({status: 404, message: "No users in circle.", data: []});
         }
 
-        //for each of the users in the Circle, get their lastPosts array and merge into one array
-        const allCircleLastPosts = []; 
+        //get all the tangents arrays and merge into one array
+        const allCircleTangentIds = []; 
         await Promise.all (
             circleIds.map( async (id) => {
-                const friend = await db.collection("users").findOne({_id : id});
+                const friend = await usersDb.collection("users").findOne({_id : id});
                 console.log("friend", friend)
-                
+
                 if (friend) {
-                    const friendLastPosts = friend.lastPosts;
-                    console.log("friend lastPosts", friendLastPosts)
-                    allCircleLastPosts.push(...friendLastPosts);
+                    const tangentIds = friend.tangents;
+                    console.log("friend tangents", tangentIds)
+                    allCircleTangentIds.push(...tangentIds);
                 }
+                
             })
         )
 
-        //merge the current user's lastPosts array into the array as well
-        allCircleLastPosts.push(...user.lastPosts);
+        console.log("all tangets", allCircleTangentIds);
 
-        console.log("all circle last posts", allCircleLastPosts);
-       
+        //merge the current user's tangents array into this array as well
+        allCircleTangentIds.push(...user.tangents);
+
+       //reduce set to only unique tangent ids
+        const uniqueTangentIds = [...new Set(allCircleTangentIds)];
+        console.log("unique", uniqueTangentIds);
+
+        //get the latest post for each tangent
+        await tangentsClient.connect();
+        const tangentsDb = tangentsClient.db("TANGENTS");
+
+        const latestPostArray = [];
+        await Promise.all (
+            uniqueTangentIds.map( async (id) => {
+                //this is an array so need to access [0]
+                const latestPost = await tangentsDb.collection(id).find().sort({_id:-1}).limit(1).toArray();
+                console.log("latest", latestPost[0]);
+
+                if (latestPost !== undefined ) {
+                    latestPostArray.push(latestPost[0]);
+                }
+            })
+        )
+        console.log("lattest array", latestPostArray);
+
         //sort this array by descending timestamp
-        let sorted  = allCircleLastPosts.sort((a, b) => {
+        let sorted  = latestPostArray.sort((a, b) => {
             let da = new Date(a.timestamp);
             let db = new Date(b.timestamp);
             return db-da;
         })
 
-        //will return only the 3 most recent last posts in unique Tangents (i.e. no posts from the same Tangent)
-        const latestThreePosts = [sorted[0]];
+        //find the most recent post that is not a point post
+        const firstMessagePost = sorted.find((post) => (Object.keys(post).indexOf("text") > -1));
+        console.log("first text", firstMessagePost);
+
+        //will return only the 3 most recent posts that are texts (not Points)
+        const latestThreePosts = [firstMessagePost];
 
         for (let i = 1; i < sorted.length; i++) {
-            if (latestThreePosts.length === 3) {
+            if (latestThreePosts.length === 3 || i === sorted.length-1) {
                 break;
             }
-
-            let tangentIdsInThree = latestThreePosts.map((post) => post.tangentId);
-            console.log("tangentsonly", tangentIdsInThree);
-
-            if (tangentIdsInThree.indexOf(sorted[i].tangentId) === -1) {
+            
+            if (Object.keys(sorted[i]).indexOf("text") > -1) {
                 latestThreePosts.push(sorted[i]);
             }
+            
         }
         
         console.log("latest3", latestThreePosts);
+
+        //get all the user objects associated with each of these posts
+        const postUsers = latestThreePosts.map((post) => post.userId);
+        console.log("users in posts", postUsers);
+
+        const usersToReturn = [];
+    
+        await Promise.all (
+            postUsers.map( async (id) => {
+                let user = await usersDb.collection("users").findOne({_id : id});
+                console.log("user", user)
+                usersToReturn.push(user);
+            })
+        )
+
+        console.log("usersTor", usersToReturn);
+
+        //add user info to each post
+        latestThreePosts.forEach((post, index) => {
+            post.username = usersToReturn[index].username;
+            post.avatar = usersToReturn[index].avatar;
+        })
+
+        console.log("postswith users", latestThreePosts);
         
-        //return the post with greatest tangentLength
-        (sorted) ? 
+        //return the 3 latest posts
+        (latestThreePosts) ? 
             res.status(200).json({status: 200, message: "Successfully retrieved latest Tangents.", data: latestThreePosts})
             : res.status(404).json({status: 404, message: "Could not retrieve the latest Tangents.", data: _id});
     }
@@ -318,7 +403,8 @@ const getMostRecentTangents = async (req, res) => {
     }
 
     finally {
-        client.close();
+        usersClient.close();
+        tangentsClient.close();
     }
 }
 

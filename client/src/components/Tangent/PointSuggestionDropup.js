@@ -1,12 +1,10 @@
 import styled from "styled-components";
 import { useRef, useContext } from "react";
-import { CurrentTangentContext } from "./CurrentTangentContext";
 
-const PointSuggestionDropup = ({searchTermRef, suggestedMatches, selectedMatch, setSelectedMatch, 
-    displaySuggestionsDropup, setDisplaySuggestionsDropup, suggestionMode, setSuggestionMode}) => {
+const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatch, 
+    displaySuggestionsDropup, setDisplaySuggestionsDropup, setMode, mode}) => {
     
     const nodeRef = useRef();
-    // const { displaySuggestionsDropup, setDisplaySuggestionsDropup } = useContext(CurrentTangentContext);
     
     const handleSelect = (event) => {
 
@@ -55,7 +53,7 @@ const PointSuggestionDropup = ({searchTermRef, suggestedMatches, selectedMatch, 
         // setDisplaySuggestionsDropup(false);
         
         //turn on suggestion mode
-        setSuggestionMode(true);
+        setMode("suggestion")
         console.log("match", selectedMatch);
         // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
     }
@@ -63,7 +61,6 @@ const PointSuggestionDropup = ({searchTermRef, suggestedMatches, selectedMatch, 
     window.onclick = function(event) {
         if (nodeRef.current && !nodeRef.current.contains(event.target)) {
             setDisplaySuggestionsDropup(false);
-            // setSuggestionMode(false);
         }
     }
 

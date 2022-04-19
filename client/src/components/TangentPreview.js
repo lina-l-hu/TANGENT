@@ -21,7 +21,7 @@ const TangentPreview = ({tangentId, text, username, imgSrc, timestamp}) => {
     return (
         <Wrapper>
             <Stamp>{(username) ? `${(currentUser.username === username) ? "me" : username} • ${timestamp}` : timestamp}</Stamp>
-            <Content to={`/tangents/${tangentId}`}>
+            <Content to={`/tangent/${tangentId}`}>
                 <div>
                     {(imgSrc) ? ( 
                         <Avatar format="small" avatarImgSrc={imgSrc} />
@@ -61,10 +61,12 @@ const TextDiv = styled.div`
 const Stamp = styled.div`
     width: 85%;
     margin: 0 auto;
+    margin-top: 10px;
     margin-bottom: 5px;
     text-align: right;
     font-family: var(--font-subheading);
     font-size: 12px;
     font-style: italic;
+    color: white;
 `;
 export default TangentPreview;

@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useContext } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import PointPreview from "./PointPreview";
 import TangentPreview from "./TangentPreview";
 import Header from "./Header";
+import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
 const initialState = {
     points: null,
@@ -36,6 +37,7 @@ const PointsInTangent = () => {
 
     const { tangentId } = useParams();
     console.log("tangentId", tangentId);
+    const { state: { currentUser, currentUserStatus}} = useContext(CurrentUserContext);
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -75,7 +77,7 @@ const PointsInTangent = () => {
         })
     }, [])
 
-    if (state.pointStatus === "loading") {
+    if (state.pointStatus === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
         <Header titleSize="smaller">points in tangent</Header>
     </PageWrapper>
@@ -85,16 +87,18 @@ const PointsInTangent = () => {
         <PageWrapper>
             <Header titleSize="smaller">points in tangent</Header>
             {state.points.map((point) => {
-                return <StyledNavLink to={`/points/${point._id}`} key={point._id}>
-                    <PointPreview coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
-                    by={point.by} year={point.year} format="short"/>
-                </StyledNavLink>
+                return (
+                    <PointDiv>
+                        <PointPreview key={point._id} _id={point._id} coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
+                        by={point.by} year={point.year} format="short" userPoints={CurrentUserContext.points}/>
+                    </PointDiv>
+                )
             })}
         </PageWrapper>
     )
 }
 
-const StyledNavLink=styled(NavLink)`
+const PointDiv=styled.div`
     width: 100%;
 `;
 

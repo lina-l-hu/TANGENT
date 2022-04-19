@@ -27,7 +27,7 @@ const Header = ({children, titleSize}) => {
 
 const Wrapper = styled.div`
     position: relative;
-    height: 9%;
+    height: 76px;
     background-color: var(--color-secondary);
     display: flex;
     justify-content: space-between;

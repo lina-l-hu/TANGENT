@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useRef, useReducer, useEffect, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
-import { CurrentTangentContext } from "./CurrentTangentContext";
 import PointInput from "./PointInput";
 
 const initialState = {
@@ -54,7 +53,7 @@ const reducer = (state, action) => {
             }
         }
 
-        case ("sucessfully-posted-point") : {
+        case ("successfully-posted-point") : {
             return {
                 ...state,
                 pointPostStatus: "success",
@@ -76,7 +75,7 @@ const reducer = (state, action) => {
             }
         }
 
-        case ("sucessfully-posted-text-msg") : {
+        case ("successfully-posted-text-msg") : {
             return {
                 ...state,
                 textMsgPostStatus: "success",
@@ -99,39 +98,45 @@ const reducer = (state, action) => {
     }
 }
 
-const Textbox = () => {
+const Textbox = ({currentUserId, currentTangentId}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    const [ selectedMatch, setSelectedMatch ] = useState(null);
-    const [ suggestionMode, setSuggestionMode ] = useState(false);
-    const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
+
+    //3 modes: text, search, and suggestion
+    //default mode is text (i.e. searchMode === false)
+    const [ mode, setMode ] = useState("text");
+    // const [ searchMode, setSearchMode ] = useState(false);
+    // const [ suggestionMode, setSuggestionMode ] = useState(false);
+    
     const [ displaySuggestionsDropup, setDisplaySuggestionsDropup ] = useState(false);
-    const textRef = useRef();
-    const searchTermRef = useRef();
-    // const { displaySuggestionsDropup, setDisplaySuggestionsDropup } = useContext(CurrentTangentContext);
+    const [ selectedMatch, setSelectedMatch ] = useState(null);
+    
+    const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
 
-    useEffect(() => {
-        const updateInput = () => {
-            dispatch ({
-                type: "update-text-input",
-                text: textRef.current.value,
-            })
+    const handleInput = (e) => {
+        dispatch({
+            type: "update-text-input",
+            text: e.target.value
+        })
+        if (e.target.value[0] === "#") {
+        // if (textRef.current.value[0] === "#") {
+            setMode("search");
         }
-
-        textRef.current.addEventListener("keyup", updateInput);
-
-        // return () => {
-        //     textRef.current.removeEventListener("keyup", updateInput);
-        // }
-
-    }, []);
+        else {
+            setMode("text");
+        }
+    }
 
     const handleSendText = () => {
         dispatch ({
             type: "posting-text-msg"
         })
 
-        //NEED TO ADD TANGENTID AND CURRENTUSERID
+        const messagePost = {
+            currentUserId: currentUserId, 
+            currentTangentId: currentTangentId,
+            text: state.textAreaInput
+        }
 
         fetch("/tangent/add-message", {
             method: "POST",
@@ -139,17 +144,24 @@ const Textbox = () => {
                 "Content-Type": "application/json",
                 'Accept': 'application/json',
             },
-            body: JSON.stringify(state.textAreaInput)
+            body: JSON.stringify(messagePost)
             
             })
             .then(res => res.json())
             .then(data => {
                if (data.status === 200) {
                    dispatch ({
-                       type: "sucessfully-posted-text-msg"
+                       type: "successfully-posted-text-msg"
                    })
 
-                   //reset???
+                   setMode("text");
+                   
+                   dispatch({ 
+                       type: "reset"
+                   })
+
+                   console.log(state);
+
                }
             })
             .catch((err) => {
@@ -179,7 +191,7 @@ const Textbox = () => {
         })
 
         //save the search term in state
-        setLastSearchTerm(state.textAreaInput.slice(1));
+        // setLastSearchTerm(state.textAreaInput.slice(1));
 
         console.log("searchTerm in front", state.textAreaInput.slice(1))
 
@@ -200,7 +212,7 @@ const Textbox = () => {
                     matches: data.data, 
                 })
                 setDisplaySuggestionsDropup(true);
-                // setSuggestionMode(true);
+                // setMode("suggestion");
             }
             else {
                 dispatch ({
@@ -217,97 +229,46 @@ const Textbox = () => {
         })
     }
 
-    // const handleAddPoint = () => {
-    //     dispatch ({
-    //         type: "posting-point"
-    //     })
-
-    //     //close dropup
-    //     setDisplaySuggestionsDropup(false);
-
-    //          //NEED TO ADD TANGENTID AND CURRENTUSERID
-
-    //     fetch("/tangent/add-point", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Accept': 'application/json',
-    //         },
-    //         body: JSON.stringify(selectedMatch)
-            
-    //         })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //            if (data.status === 200) {
-    //                dispatch ({
-    //                    type: "sucessfully-posted-point"
-    //                })
-
-    //                //reset???
-    //            }
-    //            else {
-    //                 //if error, open dropup again
-    //             setDisplaySuggestionsDropup(true);
-    //            }
-    //         })
-    //         .catch((err) => {
-    //             dispatch({
-    //                 type: "error-posting-point",
-    //                 error: err
-    //             })
-
-    //             //if error, open dropup again
-    //             setDisplaySuggestionsDropup(true);
-               
-    //         })
-
-    // }
-
-    // const onSomething = (e) => {
-    //     e.preventDefault();
-    //     setDisplaySuggestionsDropup(true);
-    //     console.log("HUKLLL");
-
-    // }
-
-    // const onChangeSuggestionMode = (e) => {
-    //     setSuggestionMode(false);
-    //     // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
-    //     e.target.value = selectedMatch.title;
-    //     // textRef.current.value="";
-    // }
+    const reset = () => {
+        dispatch ({ 
+            type: "reset"
+        })
+    }
 
     return (
         <Wrapper>
 
             {(state.pointSuggestionsFetchStatus === "success" && 
-                <PointSuggestionDropup suggestedMatches={state.pointSuggestions} suggestionMode={suggestionMode} setSuggestionMode={setSuggestionMode}
-                selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} searchTermRef={searchTermRef} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}
+                <PointSuggestionDropup suggestedMatches={state.pointSuggestions} mode={mode} setMode={setMode}
+                selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}
                 displaySuggestionsDropup={displaySuggestionsDropup}/>
             )}
 
-            {(suggestionMode) ? (
-                <PointInput setSuggestionMode={setSuggestionMode} selectedMatch={selectedMatch} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}/>
-                // <TextContainer>
-                //     <Textarea ref={searchTermRef} rows="1"
-                //         onClick={onSomething} onChange={onChangeSuggestionMode}>
-                //             {"#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year} 
-                //     </Textarea>
-                //     <button 
-                //         onClick={handleAddPoint}>
-                //         add point
-                //     </button>
-                // </TextContainer>
-            ) : (
-                <TextContainer>
-                    <textarea ref={textRef} rows="1"></textarea>
-                    <button disabled={(state.textAreaInput.length === 0)}
-                        onClick={(state.textAreaInput[0] === "#") ? handleFindPoint : handleSendText}>
-                        {(state.textAreaInput[0] === "#") ? "find point" : "send msg"}
-                    </button>
-                </TextContainer>
-            )}
+            {(mode === "suggestion") &&
+                <PointInput selectedMatch={selectedMatch} mode={mode} setMode={setMode} reset={reset}
+                setDisplaySuggestionsDropup={setDisplaySuggestionsDropup} currentUserId={currentUserId} currentTangentId={currentTangentId}/>
+            }
 
+            {(mode !== "suggestion") && 
+                <TextContainer>
+                    <textarea rows="1"
+                     onChange={handleInput}>
+                     </textarea>
+
+                    {(mode === "text") ? (
+
+                    <button disabled={(state.textAreaInput.length === 0)}
+                        onClick={handleSendText}>
+                       send msg
+                    </button>
+                    ) : (
+                        <button disabled={(state.textAreaInput.length === 0)}
+                        onClick={handleFindPoint}>
+                        find point
+                    </button>
+                    )}
+                </TextContainer>
+            }
         </Wrapper>
     )
 }
@@ -326,7 +287,8 @@ const TextContainer = styled.div`
     margin: 0 auto;
     border-radius: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background: rgb(255,255,255);
+    background: linear-gradient(0deg, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%);
     /* height: 50px; */
     padding: 12px 5px;
 

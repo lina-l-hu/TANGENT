@@ -100,6 +100,10 @@ const PointDetails = () => {
     //fetch function to get point
     const fetchPoint = async () => {
 
+        if (!pointId || pointId === undefined) {
+            return;
+        }
+
         console.log("fetching point")
         try {
             const response = await fetch("/points", {
@@ -261,8 +265,9 @@ const PointDetails = () => {
     return (
         <PageWrapper>
             <Header>{state.point.title}</Header>
-            <PointPreview _id={state.point._id} coverImgSrc={state.point.coverImgSrc} title={state.point.title} type={state.point.type} 
-                    by={state.point.by} year={state.point.year} description={state.point.description} link={state.point.link} format="full"/>
+            <PointPreview _id={state.point._id} coverImgSrc={state.point.coverImgSrc} title={state.point.title} 
+            type={state.point.type} by={state.point.by} year={state.point.year} description={state.point.description} 
+            link={state.point.link} format="full" userPoints={currentUser.points}/>
             <MentionedDiv>mentioned in these Tangents</MentionedDiv>
             {state.tangents.map((post) => {
                 let text = "";
@@ -277,16 +282,13 @@ const PointDetails = () => {
                 const user = state.users.find((user) => user._id === post.userId)
                 return (
                     <Wrapper>
-                        <NavLink to={`/tangents/${post.tangentId}`} key={post._id}>
                         <h4>{post.tangentName}</h4>
-                            <TangentPreview tangentId={post.tangentId} text={text}
-                            imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
-                        </NavLink>
+                        <TangentPreview tangentId={post.tangentId} text={text}
+                        imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
                     </Wrapper>
                 )
             })
             }
-            <TangentPreview />
         </PageWrapper>
     )
 }

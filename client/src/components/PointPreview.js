@@ -31,28 +31,16 @@ import { CurrentUserContext } from "./Profile/CurrentUserContext";
 //     }
 //   }
 
-const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, link, format}) => {
+const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, link, format, userPoints}) => {
     
     // const [ savedState, dispatch ] = useReducer(reducer, initialState);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
 
-    const [ saved, setSaved ] = useState(false);
-
-    if (currentUserStatus === "idle") {
-        if (currentUser.points.some((point) => point === _id)) {
-            setSaved(true);
-        }
-    }
+    const initialSaveStatus = (userPoints.some((point) => point === _id));
+    const [ saved, setSaved ] = useState(initialSaveStatus);
 
     
     const toggleSave = () => {
-
-        // console.log ("currentuser", currentUser);
-        // if (currentUserStatus === "idle") {
-
-        // const isSaved = currentUser.points.some((point) => point === _id);
-        
-        // console.log(isSaved, "isSaved");
         
         //save
         if (!saved) {
@@ -100,29 +88,57 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
     }
 
     //two previews, one for short, one for details
-    //depending on type, details button will say IMDB or googlebooks
+
+    if (currentUserStatus === "loading") {
+        return <Wrapper></Wrapper>
+    }
+   
+    if (format === "full") {
+        return (
+            <Wrapper>
+                <ShortDisplay>
+                    <img src={coverImgSrc}/>
+                    <div>
+                        <h3>{title}</h3>
+                        <Type>{type}</Type>
+                        <p><span>{(type === "film") ? "Director: " : "Author: "}</span>{by}</p>
+                        <p><span>Year: </span>{year}</p>
+                    </div>
+                </ShortDisplay>
+                <FullDisplay>
+                    <p><span>Description: </span>{description}</p>
+                    <LinkDiv>
+                        <DetailsLink href={link} target="_blank">{(type === "film") ? "imdb" : "google books"}</DetailsLink>
+                    </LinkDiv>
+                </FullDisplay>
+
+                <SaveButton onClick={toggleSave}>
+                { (saved) ? (
+                    <FaBookmark className="icon" />
+                ) : (
+                    <FaRegBookmark className="icon"/>
+                )}
+                </SaveButton>
+
+            </Wrapper>
+        )
+    }
+
     return (
         <Wrapper>
+
+                <NavLink to={`/points/${_id}`}>
             <ShortDisplay>
                 <img src={coverImgSrc}/>
                 <div>
                     <h3>{title}</h3>
                     <Type>{type}</Type>
-                    <p><span>Director: </span>{by}</p>
+                    <p><span>{(type === "film") ? "Director: " : "Author: "}</span>{by}</p>
                     <p><span>Year: </span>{year}</p>
                 </div>
             </ShortDisplay>
+            </NavLink>
 
-            {(format === "full" && 
-            <FullDisplay>
-                <p><span>Description: </span>{description}</p>
-                <LinkDiv>
-                    <DetailsLink href={link} target="_blank">{(type === "film") ? "imdb" : "google books"}</DetailsLink>
-                </LinkDiv>
-            </FullDisplay>
-            )}
-            
-            {(currentUserStatus === "idle" && 
             <SaveButton onClick={toggleSave}>
                 { (saved) ? (
                     <FaBookmark className="icon" />
@@ -130,7 +146,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                     <FaRegBookmark className="icon"/>
                 )}
             </SaveButton>
-            )}
+
         </Wrapper>
     )
 }

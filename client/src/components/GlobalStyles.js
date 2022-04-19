@@ -93,9 +93,9 @@ export default createGlobalStyle`
       transition: 0.1s ease-in-out;
       font-family: var(--font-heading);
     
-      &:hover {
+      /* &:hover {
         transform: scale(1.05);
-    }
+    } */
   }
 
   div {

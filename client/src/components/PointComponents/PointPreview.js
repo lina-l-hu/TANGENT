@@ -2,7 +2,8 @@ import styled from "styled-components";
 import { useState, useContext, useReducer } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
-import { CurrentUserContext } from "./Profile/CurrentUserContext";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import { GlobalContext } from "../GlobalContext";
 
 // const initialState = {
 //     isSaved: isLiked,
@@ -35,6 +36,8 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
     
     // const [ savedState, dispatch ] = useReducer(reducer, initialState);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
+    const { changeCount, setChangeCount } = useContext(GlobalContext);
+
 
     const initialSaveStatus = (userPoints.some((point) => point === _id));
     const [ saved, setSaved ] = useState(initialSaveStatus);
@@ -57,6 +60,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                     console.log("saved", data)
                   if (data.success === true) {
                     setSaved(true);
+                    setChangeCount(changeCount => changeCount+1);
                   }
                 })
                 .catch((err) => {
@@ -78,6 +82,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                     console.log("unsaved", data)
                   if (data.success === true) {
                     setSaved(false);
+                    setChangeCount(changeCount => changeCount+1);
                   }
                 })
                 .catch((err) => {
@@ -97,7 +102,12 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
         return (
             <Wrapper>
                 <ShortDisplay>
-                    <img src={coverImgSrc}/>
+                    {(coverImgSrc) ? (
+                        <img src={coverImgSrc}/>
+                    ) : (
+                        <div></div>
+                    )}
+                    
                     <div>
                         <h3>{title}</h3>
                         <Type>{type}</Type>
@@ -127,9 +137,13 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
     return (
         <Wrapper>
 
-                <NavLink to={`/points/${_id}`}>
+            <NavLink to={`/points/${_id}`}>
             <ShortDisplay>
-                <img src={coverImgSrc}/>
+                {(coverImgSrc) ? (
+                        <img src={coverImgSrc}/>
+                    ) : (
+                        <div></div>
+                    )}
                 <div>
                     <h3>{title}</h3>
                     <Type>{type}</Type>

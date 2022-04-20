@@ -2,22 +2,32 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";
 import GlobalStyles from "./GlobalStyles";
-import Header from "./Header";
+import Header from "./GeneralPageComponents/Header";
 import LandingPage from "./LandingPage";
 import FeedPage from "./FeedPage";
 import Profile from "./Profile/Profile";
 import Tangent from "./Tangent";
-import PointsInTangent from "./PointsInTangent";
-import PointDetails from "./PointDetails";
+import PointsInTangent from "./PointComponents/PointsInTangent";
+import PointDetails from "./PointComponents/PointDetails";
 import MyCircle from "./MyCircle/MyCircle";
-import MyTangents from "./MyTangents";
+import MyTangents from "./Tangent/MyTangents";
 import moment from 'moment';
 import Search from "./Search";
 import AddTangentModal from "../components/Tangent/AddTangentModal";
+import UserSignup from "./Login/UserSignup";
+import LoginComponent from "./Login/LoginComponent";
+import SignupComponent from "./Login/SignupComponent";
+import NavigationFooter from "./GeneralPageComponents/NavigationFooter";
 
 function App() {
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [token, setToken] = useState();
+
+  // if (!token) {
+  //   return 
+  //   <SignupComponent setToken={setToken} />
+  // }
 
   return (
     <Main>
@@ -25,11 +35,19 @@ function App() {
      
       <BrowserRouter>
 
+      {(!token) ? (
+        <LandingPage setToken={setToken} />
+
+      ) : (
+
+        <>
         <AddTangentModal />
 
         <Routes>
 
           <Route path="/" element={<LandingPage />} />
+
+          <Route path="/signup" element={<UserSignup />} />
 
           <Route path="/feed" element={<FeedPage />} />
 
@@ -47,7 +65,8 @@ function App() {
 
           <Route path="/search" element={<Search />} />
         </Routes>
-
+        </>
+        )}
     </BrowserRouter>
     </Main>
   );

@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import PageWrapper from "./PageWrapper"
-import Header from "./Header";
+import PageWrapper from "../components/GeneralPageComponents/PageWrapper"
+import Header from "./GeneralPageComponents/Header";
 
 const Search = () => {
+
     return (
     <PageWrapper>
-        {/* <Header>search</Header> */}
         <Body></Body>
         <Spacer></Spacer>
     </PageWrapper>
@@ -17,5 +17,6 @@ const Spacer = styled.div`
 `;
 
 const Body = styled.div`
+    overflow: scroll;
 `;
 export default Search;

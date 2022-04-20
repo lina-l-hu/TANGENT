@@ -2,11 +2,10 @@ import styled from "styled-components";
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import PageWrapper from "./PageWrapper";
-import NavigationMenu from "./NavigationMenu";
 import { FaArrowLeft } from "react-icons/fa";
 import Avatar from "./Avatar";
-import { CurrentUserContext } from "./Profile/CurrentUserContext";
-import { GlobalContext } from "./GlobalContext";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import { GlobalContext } from "../GlobalContext";
 
 const Header = ({children, titleSize}) => {
 

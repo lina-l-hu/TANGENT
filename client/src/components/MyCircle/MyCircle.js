@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useContext, useEffect, useReducer } from "react";
-import PageWrapper from "../PageWrapper";
+import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import UserPreview from "./UserPreview";
-import Header from "../Header";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
+import ButtonLoadingComponent from "../GeneralPageComponents/ButtonLoadingComponent";
 
 const initialState = {
     circle: null,
@@ -81,13 +82,12 @@ const MyCircle = () => {
 
     if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
-        {/* <Header>my circle</Header> */}
+        <LoadingComponent />
         </PageWrapper>
     }
 
     return (
         <PageWrapper>
-            {/* <Header>my circle</Header> */}
             <Body>
                 {(state.circle.length === 0) ? (
                     <h4>no one in your circle!</h4>

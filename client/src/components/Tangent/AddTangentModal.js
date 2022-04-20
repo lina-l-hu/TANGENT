@@ -195,7 +195,7 @@ const Wrapper = styled.div`
     position: fixed; 
     z-index: 100; 
     top: 60px;
-    z-index: 10;
+
 
     h2 { 
         color: var(--color-secondary);
@@ -250,7 +250,7 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.div`
-     background-color: white;
+    background-color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -267,6 +267,7 @@ const CloseDiv = styled.div`
 const CloseButton = styled.div`
     color: var(--color-main);
     font-size: 20px;
+    cursor: pointer;
 `;
 const ErrorMsg = styled.p`
     margin: 3px;

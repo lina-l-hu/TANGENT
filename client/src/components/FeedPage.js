@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { useContext, useReducer, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import PageWrapper from "./PageWrapper";
-import Header from "./Header";
-import TangentPreview from "./TangentPreview";
-import PointPreview from "./PointPreview";
+import PageWrapper from "./GeneralPageComponents/PageWrapper"
+import TangentPreview from "./Tangent/TangentPreview";
+import PointPreview from "./PointComponents/PointPreview";
 import { CurrentUserContext } from "./Profile/CurrentUserContext";
+import LoadingComponent from "./GeneralPageComponents/LoadingComponent";
 
 const initialState = {
     status: "loading",
@@ -100,7 +100,7 @@ const FeedPage = () => {
 
     if (state.status === "loading") {
         return <PageWrapper>
-            {/* <Header>feed</Header> */}
+            <LoadingComponent />
         </PageWrapper>
     }
 
@@ -117,14 +117,15 @@ const FeedPage = () => {
 
             <MostPopularTangent className="section">
                 <SectionTitle>Major discussions</SectionTitle>
-                <TangentPreview key={state.popularTangent._id} tangentId={state.popularTangent._id} timestamp={state.popularTangent.timestamp} 
+                <TangentPreview tangentId={state.popularTangent.tangentId} timestamp={state.popularTangent.timestamp} 
                 username={state.popularTangent.username} avatar={state.popularTangent} text={state.popularTangent.text}/>
             </MostPopularTangent>
 
             <NewTangents className="section">
                 <SectionTitle>Something to add?</SectionTitle>
                 {state.recentTangents.map((post) => {
-                    return <TangentPreview key={post._id} tangentId={post._id} timestamp={post.timestamp}
+                    console.log("tangentId HERE", post.tangentId);
+                    return <TangentPreview key={post._id} tangentId={post.tangentId} timestamp={post.timestamp}
                     username={post.username} avatar={post.avatar} text={post.text}/>
                 })}
             </NewTangents>

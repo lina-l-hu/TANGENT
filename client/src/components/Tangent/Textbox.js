@@ -3,6 +3,8 @@ import { useRef, useReducer, useEffect, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
 import PointInput from "./PointInput";
 import { GlobalContext } from "../GlobalContext";
+import ErrorModal from "./ErrorModal";
+import ButtonLoadingComponent from "../GeneralPageComponents/ButtonLoadingComponent";
 
 const initialState = {
     textAreaInput: "",
@@ -96,6 +98,12 @@ const reducer = (state, action) => {
                 ...initialState
             }
         }
+
+        default : {
+            return {
+                ...state,
+            }
+        }
     }
 }
 
@@ -110,9 +118,10 @@ const Textbox = ({currentUserId, currentTangentId}) => {
     // const [ suggestionMode, setSuggestionMode ] = useState(false);
     
     const [ displaySuggestionsDropup, setDisplaySuggestionsDropup ] = useState(false);
+    const [ displayErrorModal, setDisplayErrorModal ] = useState(false);
     const [ selectedMatch, setSelectedMatch ] = useState(null);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
-
+    console.log(displayErrorModal, "error modal");
     const textAreaRef = useRef();
     const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
 
@@ -166,11 +175,16 @@ const Textbox = ({currentUserId, currentTangentId}) => {
                    setChangeCount(changeCount+1);
 
                }
+               dispatch({
+                    type: "error-posting-text-msg",
+                    error: "We couldn't post your message -- please try again!"
+                })
+
             })
             .catch((err) => {
                 dispatch({
                     type: "error-posting-text-msg",
-                    error: err
+                    error: "We couldn't post your message -- please try again!"
                 })
                
             })
@@ -179,13 +193,14 @@ const Textbox = ({currentUserId, currentTangentId}) => {
     const handleFindPoint = () => {
 
         //if the searchTerm is not changed from when we last called a search fetch
-        // if (lastSearchTerm === state.textAreaInput.slice(1).trim()) {
-        //     setDisplaySuggestionsDropup(true);
-        //     console.log("last search", lastSearchTerm);
-        //     //display the results from the last search
-        //     console.log("display", displaySuggestionsDropup);
-        //     return;
-        // }
+        if (lastSearchTerm === state.textAreaInput.slice(1).trim() && state.pointSuggestionsFetchStatus !== "error") {
+            setDisplayErrorModal(false);
+            setDisplaySuggestionsDropup(true);
+            console.log("last search", lastSearchTerm);
+            //display the results from the last search
+            console.log("display", displaySuggestionsDropup);
+            return;
+        }
         
         console.log("calling fetch")
 
@@ -194,7 +209,7 @@ const Textbox = ({currentUserId, currentTangentId}) => {
         })
 
         //save the search term in state
-        // setLastSearchTerm(state.textAreaInput.slice(1));
+        setLastSearchTerm(state.textAreaInput.slice(1));
 
         console.log("searchTerm in front", state.textAreaInput.slice(1))
 
@@ -220,15 +235,18 @@ const Textbox = ({currentUserId, currentTangentId}) => {
             else {
                 dispatch ({
                     type: "error-during-matches-fetch",
-                    error: data.message,
+                    error: "We couldn't find any matches -- please try another search!"
                 })
+                setDisplaySuggestionsDropup(false);
+                setDisplayErrorModal(true);
             }
         })
         .catch ((error) => {
             dispatch ({
                 type: "error-during-matches-fetch",
-                error: error,
+                error: "Server error -- please try again!"
             })
+            setDisplayErrorModal(true);
         })
     }
 
@@ -238,8 +256,17 @@ const Textbox = ({currentUserId, currentTangentId}) => {
         })
     }
 
+    const setPointPostingError = (error) => {
+        dispatch ({
+            type: "error-posting-point", 
+            error: error
+        })
+    }
+
     return (
         <Wrapper>
+            
+            <ErrorModal errorMessage={state.error} displayErrorModal={displayErrorModal} setDisplayErrorModal={setDisplayErrorModal} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}/>
 
             {(state.pointSuggestionsFetchStatus === "success" && 
                 <PointSuggestionDropup suggestedMatches={state.pointSuggestions} mode={mode} setMode={setMode}
@@ -249,8 +276,10 @@ const Textbox = ({currentUserId, currentTangentId}) => {
 
             {(mode === "suggestion") &&
                 <PointInput selectedMatch={selectedMatch} mode={mode} setMode={setMode} reset={reset}
-                setDisplaySuggestionsDropup={setDisplaySuggestionsDropup} currentUserId={currentUserId} currentTangentId={currentTangentId}/>
+                setDisplaySuggestionsDropup={setDisplaySuggestionsDropup} currentUserId={currentUserId} setPointPostingError={setPointPostingError}
+                currentTangentId={currentTangentId} displayErrorModal={displayErrorModal} setDisplayErrorModal={setDisplayErrorModal}/>
             }
+            
 
             {(mode !== "suggestion") && 
                 <TextContainer>
@@ -262,12 +291,22 @@ const Textbox = ({currentUserId, currentTangentId}) => {
 
                     <button disabled={(state.textAreaInput.length === 0)}
                         onClick={handleSendText}>
-                       send msg
+                       {(state.pointSuggestionsFetchStatus === "fetching") ? (
+                                <ButtonLoadingComponent />
+                            ) : (
+                                "add msg"
+                            )
+                            }
                     </button>
                     ) : (
                         <button disabled={(state.textAreaInput.length === 0)}
                         onClick={handleFindPoint}>
-                        find point
+                            {(state.pointSuggestionsFetchStatus === "fetching") ? (
+                                <ButtonLoadingComponent />
+                            ) : (
+                                "find point"
+                            )
+                            }
                     </button>
                     )}
                 </TextContainer>
@@ -291,7 +330,7 @@ const TextContainer = styled.div`
     border-radius: 0;
     width: 100%;
     background: rgb(255,255,255);
-    background: linear-gradient(0deg, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%);
+    background: linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0.7) 100%);
     /* height: 50px; */
     padding: 12px 5px;
 

@@ -1,10 +1,11 @@
-import { createContext, useEffect, useReducer, useState } from "react";
+import { createContext, useEffect, useReducer, useState, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { GlobalContext } from "../GlobalContext";
 
 export const CurrentUserContext = createContext(null);
 
 const initialState = {
-    authProfile: null,
+    // authProfile: null,
     currentUser: null, 
     currentUserStatus: "loading",
     currentUserError: null,
@@ -12,12 +13,12 @@ const initialState = {
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case ("logged-in"): {
-            return {
-                ...state, 
-                authProfile: action.profile,
-            }
-        }
+        // case ("logged-in"): {
+        //     return {
+        //         ...state, 
+        //         authProfile: action.profile,
+        //     }
+        // }
 
         case ("receive-profile-data-from-server"): {
             return {
@@ -39,25 +40,24 @@ const reducer = (state, action) => {
 
 export const CurrentUserProvider = ({children}) => {
 
-    const { user, isLoading } = useAuth0();
-    console.log("logged in user", user)
+    // const { user, isLoading } = useAuth0();
+    // console.log("logged in user", user)
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    const [ changeCount, setChangeCount ] = useState(0);
-
+    const { changeCount, setChangeCount } = useContext(GlobalContext);
     useEffect(() => {
-        if (!isLoading) {
+        // if (!isLoading) {
 
-            dispatch({ 
-                type: "logged-in",
-                profile: user,
-            })
+        //     dispatch({ 
+        //         type: "logged-in",
+        //         profile: user,
+        //     })
 
             fetch("/users/get-user", {
                 method: "GET", 
                 headers: {
                     "Content-Type": "application/json",
-                    "email": `${user.email}`
+                    "email": `lina.l.hu@gmail.com`
                    
                 },
             })
@@ -83,8 +83,8 @@ export const CurrentUserProvider = ({children}) => {
                     error: err
                 })
             })
-        }
-    }, [user])
+        // }
+    }, [changeCount])
         
 
     //store userId in session storage with persisted state hook! 

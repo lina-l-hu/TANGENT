@@ -1,24 +1,37 @@
 import styled from "styled-components";
-import PageWrapper from "./PageWrapper";
-import LoginButton from "./Login";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useState } from "react";
+import PageWrapper from "./GeneralPageComponents/PageWrapper"
+import LoginComponent from "./Login/LoginComponent";
+import SignupComponent from "./Login/SignupComponent";
 
 const LandingPage = () => {
 
-    const AuthNav = () => {
-        const {isAuthenticated} = useAuth0();
-    }
+    const [ signupMode, setSignupMode ] = useState(false);
     
-    return <Wrapper>
-        <LoginButton />
+    return (
+    <PageWrapper>
+        <Body>
+            <Logo>tangent</Logo>
+            {(!signupMode) ? (
+                <LoginComponent setSignupMode={setSignupMode}/>
+            ) : (
+                <SignupComponent setSignupMode={setSignupMode}/>
+            )}
+        </Body>
         
-    </Wrapper>
+    </PageWrapper>
+    )
 }
 
-const Wrapper = styled(PageWrapper)`
+const Body = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+`;
+
+const Logo = styled.h1`
+    margin: 180px 0 40px 0;
+    font-size: 50px;
 `;
 export default LandingPage;

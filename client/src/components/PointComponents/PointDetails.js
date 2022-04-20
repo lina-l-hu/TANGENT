@@ -1,6 +1,7 @@
+//Page displaying the details for a single Point Object
 import styled from "styled-components";
 import { useReducer, useEffect, useContext } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import PointPreview from "./PointPreview";
 import TangentPreview from "../Tangent/TangentPreview";
@@ -74,7 +75,6 @@ const reducer = (state, action) => {
         }
 
         case ("receive-points-in-tangents-from-server"): {
-            console.log("here,", state, action);
             return {
                 ...state, 
                 pointsInTangents: action.pointsInTangents, 
@@ -101,12 +101,10 @@ const reducer = (state, action) => {
 const PointDetails = () => {
 
     const { pointId } = useParams();
-    console.log("pointid", pointId);
 
     const { state: { currentUser, currentUserStatus } } = useContext(CurrentUserContext);
     const { changeCount } = useContext(GlobalContext);
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    // console.log("statuses", state.pointStatus, state.tangentsStatus, state.usersStatus);
 
     //fetch function to get point
     const fetchPoints = async (points) => {
@@ -117,7 +115,6 @@ const PointDetails = () => {
 
         const searchArray = (points) ? (points) : pointId;
 
-        console.log("fetching point")
         try {
             const response = await fetch("/points", {
                 method: "GET", 
@@ -129,7 +126,6 @@ const PointDetails = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
 
                 if (points) {
                     dispatch({
@@ -176,7 +172,6 @@ const PointDetails = () => {
     //fetch the latest post for each Tangent that mentions the Point
     const fetchLatestTangentPosts = async (tangentIds) => {
 
-        console.log("fetching latest tangentposts")
         try {
             const response = await fetch("/tangents/latest-posts", {
                 method: "GET", 
@@ -188,7 +183,6 @@ const PointDetails = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log("tangents fetch", data)
                 dispatch({
                     type: "receive-tangents-from-server",
                     tangents: data.data
@@ -215,7 +209,6 @@ const PointDetails = () => {
     //fetch users to get their avatar and username info
     const fetchUsers = async (userIdArray) => {
 
-        console.log("users")
         try {
             const response = await fetch("/users/get-users", {
                 method: "GET", 
@@ -227,7 +220,6 @@ const PointDetails = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                     type: "receive-users-data-from-server",
                     users: data.data
@@ -251,12 +243,10 @@ const PointDetails = () => {
     
     
     useEffect(() => {
-        console.log("hullo");
         (async () => {
             
             //first fetch to get the Point
             const point = await fetchPoints();
-            console.log("point", point);
 
             if (point[0].mentionedIn.length === 0) {
 
@@ -272,7 +262,6 @@ const PointDetails = () => {
             else {
              //second fetch to get the latest posts of every tangent in the Point mentionedIn array
                 const tangents = await fetchLatestTangentPosts(point[0].mentionedIn);
-                console.log("tangents in async", tangents);
 
                 let usersInLatestPosts = [];
                 let pointsInLatestPosts = [];
@@ -285,13 +274,10 @@ const PointDetails = () => {
                 });
 
                 const users = [...new Set(usersInLatestPosts)];
-                console.log("usersin", users);
 
                 const pointsInPosts = [...new Set(pointsInLatestPosts)];
-                console.log("pointsinposts", pointsInPosts)
                 //third fetch to get all the users in the tangents array fetched above
                 if (users.length > 0) {
-                    console.log("fetching users");
                     fetchUsers(users);
                 }
                 else {
@@ -304,7 +290,6 @@ const PointDetails = () => {
                 //final fetch to get any other points that are mentioned in the tangent posts above
                 //does not need result from users fetch
                 if (pointsInPosts.length > 0) {
-                    console.log("fetching tangents' points");
                     fetchPoints(pointsInPosts);
                 }
                 else {
@@ -339,7 +324,7 @@ const PointDetails = () => {
                 let text = "";
                 
                 if (Object.keys(post).indexOf("pointId") > -1) {
-                    const point = state.points.find((item) => item._id === post.pointId);
+                    const point = state.pointsInTangents.find((item) => item._id === post.pointId);
                     text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
                 }
                 
@@ -347,14 +332,12 @@ const PointDetails = () => {
                     text = post.text;
                 }
                 
-                console.log("state.users", state.users)
                 const user = state.users.find((user) => user._id === post.userId)
-                console.log("userid", user._id, post.userId)
                 return (
                     <Wrapper key={post._id}>
                         <h5>{post.tangentName}</h5>
                         <TangentPreview tangentId={post.tangentId} text={text}
-                        timestamp={post.timestamp} imgSrc={user.avatar} username={user.username}/>
+                        timestamp={post.timestamp} username={user.username}/>
                     </Wrapper>
                 )
             })
@@ -364,8 +347,6 @@ const PointDetails = () => {
         </PageWrapper>
     )
 }
-{/* <TangentPreview key={post._id} tangentId={post.tangentId} text={text} */}
-// imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
 
 const MentionedDiv = styled.h3`
     margin: 10px auto;
@@ -376,7 +357,6 @@ const MentionedDiv = styled.h3`
 
 const Wrapper = styled.div`
     padding: 25px 0;
-    /* border-bottom: 2px solid var(--color-secondary); */
     border-radius: 0px;
     
     h5 { 

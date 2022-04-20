@@ -1,7 +1,7 @@
+//signup form component
+
 import styled from "styled-components";
-import { useState, useReducer, useContext } from "react";
-import { NavLink } from "react-router-dom";
-import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import { useReducer } from "react";
 
 const initialState = {
     username: null, 
@@ -99,7 +99,6 @@ const reducer = (state, action) => {
 const SignupComponent = ({setSignupMode}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    // const {signedInUID, action : {setSignedInUID}} = useContext(CurrentUserContext);
     
     const handleClick = () => {
         setSignupMode(false);
@@ -150,17 +149,14 @@ const SignupComponent = ({setSignupMode}) => {
             .then(res => res.json())
             .then(data => {
 
-                console.log("post retun", data)
                 if (data.status === 200) {
                     dispatch ({
                         type: "user-created"
                     })
-                    // setSignedInUID(data.data);
                     dispatch({
                         type: "form-error",
                         error: "You are all signed up! Please sign in with the above link!"
                     })
-                    // navigate(`/`);
 
                 }
                 else {
@@ -178,7 +174,6 @@ const SignupComponent = ({setSignupMode}) => {
                
             })
     }
-
 
     return (
         <Wrapper>
@@ -249,7 +244,7 @@ const SignupComponent = ({setSignupMode}) => {
                 }}
                     />
 
-                <label>upload profile picture 
+                {/* <label>upload profile picture 
                     <input className="file-input"
                     type="file" 
                     onChange={(e) => { dispatch ({
@@ -261,7 +256,7 @@ const SignupComponent = ({setSignupMode}) => {
                     })
                 }}
                     />
-                </label>
+                </label> */}
             <button>connect</button>
             </form>
             <button className="link" onClick={handleClick}>already in our circle? sign in</button>
@@ -271,8 +266,6 @@ const SignupComponent = ({setSignupMode}) => {
 }
 
 const Wrapper = styled.div`
-    /* margin: 0 auto;
-    margin-top: 300px; */
     background-color: var(--color-secondary-transparent);
     padding: 25px;
     width: 60%;

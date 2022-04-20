@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useRef, useState } from "react";
 import Profile from "./Profile";
 
+//Tabs on Profile Header
 const ProfileTabs = ({tab, setTab}) => {
 
     const handleTabClick = (e) => {

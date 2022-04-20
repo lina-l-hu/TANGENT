@@ -8,11 +8,7 @@ import NavigationFooter from "./NavigationFooter";
 const PageWrapper = ({children}) => {
 
     const { token } = useContext(CurrentUserContext);    
-    //if the pathname has tangent, profile or point in the name, do not include generic header
     
-    // return (
-    //     <Wrapper>{children}</Wrapper>
-    // )
     return (
         <>
         {((window.location.pathname === "/") || (window.location.pathname === "/signup") || !token)? (

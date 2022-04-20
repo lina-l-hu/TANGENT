@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { useRef, useContext } from "react";
 
+//A dropup that shows suggestions during Point search
 const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatch, 
     displaySuggestionsDropup, setDisplaySuggestionsDropup, setMode, mode}) => {
     
     const nodeRef = useRef();
-    console.log("displaysuggest", displaySuggestionsDropup);
     const handleSelect = (event) => {
 
         //identify which element has been clicked
@@ -15,46 +15,33 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
         const classnameArray = targettedClass.split(" ");
         const selectedId = classnameArray[classnameArray.length-1];
 
-        console.log("selectedId", selectedId);
-        // console.log("target", event.target)
-        // console.log("ev.target.inner", event.target.innerHTML);
         let selectedObject = undefined;
 
         // if selected title is a film
         if (selectedId.charAt(0) === "t") {
             if (suggestedMatches.filmPoints.length > 0) {
                 selectedObject = suggestedMatches.filmPoints.find((match) => match._id === selectedId);
-                console.log("1", selectedObject)
             }
             
             if (suggestedMatches.films.length > 0 && selectedObject === undefined) {
                 selectedObject = suggestedMatches.films.find((match) => match._id === selectedId);
-                console.log("2", selectedObject)
             }
         }
         else {
             if (suggestedMatches.bookPoints.length > 0) {
                 selectedObject = suggestedMatches.bookPoints.find((match) => match._id === selectedId);
-                console.log("3", selectedObject)
             }
 
             if (suggestedMatches.books.length > 0 && selectedObject === undefined) {
                 selectedObject = suggestedMatches.books.find((match) => match._id === selectedId);
-                console.log("4", selectedObject)
             }
         }
-
-        console.log("obj", selectedObject);
 
         //set the selected element to state
         setSelectedMatch(selectedObject);
         
-        //close the suggestions dropup
-        // setDisplaySuggestionsDropup(false);
-        
         //turn on suggestion mode
         setMode("suggestion")
-        console.log("match", selectedMatch);
         // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
     }
 

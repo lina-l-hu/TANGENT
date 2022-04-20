@@ -1,3 +1,5 @@
+//Text input component to send message or search for Point used on Tangent page
+
 import styled from "styled-components";
 import { useRef, useReducer, useEffect, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
@@ -121,7 +123,6 @@ const Textbox = ({currentUserId, currentTangentId}) => {
     const [ displayErrorModal, setDisplayErrorModal ] = useState(false);
     const [ selectedMatch, setSelectedMatch ] = useState(null);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
-    console.log(displayErrorModal, "error modal");
     const textAreaRef = useRef();
     const [ lastSearchTerm, setLastSearchTerm ] = useState(null);
 
@@ -196,22 +197,16 @@ const Textbox = ({currentUserId, currentTangentId}) => {
         if (lastSearchTerm === state.textAreaInput.slice(1).trim() && state.pointSuggestionsFetchStatus !== "error") {
             setDisplayErrorModal(false);
             setDisplaySuggestionsDropup(true);
-            console.log("last search", lastSearchTerm);
             //display the results from the last search
-            console.log("display", displaySuggestionsDropup);
             return;
         }
         
-        console.log("calling fetch")
-
         dispatch ({
             type: "fetching-matches"
         })
 
         //save the search term in state
         setLastSearchTerm(state.textAreaInput.slice(1));
-
-        console.log("searchTerm in front", state.textAreaInput.slice(1))
 
         //fetch Point suggestions from both the Points database and from the external movie and book APIs
         fetch(`/point-suggestions/?searchTerm=${state.textAreaInput.slice(1)}`, {
@@ -222,7 +217,6 @@ const Textbox = ({currentUserId, currentTangentId}) => {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log("data from api FE", data)
 
             if (data.status === 200) {
                 dispatch ({
@@ -230,7 +224,6 @@ const Textbox = ({currentUserId, currentTangentId}) => {
                     matches: data.data, 
                 })
                 setDisplaySuggestionsDropup(true);
-                // setMode("suggestion");
             }
             else {
                 dispatch ({

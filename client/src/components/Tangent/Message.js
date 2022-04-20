@@ -1,3 +1,4 @@
+//Message component used on Tangent chat
 import styled from "styled-components";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";

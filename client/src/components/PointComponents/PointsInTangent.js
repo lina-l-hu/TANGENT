@@ -1,3 +1,5 @@
+//Page showing all the Points mentioned in a Tangent
+
 import styled from "styled-components";
 import { useReducer, useEffect, useContext } from "react";
 import { useParams, NavLink } from "react-router-dom";
@@ -36,7 +38,6 @@ const reducer = (state, action) => {
 const PointsInTangent = () => {
 
     const { tangentId } = useParams();
-    console.log("tangentId", tangentId);
     const { state: { currentUser, currentUserStatus}} = useContext(CurrentUserContext);
     const { changeCount } = useContext(GlobalContext);
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -45,7 +46,6 @@ const PointsInTangent = () => {
 
     useEffect(() => {
 
-        console.log("about to fetch")
         fetch("/tangent/points", {
             method: "GET", 
             headers: {
@@ -55,7 +55,6 @@ const PointsInTangent = () => {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log("pointse data", data)
             if (data.status === 200) {
                 dispatch({
                     type: "receive-points-from-server",

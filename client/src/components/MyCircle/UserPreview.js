@@ -10,9 +10,9 @@ const UserPreview = ({circle, _id, imgSrc, username, tagline}) => {
                 <AvatarDiv>
                     {(imgSrc) ? (
                     <Avatar avatarImgSrc={imgSrc} format="small"/>
-                ) : (
+                    ) : (
                     <Avatar userLetter={username.charAt(0).toUpperCase()} format="small"/>
-                )}
+                    )}
                 </AvatarDiv>
                 
                 <Text>

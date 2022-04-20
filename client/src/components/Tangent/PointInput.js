@@ -1,6 +1,6 @@
+//Component that adds a Point to a Tangent 
 import styled from "styled-components";
 import { useReducer, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../GlobalContext";
 import ButtonLoadingComponent from "../GeneralPageComponents/ButtonLoadingComponent";
 

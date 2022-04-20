@@ -2,6 +2,7 @@ import styled from "styled-components";
 import PageWrapper from "../components/GeneralPageComponents/PageWrapper"
 import Header from "./GeneralPageComponents/Header";
 
+//Did not implement yet
 const Search = () => {
 
     return (

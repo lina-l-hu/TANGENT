@@ -1,3 +1,5 @@
+//Modal to add a new Tangent
+
 import styled from "styled-components";
 import { useReducer, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -107,7 +109,6 @@ const AddTangentModal = () => {
             .then(res => res.json())
             .then(data => {
 
-                console.log("post retun", data)
                 if (data.status === 200) {
                     dispatch ({
                         type: "tangent-successfully-posted"

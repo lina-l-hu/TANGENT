@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import Avatar from "./Avatar";
+import Avatar from "../GeneralPageComponents/Avatar";
 // import { useAuth0 } from "@auth0/auth0-react";
-import { CurrentUserContext } from "../components/Profile/CurrentUserContext";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import { useContext } from "react";
 
 //should we fetch for username and imgSrc here or be passed?!!! 

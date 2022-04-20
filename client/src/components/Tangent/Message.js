@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useContext } from "react";
-import Avatar from "../Avatar";
+import Avatar from "../GeneralPageComponents/Avatar";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
 const Message = ({text, username, avatarImgSrc, timestamp}) => {

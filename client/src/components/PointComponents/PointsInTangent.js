@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { useReducer, useEffect, useContext } from "react";
 import { useParams, NavLink } from "react-router-dom";
-import PageWrapper from "./PageWrapper";
+import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import PointPreview from "./PointPreview";
-import TangentPreview from "./TangentPreview";
-import Header from "./Header";
-import { CurrentUserContext } from "./Profile/CurrentUserContext";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     points: null,
@@ -26,7 +26,7 @@ const reducer = (state, action) => {
         case ("failure-loading-points-from-server"): {
             return {
                 ...state,
-                pointStatus: "failed",
+                pointsStatus: "failed",
                 pointsError: action.error,
             }
         }
@@ -38,7 +38,7 @@ const PointsInTangent = () => {
     const { tangentId } = useParams();
     console.log("tangentId", tangentId);
     const { state: { currentUser, currentUserStatus}} = useContext(CurrentUserContext);
-
+    const { changeCount } = useContext(GlobalContext);
     const [state, dispatch] = useReducer(reducer, initialState);
 
     //fetch all Points in the Tangent
@@ -75,31 +75,43 @@ const PointsInTangent = () => {
                 error: err
             })
         })
-    }, [])
+    }, [changeCount])
 
-    if (state.pointStatus === "loading" || currentUserStatus === "loading") {
+    if (state.pointsStatus === "loading" || currentUserStatus === "loading" || !state.points) {
         return <PageWrapper>
-        {/* <Header titleSize="smaller">points in tangent</Header> */}
+        <LoadingComponent />
     </PageWrapper>
     }
 
+    
     return (
         <PageWrapper>
+            <Body>
             {/* <Header titleSize="smaller">points in tangent</Header> */}
             {state.points.map((point) => {
                 return (
-                    <PointDiv>
+                    <PointDiv key={point._id} >
                         <PointPreview key={point._id} _id={point._id} coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
-                        by={point.by} year={point.year} format="short" userPoints={CurrentUserContext.points}/>
+                        by={point.by} year={point.year} format="short" userPoints={currentUser.points}/>
                     </PointDiv>
                 )
             })}
+            <Spacer></Spacer>
+            </Body>
         </PageWrapper>
     )
+
 }
 
 const PointDiv=styled.div`
     width: 100%;
 `;
 
+const Body = styled.div`
+    overflow: scroll;
+`;
+
+const Spacer = styled.div`
+    height: 70px;
+`;
 export default PointsInTangent;

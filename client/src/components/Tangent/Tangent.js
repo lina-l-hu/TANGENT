@@ -1,13 +1,15 @@
 import styled from "styled-components";
 import { useEffect, useReducer, useContext, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import PageWrapper from "../PageWrapper";
+import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import Textbox from "./Textbox";
 import Message from "./Message";
-import Header from "../Header";
-import PointPreview from "../PointPreview";
+import Header from "../GeneralPageComponents/Header";
+import PointPreview from "../PointComponents/PointPreview";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import { GlobalContext } from "../GlobalContext";
+import ErrorModal from "./ErrorModal";
+import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
 
 const initialState = {
     status: "loading",
@@ -50,6 +52,7 @@ const Tangent = () => {
     const { changeCount, setChangeCount } = useContext(GlobalContext);
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
+
 
     useEffect(() => {
 
@@ -105,20 +108,18 @@ const Tangent = () => {
 
     if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
-            {/* <Header>tangent</Header> */}
+            <LoadingComponent />
         </PageWrapper>
     }
 
     if (state.tangentFetchStatus !== 200) {
         return <PageWrapper>
-        {/* <Header>tangent</Header> */}
         <Error>Tangent not found!</Error>
     </PageWrapper>
     }
 
     return (
         <PageWrapper>
-            {/* <Header titleSize="smaller">{state.tangent[0].tangentName}</Header> */}
             <Body>
                 <LinkDiv>
                     <h4>{state.tangent[0].tangentName}</h4>
@@ -137,7 +138,7 @@ const Tangent = () => {
                             const point = state.points.find((item) => item._id === post.pointId);
                             return (
                                 <PointDiv key={point._id}>
-                                    <PointPreview key={point._id} _id={point._id} coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
+                                    <PointPreview _id={point._id} coverImgSrc={point.coverImgSrc} title={point.title} type={point.type} 
                                     by={point.by} year={point.year} format="short" userPoints={currentUser.points}/>
                                 </PointDiv>
                             )

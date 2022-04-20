@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useReducer, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../GlobalContext";
+import ButtonLoadingComponent from "../GeneralPageComponents/ButtonLoadingComponent";
 
 const initialState = {
     pointPostStatus: "idle",
@@ -42,7 +43,8 @@ const reducer = (state, action) => {
 
 
 const PointInput = ({currentUserId, currentTangentId, selectedMatch, 
-    reset, mode, setMode, setDisplaySuggestionsDropup}) => {
+    reset, mode, setMode, setDisplaySuggestionsDropup, setPointPostingError,
+    displayErrorModal, setDisplayErrorModal}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
     const {changeCount, setChangeCount} = useContext(GlobalContext);
@@ -74,24 +76,27 @@ const PointInput = ({currentUserId, currentTangentId, selectedMatch,
                        type: "successfully-posted-point"
                    })
 
-                   setChangeCount(changeCount+1);
+                   setChangeCount(changeCount => changeCount+1);
 
                    setMode("text");
                    reset();
                }
+               else if (data.status === 400) {
+                    setPointPostingError("Point may already be in this Tangent!");
+                    setDisplayErrorModal(true);
+                    setDisplaySuggestionsDropup(false);
+               }    
                else {
-                    //if error, open dropup again
-                setDisplaySuggestionsDropup(true);
-               }
+                    setPointPostingError("We could not post your Point -- please try again!")
+                    setDisplayErrorModal(true);
+                    setDisplaySuggestionsDropup(false);
+                }
             })
             .catch((err) => {
-                dispatch({
-                    type: "error-posting-point",
-                    error: err
-                })
-
-                //if error, open dropup again
-                setDisplaySuggestionsDropup(true);
+                setPointPostingError("We could not post your Point -- please try again!")
+                setDisplayErrorModal(true);
+                //if error, open dropup again and display popup
+                setDisplaySuggestionsDropup(false);
                
             })
 
@@ -113,7 +118,12 @@ const PointInput = ({currentUserId, currentTangentId, selectedMatch,
                 <textarea rows="1" disabled></textarea>
                 <button 
                     onClick={handleAddPoint}>
-                    add point
+                    {(state.pointSuggestionsFetchStatus === "fetching") ? (
+                        <ButtonLoadingComponent />
+                        ) : (
+                            "add point"
+                        )
+                    }
                 </button>
             </TextContainer>
         </Wrapper>

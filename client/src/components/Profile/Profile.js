@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import { useState, useContext, useEffect, useReducer } from "react";
 import { useParams, NavLink } from "react-router-dom";
-import PageWrapper from "../PageWrapper";
-import Header from "../Header";
+import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import ProfileHeader from "./ProfileHeader";
 import ProfileTabs from "./ProfileTabs";
-import TangentPreview from "../TangentPreview";
-import PointPreview from "../PointPreview";
+import TangentPreview from "../Tangent/TangentPreview";
+import PointPreview from "../PointComponents/PointPreview";
 import { CurrentUserContext } from "./CurrentUserContext";
 import ToggleInCircleButton from "./ToggleInCircleButton";
+import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
 
 const initialState = {
     profile: null, 
@@ -255,7 +255,7 @@ const Profile = () => {
     if (currentUserStatus === "loading" || state.profileStatus === "loading" ) {
         console.log("curuserstat", currentUserStatus, "profilestat", state.profileStatus)
         return <PageWrapper>
-            {/* <Header></Header> */}
+            <LoadingComponent/>
         </PageWrapper>
     }
 

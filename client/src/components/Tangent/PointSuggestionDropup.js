@@ -58,11 +58,11 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
         // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
     }
 
-    window.onclick = function(event) {
-        if (nodeRef.current && !nodeRef.current.contains(event.target)) {
-            setDisplaySuggestionsDropup(false);
-        }
-    }
+    // window.onclick = function(event) {
+    //     if (nodeRef.current && !nodeRef.current.contains(event.target)) {
+    //         setDisplaySuggestionsDropup(false);
+    //     }
+    // }
 
     return (
         <Wrapper ref={nodeRef} isDisplay={(displaySuggestionsDropup)}>

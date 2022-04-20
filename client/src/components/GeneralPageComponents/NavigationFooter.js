@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { FaRegComment, FaRegUserCircle, FaSearch, FaRegNewspaper, FaUserFriends } from "react-icons/fa";
-import { CurrentUserContext } from "./Profile/CurrentUserContext";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
 const NavigationFooter = () => {
 

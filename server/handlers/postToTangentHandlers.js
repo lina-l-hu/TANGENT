@@ -27,11 +27,25 @@ const addPointToTangent = async (req, res) => {
 
     try {
 
-        await pointsClient.connect();
+        //first, check if this Point is already mentioned in the Tangent
+        await tangentsClient.connect();
+        const tangentsDb = tangentsClient.db("TANGENTS");
 
+        //get latest post in the tangent
+        const latestPost = await tangentsDb.collection(currentTangentId).find().sort({_id:-1}).limit(1).toArray();
+        console.log("latestpost", latestPost);
+        //get the tangentPoints array and check if the Point Id is already in there
+        const alreadyMentioned = latestPost[0].tangentPoints.some((point) => point === _id);
+        console.log("already in tange", alreadyMentioned);
+
+        if (alreadyMentioned) {
+            return res.status(400).json({status: 400, message: "Point is already in this Tangent!", data: _id});
+        }
+
+        //check if Point already exists in database 
+        await pointsClient.connect();
         const pointsDb = pointsClient.db("POINTS");
         console.log("connected");
-        //first check if Point already exists in database -- 
         const existingPoint = await pointsDb.collection(type).findOne({_id: _id});
 
         console.log("existing", existingPoint);
@@ -63,7 +77,6 @@ const addPointToTangent = async (req, res) => {
                 coverImgSrc: coverImgSrc,
                 year: year, 
                 by: by, 
-                // language: language,
                 description: description,
                 link: link, 
                 mentionedIn: [currentTangentId]
@@ -79,14 +92,8 @@ const addPointToTangent = async (req, res) => {
         }
         //after a new Point is successfully added to the database or the mentionedIn array of an existing Point is successfully updated,
         //we still need to add this new post to the Tangent (i.e. a new document in the current Tangent collection)
-        await tangentsClient.connect();
-
-        const tangentsDb = tangentsClient.db("TANGENTS");
-
-        //get latest post in the tangent
-        const latestPost = await tangentsDb.collection(currentTangentId).find().sort({_id:-1}).limit(1).toArray();
-        console.log("latestpost", latestPost);
-
+    
+        //latestPost has been fetched above
         //if the current user is not already in the usersInTangent array (i.e. this is their first post in this Tangent)
         //then add their id to this array, then update the tangents array for the user in the USERS database
         let updatedUsersInTangent = latestPost[0].usersInTangent;

@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { useContext, useReducer, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import PageWrapper from "./PageWrapper";
-import { CurrentUserContext } from "./Profile/CurrentUserContext";
-import TangentPreview from "./TangentPreview";
-import Header from "./Header";
+import PageWrapper from "../GeneralPageComponents/PageWrapper";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import TangentPreview from "../Tangent/TangentPreview";
+import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
 
 const initialState = {
     tangents: null, 
@@ -250,7 +250,7 @@ const MyTangents = () => {
 
     if (currentUserStatus === "loading" || state.pointsStatus === "loading" || state.usersStatus === "loading") {
         return <PageWrapper>
-            {/* <Header>my tangents</Header> */}
+            <LoadingComponent />
         </PageWrapper>
     }
 
@@ -270,12 +270,10 @@ const MyTangents = () => {
                 console.log("state.users", state.users)
                 const user = state.users.find((user) => user._id === post.userId)
                 return (
-                    <Wrapper>
-                    {/* <NavLink to={`/tangents/${post.tangentId}`} key={post._id}> */}
+                    <Wrapper key={post._id} >
                     <h4>{post.tangentName}</h4>
-                        <TangentPreview key={post._id} tangentId={post.tangentId} text={text}
+                        <TangentPreview tangentId={post.tangentId} text={text}
                         imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
-                    {/* </NavLink> */}
                     </Wrapper>
                 )
             })

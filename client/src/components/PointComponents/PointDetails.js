@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { useReducer, useEffect, useContext } from "react";
 import { useParams, NavLink } from "react-router-dom";
-import PageWrapper from "./PageWrapper";
+import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import PointPreview from "./PointPreview";
-import TangentPreview from "./TangentPreview";
-import Header from "./Header";
-import { CurrentUserContext } from "./Profile/CurrentUserContext";
+import TangentPreview from "../Tangent/TangentPreview";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
+import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     point: null,
@@ -38,6 +39,7 @@ const reducer = (state, action) => {
         }
 
         case ("receive-tangents-from-server"): {
+            console.log("state", state, "action", action);
             return {
                 ...state, 
                 tangents: action.tangents, 
@@ -68,6 +70,12 @@ const reducer = (state, action) => {
                 usersError: action.error,
             }
         }
+
+        default : {
+            return {
+                ...state,
+            }
+        }
     }
 }
 
@@ -77,7 +85,7 @@ const PointDetails = () => {
     console.log("pointid", pointId);
 
     const { state: { currentUser, currentUserStatus } } = useContext(CurrentUserContext);
-
+    const { changeCount } = useContext(GlobalContext);
     const [ state, dispatch ] = useReducer(reducer, initialState);
     // console.log("statuses", state.pointStatus, state.tangentsStatus, state.usersStatus);
 
@@ -139,7 +147,7 @@ const PointDetails = () => {
             if (data.status === 200) {
                 console.log("tangents fetch", data)
                 dispatch({
-                    type: "receive-tangents-data-from-server",
+                    type: "receive-tangents-from-server",
                     tangents: data.data
                 })
                 return data.data;
@@ -217,7 +225,7 @@ const PointDetails = () => {
                 })
             }
             else {
-                //second fetch to get the latest posts of every tangent in the Point mentionedIn array
+             //second fetch to get the latest posts of every tangent in the Point mentionedIn array
                 const tangents = await fetchLatestTangentPosts(point.mentionedIn);
                 console.log("tangents in async", tangents);
 
@@ -242,20 +250,18 @@ const PointDetails = () => {
                 }
             }
             })();
-    }, [currentUser])
-
+    }, [currentUser, changeCount])
    
-    // if (!state.point || !state.tangents || !state.users) {
     if (currentUserStatus !== "idle" || state.pointStatus !== "idle" || state.tangentsStatus !== "idle" || state.usersStatus !== "idle") {
         return (
             <PageWrapper>
-                {/* <Header>point</Header> */}
+                <LoadingComponent />
             </PageWrapper>
         )
     }
     return (
         <PageWrapper>
-            {/* <Header>{state.point.title}</Header> */}
+            <Body>
             
             <PointPreview _id={state.point._id} coverImgSrc={state.point.coverImgSrc} title={state.point.title} 
             type={state.point.type} by={state.point.by} year={state.point.year} description={state.point.description} 
@@ -265,46 +271,65 @@ const PointDetails = () => {
             
             {state.tangents.map((post) => {
                 let text = "";
-                console.log("here");
+                // console.log("here");
                 
+                // if (Object.keys(post).indexOf("pointId") > -1) {
+                //     const point = state.points.find((item) => item._id === post.pointId);
+                //     text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
+                // }
                 if (Object.keys(post).indexOf("pointId") > -1) {
-                    const point = state.points.find((item) => item._id === post.pointId);
-                    text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
+                    text = "Last post in this Tangent was a different Point! Peek the convo to see how your friends moved from this Point to that one!";
                 }
-                
                 else {
                     text = post.text;
                 }
                 
                 console.log("state.users", state.users)
                 const user = state.users.find((user) => user._id === post.userId)
-                
+                console.log("userid", user._id, post.userId)
                 return (
                     <Wrapper key={post._id}>
-                        <h4>{post.tangentName}</h4>
+                        <h5>{post.tangentName}</h5>
                         <TangentPreview tangentId={post.tangentId} text={text}
-                        imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
+                        timestamp={post.timestamp} imgSrc={user.avatar} username={user.username}/>
                     </Wrapper>
                 )
             })
             }
+            <Spacer></Spacer>
+            </Body>
         </PageWrapper>
     )
 }
+{/* <TangentPreview key={post._id} tangentId={post.tangentId} text={text} */}
+// imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
 
-const MentionedDiv = styled.h4`
+const MentionedDiv = styled.h3`
     margin: 10px auto;
     font-style: italic;
+    text-align: center;
+    padding-top: 20px;
 `;
 
 const Wrapper = styled.div`
     padding: 25px 0;
-    border-bottom: 2px solid var(--color-secondary);
+    /* border-bottom: 2px solid var(--color-secondary); */
     border-radius: 0px;
     
-    h4 { 
+    h5 { 
         margin-left: 25px;
+        font-family: var(--font-heading);
+        margin-bottom: -10px;
+        font-size: 18px;
+        font-weight: bold;
     }
 `;
 
+const Body = styled.div`
+    overflow: scroll;
+`;
+
+const Spacer = styled.div`
+    height: 70px;
+`;
 export default PointDetails;

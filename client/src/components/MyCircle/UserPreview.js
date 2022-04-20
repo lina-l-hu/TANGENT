@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import Avatar from "../Avatar";
+import Avatar from "../GeneralPageComponents/Avatar";
 import ToggleInCircleButton from "../Profile/ToggleInCircleButton";
 
 const UserPreview = ({_id, imgSrc, username, tagline}) => {

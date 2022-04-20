@@ -1,10 +1,13 @@
 import styled from "styled-components";
+import { useContext } from "react";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import Header from "./Header";
 import NavigationFooter from "./NavigationFooter";
 
 //Each page is styled for iPhone 12/13 dimensions
 const PageWrapper = ({children}) => {
-    
+
+    const { token } = useContext(CurrentUserContext);    
     //if the pathname has tangent, profile or point in the name, do not include generic header
     
     // return (
@@ -12,7 +15,7 @@ const PageWrapper = ({children}) => {
     // )
     return (
         <>
-        {((window.location.pathname === "/") || (window.location.pathname === "/signup") )? (
+        {((window.location.pathname === "/") || (window.location.pathname === "/signup") || !token)? (
             <Wrapper>{children}</Wrapper>
             ) : (
             <Wrapper>

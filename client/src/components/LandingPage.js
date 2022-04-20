@@ -4,6 +4,7 @@ import PageWrapper from "./GeneralPageComponents/PageWrapper"
 import LoginComponent from "./Login/LoginComponent";
 import SignupComponent from "./Login/SignupComponent";
 
+
 const LandingPage = () => {
 
     const [ signupMode, setSignupMode ] = useState(false);
@@ -13,9 +14,9 @@ const LandingPage = () => {
         <Body>
             <Logo>tangent</Logo>
             {(!signupMode) ? (
-                <LoginComponent setSignupMode={setSignupMode}/>
+                <LoginComponent  setSignupMode={setSignupMode}/>
             ) : (
-                <SignupComponent setSignupMode={setSignupMode}/>
+                <SignupComponent  setSignupMode={setSignupMode}/>
             )}
         </Body>
         
@@ -34,4 +35,5 @@ const Logo = styled.h1`
     margin: 180px 0 40px 0;
     font-size: 50px;
 `;
+
 export default LandingPage;

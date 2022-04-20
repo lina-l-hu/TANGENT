@@ -35,16 +35,16 @@ import { GlobalContext } from "../GlobalContext";
 const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, link, format, userPoints}) => {
     
     // const [ savedState, dispatch ] = useReducer(reducer, initialState);
-    const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
+    const { state: { currentUser, currentUserStatus} } = useContext(CurrentUserContext);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
 
-
+    // const initialSaveStatus = (loadedBookmarks.some((point) => point === _id));
     const initialSaveStatus = (userPoints.some((point) => point === _id));
     const [ saved, setSaved ] = useState(initialSaveStatus);
 
     
     const toggleSave = () => {
-        
+        setSaved(!saved);
         //save
         if (!saved) {
             fetch(`/users/bookmark-point`, {
@@ -60,7 +60,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                     console.log("saved", data)
                   if (data.success === true) {
                     setSaved(true);
-                    setChangeCount(changeCount => changeCount+1);
+                    setChangeCount(changeCount+1);
                   }
                 })
                 .catch((err) => {
@@ -82,7 +82,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                     console.log("unsaved", data)
                   if (data.success === true) {
                     setSaved(false);
-                    setChangeCount(changeCount => changeCount+1);
+                    setChangeCount(changeCount+1);
                   }
                 })
                 .catch((err) => {

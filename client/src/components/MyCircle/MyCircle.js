@@ -5,6 +5,7 @@ import UserPreview from "./UserPreview";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
 import ButtonLoadingComponent from "../GeneralPageComponents/ButtonLoadingComponent";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     circle: null,
@@ -34,6 +35,7 @@ const reducer = (state, action) => {
 const MyCircle = () => {
     const { state: { currentUser, currentUserStatus} } = useContext(CurrentUserContext);
     const [ state, dispatch ] = useReducer(reducer, initialState);
+    const { changeCount } = useContext(GlobalContext);
 
     useEffect(() => {
 
@@ -78,7 +80,7 @@ const MyCircle = () => {
             })
         })
     }
-    }, [currentUser])
+    }, [currentUser, changeCount])
 
     if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
@@ -94,7 +96,7 @@ const MyCircle = () => {
                 ) : (
                     <>
                     {state.circle.map((friend) => 
-                        <UserPreview key={friend._id} _id={friend._id} username={friend.username} tagline={friend.tagline} imgSrc={friend.avatar}/>
+                        <UserPreview key={friend._id} circle={currentUser.circle} _id={friend._id} username={friend.username} tagline={friend.tagline} imgSrc={friend.avatar}/>
                     )}
                     </>
                 )}

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useReducer, useContext, useState } from "react";
+import { useEffect, useReducer, useContext, useState, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import Textbox from "./Textbox";
@@ -52,7 +52,16 @@ const Tangent = () => {
     const { changeCount, setChangeCount } = useContext(GlobalContext);
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
+    const messagesEndRef = useRef(null);
 
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+  
+    useEffect(() => {
+      scrollToBottom()
+    }, [changeCount]);
+  
 
     useEffect(() => {
 
@@ -106,6 +115,7 @@ const Tangent = () => {
         });
     }, [changeCount])
 
+
     if (state.status === "loading" || currentUserStatus === "loading") {
         return <PageWrapper>
             <LoadingComponent />
@@ -130,7 +140,7 @@ const Tangent = () => {
                         //find user associated with this message by id
                         const user = state.users.find((user) => user._id === post.userId);
                         if (post.text) {
-                            return <Message key={post._id} text={post.text} avatarImgSrc={user.avatar} username={user.username} 
+                            return <Message key={post._id} userId={user._id} text={post.text} avatarImgSrc={user.avatar} username={user.username} 
                             timestamp={post.timestamp}/>
                         }
                         else {
@@ -145,6 +155,7 @@ const Tangent = () => {
                         }
                     })}
                 </Messages>
+                <div ref={messagesEndRef} />
                 <Spacer></Spacer>
             </Body>
                 <Textbox currentTangentId={tangentId} currentUserId={currentUser._id} />

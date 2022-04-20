@@ -2,6 +2,8 @@
 
 const express = require("express");
 const morgan = require("morgan");
+const cors = require('cors');
+
 
 //import handlers
 const { getPointSuggestions } = require("./handlers/getPointSuggestions");
@@ -11,6 +13,7 @@ const { getTangent, getPointsInTangent, getMostPopularTangent,
 const { getUser, getMultipleUsers, getUserTangents, getUserPoints, getUserCircle, 
     addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
 const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
+const { authenticateUser } = require("./handlers/authenticationHandler");
 
 //server port
 const PORT = 8000;
@@ -27,6 +30,8 @@ express()
     .use(morgan("tiny"))
     .use(express.json())
     .use(express.static("public"))
+    .use(cors())
+    .use('/login', authenticateUser)
 
     //point endpoints
     .get("/point-suggestions", getPointSuggestions)
@@ -62,7 +67,6 @@ express()
     .patch("/users/add-user-to-circle", addUserToCircle)
     .patch("/users/remove-user-from-circle", removeUserFromCircle)
     
-    //M figure out how to do with auth0 too? 
     .post("/users/add-user", addUser)
 
     //catch all endpoint

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import Avatar from "../GeneralPageComponents/Avatar";
 import ToggleInCircleButton from "../Profile/ToggleInCircleButton";
 
-const UserPreview = ({_id, imgSrc, username, tagline}) => {
+const UserPreview = ({circle, _id, imgSrc, username, tagline}) => {
     return (
         <Wrapper>
             <NavLink to={`/profile/${_id}`}>
@@ -21,7 +21,7 @@ const UserPreview = ({_id, imgSrc, username, tagline}) => {
                 </Text>
             </NavLink>
             <ButtonDiv>
-                <ToggleInCircleButton friendId={_id}/>
+                <ToggleInCircleButton circle={circle} friendId={_id}/>
             </ButtonDiv>
         </Wrapper>
     )

@@ -5,6 +5,7 @@ import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import TangentPreview from "../Tangent/TangentPreview";
 import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     tangents: null, 
@@ -89,7 +90,7 @@ const reducer = (state, action) => {
 const MyTangents = () => {
 
     const { state: { currentUser, currentUserStatus } } = useContext(CurrentUserContext);
-
+    const { changeCount } = useContext(GlobalContext);
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     //fetch function to get the list 
@@ -245,13 +246,19 @@ const MyTangents = () => {
             }
         })();
 
-    }, [currentUser]);
+    }, [currentUser, changeCount]);
 
 
     if (currentUserStatus === "loading" || state.pointsStatus === "loading" || state.usersStatus === "loading") {
         return <PageWrapper>
             <LoadingComponent />
         </PageWrapper>
+    }
+
+    if (!state.tangents) {
+        return <PageWrapper>
+            <NoFriends>Add friends to your circle to see some action!</NoFriends>
+            </PageWrapper>
     }
 
     return (
@@ -283,6 +290,17 @@ const MyTangents = () => {
         </PageWrapper>
     )
 }
+
+const NoFriends = styled.div`
+    display: flex;
+    justify-content: center;
+    margin: 30x auto;
+    font-family: var(--font-subheading);
+    color: white;
+    font-size: 20px;
+    padding: 30px;
+    font-style: italic;
+`;
 
 const Wrapper = styled.div`
     padding: 25px 0;

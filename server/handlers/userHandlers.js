@@ -255,7 +255,7 @@ const addUser = async (req, res) => {
         const existingUser = await db.collection("users").findOne({email: email});
         
         if (existingUser) {
-            return res.status(400).json({status: 400, message: "User already registered with this email.", data: req.body});
+            return res.status(400).json({status: 400, message: "User already registered with this email.", data: email});
         }
         
         const usernameTaken = await db.collection("users").findOne({username: username});
@@ -455,6 +455,7 @@ const addUserToCircle = async (req, res) => {
 //remove a user from the given user's circle (i.e. unfriend)
 const removeUserFromCircle = async (req, res) => {
     const { userId, friendId } = req.body;
+    console.log("user, friend", userId, friendId);
 
     if (!userId || !friendId) {
         return res.status(400).json({status: 400, message: "Bad request - user ID or friend ID missing."});
@@ -477,9 +478,11 @@ const removeUserFromCircle = async (req, res) => {
             return res.status(400).json({status: 400, message: "User already not in Circle!", data: req.body});
         }
 
-        const updatedCircle = user.points.filter((friend) => friend._id !== friendId);
+        console.log("circle before update", user.circle)
+        const updatedCircle = user.circle.filter((friend) => friend !== friendId);
         const update = await db.collection("users").updateOne({_id: userId} , { $set: {circle: updatedCircle} });
-
+        console.log("updatedCircle", updatedCircle);
+        console.log("update", update);
         if (update.matchedCount !== 1) {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
         }

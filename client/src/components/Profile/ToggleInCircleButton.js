@@ -1,15 +1,19 @@
 import styled from "styled-components";
 import { useState, useContext } from "react";
 import { CurrentUserContext } from "./CurrentUserContext";
+import { GlobalContext } from "../GlobalContext";
 
-const ToggleInCircleButton = ({friendId, format}) => {
+const ToggleInCircleButton = ({circle, friendId, format}) => {
 
+    console.log("circle, firneId", circle, friendId);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
-
-    const [ inCircle, setInCircle ] = useState(currentUser.circle.some((friend) => friend === friendId));
+    const { changeCount, setChangeCount } = useContext(GlobalContext);
+    const initialFriendStatus = (circle.some((friend) => friend === friendId));
+    const [ inCircle, setInCircle ] = useState(initialFriendStatus);
     
     const toggleInCircle = () => {
-
+        setInCircle(!inCircle);
+        
         if (!inCircle) {
             fetch(`/users/add-user-to-circle`, {
             method: "PATCH",
@@ -24,6 +28,7 @@ const ToggleInCircleButton = ({friendId, format}) => {
                 console.log("added friend", data)
               if (data.success === true) {
                 setInCircle(true);
+                setChangeCount(changeCount+1);
               }
             })
             .catch((err) => {
@@ -44,6 +49,7 @@ const ToggleInCircleButton = ({friendId, format}) => {
                     console.log("removed friend", data)
                   if (data.success === true) {
                     setInCircle(false);
+                    setChangeCount(changeCount+1);
                   }
                 })
                 .catch((err) => {
@@ -71,6 +77,10 @@ const Wrapper = styled.div`
         padding: 5px;
         border-radius: 15px;
         width: ${props => (props.large) ? "300px" : "110px"};
+    
+        &:hover {
+            color: var(--color-highlight);
+        }
     }
 
     .isFriend {

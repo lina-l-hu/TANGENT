@@ -22,7 +22,7 @@ import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
 function App() {
 
-  const { token, setToken } = useContext(CurrentUserContext);
+  const { token, actions: {setToken} } = useContext(CurrentUserContext);
 
   // if (!token) {
   //   return 
@@ -36,7 +36,7 @@ function App() {
       <BrowserRouter>
 
       {(!token) ? (
-        <LandingPage setToken={setToken} />
+        <LandingPage />
 
       ) : (
 

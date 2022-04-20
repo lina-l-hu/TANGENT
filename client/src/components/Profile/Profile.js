@@ -9,6 +9,7 @@ import PointPreview from "../PointComponents/PointPreview";
 import { CurrentUserContext } from "./CurrentUserContext";
 import ToggleInCircleButton from "./ToggleInCircleButton";
 import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
+import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
     profile: null, 
@@ -77,6 +78,7 @@ const reducer = (state, action) => {
 const Profile = () => {
 
     const { userId } = useParams();
+    const { changeCount } = useContext(GlobalContext);
     console.log("params", userId)
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
@@ -235,7 +237,7 @@ const Profile = () => {
                 fetchBookmarkedPoints();
         })();
 
-    }, [currentUser]);
+    }, [currentUser, changeCount]);
 
     let isCurrentUser = false;
     let isFriend = false;
@@ -258,13 +260,9 @@ const Profile = () => {
             <LoadingComponent/>
         </PageWrapper>
     }
-
-//show add friend button
-//show gear icon if current user page
     
     return (
         <PageWrapper>
-            {/* <Header>{(isCurrentUser) ? "me" : state.profile.name}</Header> */}
             <Body>
             <ProfileHeader isCurrentUser={(isCurrentUser)} username={state.profile.username} tagline={state.profile.tagline} status={state.profileStatus}/>
             
@@ -309,7 +307,9 @@ const Profile = () => {
             )}  
             </> 
             ) : (
-                <ToggleInCircleButton friendId={state.profile._id} format="large"/>
+                <FriendButtonDiv>
+                    <ToggleInCircleButton circle={currentUser.circle} friendId={state.profile._id} format="large"/>
+                </FriendButtonDiv>
             )
         }     
         <Spacer></Spacer>
@@ -317,6 +317,11 @@ const Profile = () => {
         </PageWrapper>
     )
 }
+
+const FriendButtonDiv = styled.div`
+    display: flex;
+    justify-content: center;
+`;
 
 const Body = styled.div`
     overflow: scroll;

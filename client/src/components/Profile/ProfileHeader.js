@@ -1,22 +1,35 @@
 import styled from "styled-components";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "./CurrentUserContext";
 import Avatar from "../GeneralPageComponents/Avatar";
-import { useAuth0 } from "@auth0/auth0-react";
 
 const ProfileHeader = ({isCurrentUser, username, status, avatarImgSrc, tagline}) => {
 
-    // const { user, isLoading, loading } = useAuth0;
-    // console.log("user in header", user)
+    const navigate = useNavigate();
 
-    const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
+    const { state: { currentUser, currentUserStatus}, 
+    actions: {setToken, setSignedInUID }} = useContext(CurrentUserContext);
+
+    const handleSignout = () => {
+        //clear the user token and the saved user id from local storage
+        setToken(null);
+        setSignedInUID(null);
+
+        //redirect the user back to the landing login page
+        navigate("/");
+    }
 
     //only render if not loading
     return (
         <Wrapper>
-            {/* {( status === "idle" && !isLoading && !loading && */}
             {( currentUserStatus === "idle" && 
             <>
+            {(isCurrentUser && 
+            <SignoutDiv>
+                <button onClick={handleSignout}>sign out</button>
+            </SignoutDiv>
+            )}
             <Avatar avatarImgSrc={avatarImgSrc} userLetter={username.charAt(0).toUpperCase()} format="large" />
             <h3>{username}</h3>
             <p>{tagline}</p>
@@ -38,6 +51,21 @@ const Wrapper = styled.div`
 
     * {
         margin: 7px 0;
+    }
+`;
+
+const SignoutDiv = styled.button`
+    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    background-color: transparent;
+    
+    button {
+        background-color: var(--color-secondary-transparent);
+        padding: 10px;
+        margin-right: 20px;
+        margin-top: 0;
     }
 `;
 

@@ -18,6 +18,9 @@ const initialState = {
     users: null, 
     usersStatus: "loading", 
     usersError: null,
+    pointsInTangents: null, 
+    pointsInTangentsStatus: "loading",
+    pointsInTangentsError: null
 }
 
 const reducer = (state, action) => {
@@ -39,7 +42,6 @@ const reducer = (state, action) => {
         }
 
         case ("receive-tangents-from-server"): {
-            console.log("state", state, "action", action);
             return {
                 ...state, 
                 tangents: action.tangents, 
@@ -71,6 +73,23 @@ const reducer = (state, action) => {
             }
         }
 
+        case ("receive-points-in-tangents-from-server"): {
+            console.log("here,", state, action);
+            return {
+                ...state, 
+                pointsInTangents: action.pointsInTangents, 
+                pointsInTangentsStatus: "idle", 
+            }
+        }
+
+        case ("failure-loading-points-in-tangents-from-server"): {
+            return {
+                ...state,
+                pointsInTangentsStatus: "failed",
+                pointsInTangentsError: action.error,
+            }
+        }
+
         default : {
             return {
                 ...state,
@@ -90,11 +109,13 @@ const PointDetails = () => {
     // console.log("statuses", state.pointStatus, state.tangentsStatus, state.usersStatus);
 
     //fetch function to get point
-    const fetchPoint = async () => {
+    const fetchPoints = async (points) => {
 
         if (!pointId || pointId === undefined) {
             return;
         }
+
+        const searchArray = (points) ? (points) : pointId;
 
         console.log("fetching point")
         try {
@@ -102,25 +123,45 @@ const PointDetails = () => {
                 method: "GET", 
                 headers: {
                     "Content-Type": "application/json",
-                    "pointids": `${pointId}`
+                    "pointids": `${searchArray}`
                 },
             })
 
             const data = await response.json();
             if (data.status === 200) {
                 console.log(data)
-                dispatch({
-                    type: "receive-point-from-server",
-                    point: data.data[0]
-                })
-                return data.data[0];
+
+                if (points) {
+                    dispatch({
+                    type: "receive-points-in-tangents-from-server",
+                    pointsInTangents: data.data
+                    })
+                }
+                else {
+                    dispatch({
+                        type: "receive-point-from-server",
+                        point: data.data[0]
+                    })
+                }
+                
+                return data.data;
             }
-            else (
-                dispatch ({
-                    type: "failure-loading-point-from-server",
-                    error: data.message
-                })
-            )
+            else {
+                if (points) {
+                    dispatch({
+                        type: "failure-loading-points-in-tangents-from-server",
+                        error: data.message
+                    })
+                    
+                }
+                else {
+                    dispatch ({
+                        type: "failure-loading-point-from-server",
+                        error: data.message
+                    })
+                }
+               
+            }
             return [];
         }
 
@@ -134,6 +175,8 @@ const PointDetails = () => {
 
     //fetch the latest post for each Tangent that mentions the Point
     const fetchLatestTangentPosts = async (tangentIds) => {
+
+        console.log("fetching latest tangentposts")
         try {
             const response = await fetch("/tangents/latest-posts", {
                 method: "GET", 
@@ -171,6 +214,8 @@ const PointDetails = () => {
 
     //fetch users to get their avatar and username info
     const fetchUsers = async (userIdArray) => {
+
+        console.log("users")
         try {
             const response = await fetch("/users/get-users", {
                 method: "GET", 
@@ -210,10 +255,10 @@ const PointDetails = () => {
         (async () => {
             
             //first fetch to get the Point
-            const point = await fetchPoint();
+            const point = await fetchPoints();
             console.log("point", point);
 
-            if (point.mentionedIn.length === 0) {
+            if (point[0].mentionedIn.length === 0) {
 
                 dispatch({
                     type: "receive-tangents-from-server",
@@ -226,20 +271,27 @@ const PointDetails = () => {
             }
             else {
              //second fetch to get the latest posts of every tangent in the Point mentionedIn array
-                const tangents = await fetchLatestTangentPosts(point.mentionedIn);
+                const tangents = await fetchLatestTangentPosts(point[0].mentionedIn);
                 console.log("tangents in async", tangents);
 
                 let usersInLatestPosts = [];
+                let pointsInLatestPosts = [];
                 tangents.forEach((post) => {
                     usersInLatestPosts.push(post.userId);
+                    
+                    if (Object.keys(post).indexOf("pointId") !== -1) {
+                        pointsInLatestPosts.push(post.pointId);
+                    }
                 });
 
                 const users = [...new Set(usersInLatestPosts)];
                 console.log("usersin", users);
 
+                const pointsInPosts = [...new Set(pointsInLatestPosts)];
+                console.log("pointsinposts", pointsInPosts)
+                //third fetch to get all the users in the tangents array fetched above
                 if (users.length > 0) {
                     console.log("fetching users");
-                    //third fetch to get all the users in the tangents array fetched above
                     fetchUsers(users);
                 }
                 else {
@@ -248,11 +300,25 @@ const PointDetails = () => {
                         users: []
                     })
                 }
+
+                //final fetch to get any other points that are mentioned in the tangent posts above
+                //does not need result from users fetch
+                if (pointsInPosts.length > 0) {
+                    console.log("fetching tangents' points");
+                    fetchPoints(pointsInPosts);
+                }
+                else {
+                    dispatch({
+                        type: "receive-points-in-tangents-from-server", 
+                        pointsInTangents: []
+                    })
+                }
             }
             })();
     }, [currentUser, changeCount])
    
-    if (currentUserStatus !== "idle" || state.pointStatus !== "idle" || state.tangentsStatus !== "idle" || state.usersStatus !== "idle") {
+    if (currentUserStatus !== "idle" || state.pointStatus !== "idle" || state.tangentsStatus !== "idle" 
+    || state.usersStatus !== "idle" || state.pointsInTangentsStatus !== "idle") {
         return (
             <PageWrapper>
                 <LoadingComponent />
@@ -271,15 +337,12 @@ const PointDetails = () => {
             
             {state.tangents.map((post) => {
                 let text = "";
-                // console.log("here");
                 
-                // if (Object.keys(post).indexOf("pointId") > -1) {
-                //     const point = state.points.find((item) => item._id === post.pointId);
-                //     text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
-                // }
                 if (Object.keys(post).indexOf("pointId") > -1) {
-                    text = "Last post in this Tangent was a different Point! Peek the convo to see how your friends moved from this Point to that one!";
+                    const point = state.points.find((item) => item._id === post.pointId);
+                    text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
                 }
+                
                 else {
                     text = post.text;
                 }

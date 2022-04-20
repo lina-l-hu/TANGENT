@@ -1,7 +1,7 @@
 import { createContext, useEffect, useReducer, useState, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { GlobalContext } from "../GlobalContext";
-import useToken from "../../UseToken.hook";
+import usePersistedState from "../../usePersistedState.hook";
 
 export const CurrentUserContext = createContext(null);
 
@@ -46,21 +46,24 @@ export const CurrentUserProvider = ({children}) => {
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
-    const { token, setToken } = useToken("");
+    const [ token, setToken] = usePersistedState(null, "userToken");
+    const [ signedInEmail, setSignedInEmail ] = useState(null);
+    const [ signedInUID, setSignedInUID ] = usePersistedState("", "signed-in-user");
+    const [ loadedCircle, setLoadedCircle ] = useState([]);
+    const [ loadedBookmarks, setLoadedBookmarks ] = useState([]);
 
     useEffect(() => {
-        // if (!isLoading) {
+        
+        if (token) {
 
-        //     dispatch({ 
-        //         type: "logged-in",
-        //         profile: user,
-        //     })
+            console.log("signed in emial", signedInEmail);
 
             fetch("/users/get-user", {
                 method: "GET", 
                 headers: {
                     "Content-Type": "application/json",
-                    "email": `lina.l.hu@gmail.com`
+                    "email": `${signedInEmail}`,
+                    "userid": `${signedInUID}`
                    
                 },
             })
@@ -68,10 +71,14 @@ export const CurrentUserProvider = ({children}) => {
             .then((data) => {
                 console.log("profile of current user", data)
                 if (data.status === 200) {
+                    setSignedInUID(data.data._id);
                     dispatch({
                     type: "receive-profile-data-from-server",
                     profile: data.data
                     })
+
+                    setLoadedBookmarks(data.data.points);
+                    setLoadedCircle(data.data.circle);
                 }
                 else (
                     dispatch ({
@@ -86,14 +93,17 @@ export const CurrentUserProvider = ({children}) => {
                     error: err
                 })
             })
-        // }
-    }, [changeCount])
+        }
+    }, [token, changeCount])
         
 
     //store userId in session storage with persisted state hook! 
 
 
-    return <CurrentUserContext.Provider value={{state}}>
+    return <CurrentUserContext.Provider value={{state, token, signedInEmail, signedInUID,  
+                                                loadedBookmarks, loadedCircle,
+                                                actions: { setToken, setSignedInEmail, setSignedInUID, 
+                                                setLoadedBookmarks, setLoadedCircle }}}>
         {children}
         </CurrentUserContext.Provider>
 }

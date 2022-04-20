@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { useState, useReducer } from "react";
+import { useState, useReducer, useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
 const initialState = {
     username: null, 
@@ -78,19 +79,104 @@ const reducer = (state, action) => {
             }
         }
 
+        case ("form-error") : {
+            return {
+                ...state, 
+                error: action.error
+            }
+        }
+
+        case ("reset-error") : {
+            return {
+                ...state, 
+                error: null
+            }
+        }
+
     }
 }
 
 const SignupComponent = ({setSignupMode}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
-
+    // const {signedInUID, action : {setSignedInUID}} = useContext(CurrentUserContext);
+    
     const handleClick = () => {
         setSignupMode(false);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        
+        //validation
 
+        if (state.username.length < 1 || state.name.length < 1 || !state.username || !state.name 
+            || state.password.length < 1 || !state.password) {
+            dispatch({
+                type: "form-error",
+                error: "Name, username, and password are required and must have at least one character."
+            })
+            return;
+        }
+
+        if (state.email.indexOf("@") < 1 || state.email.indexOf("@") > (state.email.length - 2) || 
+        state.email.length < 3 || !state.email || state.email === "") {
+            dispatch({
+                type: "form-error",
+                error: "Invalid email."
+            })
+            return;
+        }
+
+        const newUser = {
+            username: state.username,
+            name: state.name, 
+            email: state.email, 
+            avatar: state.avatar, 
+            tagline: state.tagline, 
+            password: state.password
+        }
+
+        fetch("/users/add-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(newUser)
+            
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                console.log("post retun", data)
+                if (data.status === 200) {
+                    dispatch ({
+                        type: "user-created"
+                    })
+                    // setSignedInUID(data.data);
+                    dispatch({
+                        type: "form-error",
+                        error: "You are all signed up! Please sign in with the above link!"
+                    })
+                    // navigate(`/`);
+
+                }
+                else {
+                        dispatch({
+                            type: "failed-post",
+                            error: data.message
+                        })
+                }
+            })
+            .catch((err) => {
+                dispatch({
+                    type: "failed-post",
+                    error: "Error during post to server -- please try again."
+                })
+               
+            })
     }
 
 
@@ -101,60 +187,85 @@ const SignupComponent = ({setSignupMode}) => {
                     <input
                     type="text" 
                     placeholder="name"
-                    onChange={(e) => dispatch ({
+                    onChange={(e) => { dispatch ({
                         type: "set-name", 
                         name: e.target.value
-                    }) }
+                    }) 
+                        dispatch ({
+                            type: "reset-error"
+                        })
+                    }}
                     />
 
                     <input
                     type="text" 
                     placeholder="username"
-                    onChange={(e) => dispatch ({
+                    onChange={(e) => { dispatch ({
                         type: "set-username", 
                         username: e.target.value
-                    }) }
+                    }) 
+                    dispatch ({
+                        type: "reset-error"
+                    })
+                }}
                     />
  
                     <input
                     type="text" 
                     placeholder="email"
-                    onChange={(e) => dispatch ({
+                    onChange={(e) => { dispatch ({
                         type: "set-email", 
                         email: e.target.value
-                    }) }
+                    }) 
+                    dispatch ({
+                        type: "reset-error"
+                    })
+                }}
                     />
 
                     <input
                     type="password" 
                     placeholder="password"
-                    onChange={(e) => dispatch ({
+                    onChange={(e) => { dispatch ({
                         type: "set-password", 
                         password: e.target.value
-                    }) }
+                    }) 
+                    dispatch ({
+                        type: "reset-error"
+                    })
+                }}
                     />
               
                     <input
                     type="text" 
                     placeholder="your tagline -- e.g. new wave over old wave"
-                    onChange={(e) => dispatch ({
+                    onChange={(e) => { dispatch ({
                         type: "set-tagline", 
                         tagline: e.target.value
-                    }) }
+                    }) 
+                    dispatch ({
+                        type: "reset-error"
+                    })
+                }}
                     />
 
                 <label>upload profile picture 
                     <input className="file-input"
                     type="file" 
-                    onChange={(e) => dispatch ({
+                    onChange={(e) => { dispatch ({
                         type: "set-image", 
                         image: e.target.files[0]
-                    }) }
+                    }) 
+                    dispatch ({
+                        type: "reset-error"
+                    })
+                }}
                     />
                 </label>
             <button>connect</button>
             </form>
             <button className="link" onClick={handleClick}>already in our circle? sign in</button>
+            <ErrorMsg><p>{state.error}</p></ErrorMsg>
         </Wrapper>
     )
 }
@@ -191,12 +302,17 @@ const Wrapper = styled.div`
     
 `;
 
-const StyledLink = styled(NavLink)`
-    font-family: var(--font-body);
-    text-align: right;
-    margin-top: 20px;
-    font-size: 14px;
-    
-`;
+const ErrorMsg = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 30px;
+
+    p {
+        font-size: 12px;
+        font-style: italic;
+    }
+
+`
 
 export default SignupComponent;

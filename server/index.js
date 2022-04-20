@@ -2,6 +2,8 @@
 
 const express = require("express");
 const morgan = require("morgan");
+const cors = require('cors');
+
 
 //import handlers
 const { getPointSuggestions } = require("./handlers/getPointSuggestions");
@@ -28,6 +30,7 @@ express()
     .use(morgan("tiny"))
     .use(express.json())
     .use(express.static("public"))
+    .use(cors())
     .use('/login', authenticateUser)
 
     //point endpoints
@@ -64,7 +67,6 @@ express()
     .patch("/users/add-user-to-circle", addUserToCircle)
     .patch("/users/remove-user-from-circle", removeUserFromCircle)
     
-    //M figure out how to do with auth0 too? 
     .post("/users/add-user", addUser)
 
     //catch all endpoint

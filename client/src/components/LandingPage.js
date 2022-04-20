@@ -5,7 +5,7 @@ import LoginComponent from "./Login/LoginComponent";
 import SignupComponent from "./Login/SignupComponent";
 
 
-const LandingPage = ({setToken}) => {
+const LandingPage = () => {
 
     const [ signupMode, setSignupMode ] = useState(false);
     
@@ -14,9 +14,9 @@ const LandingPage = ({setToken}) => {
         <Body>
             <Logo>tangent</Logo>
             {(!signupMode) ? (
-                <LoginComponent setToken={setToken} setSignupMode={setSignupMode}/>
+                <LoginComponent  setSignupMode={setSignupMode}/>
             ) : (
-                <SignupComponent setToken={setToken} setSignupMode={setSignupMode}/>
+                <SignupComponent  setSignupMode={setSignupMode}/>
             )}
         </Body>
         

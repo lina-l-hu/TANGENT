@@ -10,19 +10,21 @@ const NavigationFooter = () => {
     return (
         <Wrapper>
             <NavLink to="/feed">
-                <FaRegNewspaper className="icon"/>
+                <FaRegNewspaper 
+                className={(window.location.pathname=== "/feed") ? "icon selected" : "icon"}/>
             </NavLink>
 
             <NavLink to="/my-circle">
-                <FaUserFriends className="icon"/>
+                <FaUserFriends 
+                className={(window.location.pathname === "/my-circle") ? "icon selected" : "icon"}/>
             </NavLink>
             
             <NavLink to="/tangents">
-                <FaRegComment className="icon"/> 
+                <FaRegComment className={(window.location.pathname === "/tangents") ? "icon selected" : "icon"}/>
             </NavLink>
            
             <NavLink to="/search">
-                <FaSearch className="icon"/>
+                <FaSearch className={(window.location.pathname === "/search") ? "icon selected" : "icon"}/>
             </NavLink>
 
             {(currentUserStatus === "idle") ? (
@@ -57,6 +59,11 @@ const Wrapper = styled.div`
             color: #7A729F;
         }
     }
+
+    .selected { 
+        color: #7A729F;
+    }
+
 `;
 
 export default NavigationFooter;

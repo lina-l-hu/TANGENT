@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
+import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
 async function loginUser(credentials) {
     return fetch('http://localhost:8000/login', {
@@ -14,11 +15,14 @@ async function loginUser(credentials) {
       .then(data => data.json())
    }
 
-export default function LoginComponent ({setToken, setSignupMode}) {
+export default function LoginComponent ({setSignupMode}) {
     const navigate = useNavigate();
 
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
+    const [ error, setError ] = useState(null);
+
+    const { token, actions: {setToken, setSignedInEmail} } = useContext(CurrentUserContext);
 
     const handleClick = () => {
         setSignupMode(true);
@@ -27,13 +31,27 @@ export default function LoginComponent ({setToken, setSignupMode}) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = await loginUser({
-          email,
-          password
-        });
-        console.log("toke", token)
-        setToken(token);
-        navigate("/feed");
+        setSignedInEmail(email);
+        
+        if (password === "" || !password || 
+        email.indexOf("@") < 1 || email.indexOf("@") > (email.length - 2) || 
+        email.length < 3 || !email || email === "") {
+            setError("You must enter a valid email and password with more than 3 characters each.")
+        }
+        else {
+            
+            const token = await loginUser({ email, password});
+            if (token.status) {
+                console.log("not authenticated");
+                setError(token.message);
+            }
+            else {
+                setToken(token);
+                navigate("/feed");   
+            }
+            console.log("toke", token)
+        }
+        
 
     }
 
@@ -42,19 +60,26 @@ export default function LoginComponent ({setToken, setSignupMode}) {
             <p>please log in</p>
             <form onSubmit={handleSubmit}>
             <input
-              type="email"
+              type="text"
               placeholder="email"   
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError(null);
+                }}
             />
             <input
               type="password"
               placeholder="password"   
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
             />
             <button>enter</button>
             </form>
             {/* <StyledLink to="/signup">or signup here</StyledLink> */}
             <button className="link" onClick={handleClick}>or signup here</button>
+            <ErrorMsg><p>{error}</p></ErrorMsg>
         </Wrapper>
     )
 }
@@ -87,6 +112,19 @@ const Wrapper = styled.div`
         background-color: transparent;
     }
 `;
+
+const ErrorMsg = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 30px;
+
+    p {
+        font-size: 12px;
+        font-style: italic;
+    }
+
+`
 
 // const StyledLink = styled(NavLink)`
 //     font-family: var(--font-body);

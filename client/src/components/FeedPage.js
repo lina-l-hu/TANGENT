@@ -6,6 +6,7 @@ import TangentPreview from "./Tangent/TangentPreview";
 import PointPreview from "./PointComponents/PointPreview";
 import { CurrentUserContext } from "./Profile/CurrentUserContext";
 import LoadingComponent from "./GeneralPageComponents/LoadingComponent";
+import { GlobalContext } from "./GlobalContext";
 
 const initialState = {
     status: "loading",
@@ -41,7 +42,7 @@ const reducer = (state, action) => {
 const FeedPage = () => {
 
     const { state: { currentUser, currentUserStatus } } = useContext(CurrentUserContext);
-    
+    const { changeCount } = useContext(GlobalContext);
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     useEffect(() => {
@@ -96,7 +97,7 @@ const FeedPage = () => {
             })
         });
     }
-    }, [currentUser])
+    }, [currentUser, changeCount])
 
     if (state.status === "loading") {
         return <PageWrapper>
@@ -104,9 +105,14 @@ const FeedPage = () => {
         </PageWrapper>
     }
 
+    if (state.popularPoint.length === 0 || state.popularTangent.length === 0 ) {
+        return <PageWrapper>
+            <NoFriends>Add friends to your circle to see some action!</NoFriends>
+            </PageWrapper>
+    }
+
     return (
     <PageWrapper>
-        {/* <Header>feed</Header> */}
         <Body>
             <MostPopularPoint className="section">
                 <SectionTitle>Talk of the day</SectionTitle>
@@ -118,7 +124,7 @@ const FeedPage = () => {
             <MostPopularTangent className="section">
                 <SectionTitle>Major discussions</SectionTitle>
                 <TangentPreview tangentId={state.popularTangent.tangentId} timestamp={state.popularTangent.timestamp} 
-                username={state.popularTangent.username} avatar={state.popularTangent} text={state.popularTangent.text}/>
+                username={state.popularTangent.username} imgSrc={state.popularTangent.avatar} text={state.popularTangent.text}/>
             </MostPopularTangent>
 
             <NewTangents className="section">
@@ -126,7 +132,7 @@ const FeedPage = () => {
                 {state.recentTangents.map((post) => {
                     console.log("tangentId HERE", post.tangentId);
                     return <TangentPreview key={post._id} tangentId={post.tangentId} timestamp={post.timestamp}
-                    username={post.username} avatar={post.avatar} text={post.text}/>
+                    username={post.username} imgSrc={post.avatar} text={post.text}/>
                 })}
             </NewTangents>
 
@@ -137,6 +143,17 @@ const FeedPage = () => {
     )
 }
 
+const NoFriends = styled.div`
+    display: flex;
+    justify-content: center;
+    margin: 30x auto;
+    font-family: var(--font-subheading);
+    color: white;
+    font-size: 20px;
+    padding: 30px;
+    font-style: italic;
+`;
+
 const Body = styled.div`
     overflow: scroll;
 
@@ -144,7 +161,6 @@ const Body = styled.div`
         margin: 30px 0;
         color: white;
     }
-    
 `;
 
 const Spacer = styled.div`

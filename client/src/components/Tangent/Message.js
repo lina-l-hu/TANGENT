@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { useContext } from "react";
+import { NavLink } from "react-router-dom";
 import Avatar from "../GeneralPageComponents/Avatar";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
-const Message = ({text, username, avatarImgSrc, timestamp}) => {
+const Message = ({text, userId, username, avatarImgSrc, timestamp}) => {
 
     const { state: { currentUser, currentUserStatus } } = useContext(CurrentUserContext);
-
     
     if (currentUserStatus === "loading") {
         return <Wrapper></Wrapper>;
@@ -23,9 +23,13 @@ const Message = ({text, username, avatarImgSrc, timestamp}) => {
                     <Text thisUser={true}>{text}</Text>
                     <div>
                         {(avatarImgSrc) ? ( 
+                                <NavLink to={`/profile/${userId}`}>
                                 <Avatar format="small" avatarImgSrc={avatarImgSrc} />
+                                </NavLink>
                             ) : (
+                                <NavLink to={`/profile/${userId}`}>
                                 <Avatar format="small" userLetter={username.charAt(0).toUpperCase()} />
+                                </NavLink>
                             )}
                     </div>
                 </Content>   
@@ -43,9 +47,13 @@ const Message = ({text, username, avatarImgSrc, timestamp}) => {
             <Content thisUser={false}>
                 <div>
                     {(avatarImgSrc) ? ( 
+                        <NavLink to={`/profile/${userId}`}>
                             <Avatar format="small" avatarImgSrc={avatarImgSrc} />
+                            </NavLink>
                         ) : (
+                            <NavLink to={`/profile/${userId}`}>
                             <Avatar format="small" userLetter={username.charAt(0).toUpperCase()} />
+                            </NavLink>
                         )}
                 </div>
             <Text thisUser={false}>{text}</Text>

@@ -28,6 +28,7 @@ const authenticateUser = async (req, res) => {
         }
         
         if (user.password === password) {
+            console.log("sending token")
             res.send({token: 'tangent123'});
         }
         

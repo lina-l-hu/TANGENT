@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { useState, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
+
+//Login component that gets a token from the server for authentication
 
 async function loginUser(credentials) {
     return fetch('http://localhost:8000/login', {
@@ -28,11 +30,11 @@ export default function LoginComponent ({setSignupMode}) {
         setSignupMode(true);
     }
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSignedInEmail(email);
         
+        //some validation 
         if (password === "" || !password || 
         email.indexOf("@") < 1 || email.indexOf("@") > (email.length - 2) || 
         email.length < 3 || !email || email === "") {
@@ -42,14 +44,12 @@ export default function LoginComponent ({setSignupMode}) {
             
             const token = await loginUser({ email, password});
             if (token.status) {
-                console.log("not authenticated");
                 setError(token.message);
             }
             else {
                 setToken(token);
                 navigate("/feed");   
             }
-            console.log("toke", token)
         }
         
 
@@ -89,8 +89,6 @@ LoginComponent.propTypes = {
 }
 
 const Wrapper = styled.div`
-    /* margin: 0 auto;
-    margin-top: 300px; */
     background-color: var(--color-secondary-transparent);
     padding: 25px;
     width: 60%;
@@ -123,13 +121,4 @@ const ErrorMsg = styled.div`
         font-size: 12px;
         font-style: italic;
     }
-
 `
-
-// const StyledLink = styled(NavLink)`
-//     font-family: var(--font-body);
-//     text-align: right;
-//     margin-top: 20px;
-//     font-size: 14px;
-    
-// `;

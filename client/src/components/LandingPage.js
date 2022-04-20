@@ -4,7 +4,7 @@ import PageWrapper from "./GeneralPageComponents/PageWrapper"
 import LoginComponent from "./Login/LoginComponent";
 import SignupComponent from "./Login/SignupComponent";
 
-
+//Landing page with a toggle for the Sign In or Signup components
 const LandingPage = () => {
 
     const [ signupMode, setSignupMode ] = useState(false);

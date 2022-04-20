@@ -1,14 +1,14 @@
+//A Tangent, i.e. chat
+
 import styled from "styled-components";
 import { useEffect, useReducer, useContext, useState, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import Textbox from "./Textbox";
 import Message from "./Message";
-import Header from "../GeneralPageComponents/Header";
 import PointPreview from "../PointComponents/PointPreview";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import { GlobalContext } from "../GlobalContext";
-import ErrorModal from "./ErrorModal";
 import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
 
 const initialState = {
@@ -47,7 +47,6 @@ const reducer = (state, action) => {
 const Tangent = () => {
 
     const { tangentId } = useParams();
-    console.log("tangentId", tangentId);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
     
@@ -98,7 +97,6 @@ const Tangent = () => {
                 return response.json();
             }));
         }).then((data) => {
-            console.log("all fetch data", data);
             dispatch({
                 type: "successfully-fetched-all-data",
                 tangentFetchStatus: data[0].status, 
@@ -107,7 +105,6 @@ const Tangent = () => {
                 users: data[2].data
             })
         }).catch((err) => {
-            console.log(err);
             dispatch({
                 type: "failure-fetching-all-data",
                 error: err
@@ -140,7 +137,7 @@ const Tangent = () => {
                         //find user associated with this message by id
                         const user = state.users.find((user) => user._id === post.userId);
                         if (post.text) {
-                            return <Message key={post._id} userId={user._id} text={post.text} avatarImgSrc={user.avatar} username={user.username} 
+                            return <Message key={post._id} userId={user._id} text={post.text} username={user.username} 
                             timestamp={post.timestamp}/>
                         }
                         else {

@@ -1,50 +1,21 @@
 import styled from "styled-components";
-import { useState, useContext, useReducer } from "react";
+import { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import { GlobalContext } from "../GlobalContext";
 
-// const initialState = {
-//     isSaved: isLiked,
-//     error: null, 
-//   }
-
-//   const reducer = (state, action) => {
-//     switch (action.type) {
-//       case ("saved"): 
-//       return {
-//         ...state, 
-//         isSaved: true, 
-//         error: null,
-//       }
-//       case ("unsaved"): 
-//       return {
-//         ...state, 
-//         isSaved: false, 
-//         error: null,
-//       }
-//       case ("failed"): 
-//       return {
-//         ...state,
-//         error: action.error,
-//       }
-//     }
-//   }
-
+//Preview component that displays Point details used on different pages
 const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, link, format, userPoints}) => {
     
-    // const [ savedState, dispatch ] = useReducer(reducer, initialState);
     const { state: { currentUser, currentUserStatus} } = useContext(CurrentUserContext);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
 
-    // const initialSaveStatus = (loadedBookmarks.some((point) => point === _id));
     const initialSaveStatus = (userPoints.some((point) => point === _id));
     const [ saved, setSaved ] = useState(initialSaveStatus);
 
     
     const toggleSave = () => {
-        setSaved(!saved);
         //save
         if (!saved) {
             fetch(`/users/bookmark-point`, {
@@ -57,14 +28,12 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
             })
                 .then(res => res.json())
                 .then(data => {
-                    console.log("saved", data)
                   if (data.success === true) {
                     setSaved(true);
                     setChangeCount(changeCount+1);
                   }
                 })
                 .catch((err) => {
-                    console.log("couldn't save bookmark");
                 })
         }
         //unsave
@@ -79,7 +48,6 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
             })
                 .then(res => res.json())
                 .then(data => {
-                    console.log("unsaved", data)
                   if (data.success === true) {
                     setSaved(false);
                     setChangeCount(changeCount+1);
@@ -93,7 +61,6 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
     }
 
     //two previews, one for short, one for details
-
     if (currentUserStatus === "loading") {
         return <Wrapper></Wrapper>
     }
@@ -169,10 +136,8 @@ const Wrapper = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
     width: 75%;
     margin: 20px auto;
-    /* border: 5px solid var(--color-secondary); */
     background-color: var(--color-secondary-transparent);
     box-shadow: 3px 3px 5px 3px var(--color-secondary);
     color: white;
@@ -199,7 +164,6 @@ const ShortDisplay = styled.div`
     div {
         width: 100%;
         * {
-            /* line-height: 26px; */
             margin: 5px 0;
         }
  

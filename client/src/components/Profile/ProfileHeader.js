@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "./CurrentUserContext";
 import Avatar from "../GeneralPageComponents/Avatar";
 
-const ProfileHeader = ({isCurrentUser, username, status, avatarImgSrc, tagline}) => {
+//Header on profile page
+const ProfileHeader = ({isCurrentUser, username, avatarImgSrc, tagline}) => {
 
     const navigate = useNavigate();
 
-    const { state: { currentUser, currentUserStatus}, 
+    const { state: { currentUserStatus}, 
     actions: {setToken, setSignedInUID }} = useContext(CurrentUserContext);
 
     const handleSignout = () => {

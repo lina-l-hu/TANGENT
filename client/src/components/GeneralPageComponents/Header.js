@@ -1,18 +1,16 @@
 import styled from "styled-components";
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import PageWrapper from "./PageWrapper";
 import { FaArrowLeft } from "react-icons/fa";
-import Avatar from "./Avatar";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import { GlobalContext } from "../GlobalContext";
 
+//Header
 const Header = ({children, titleSize}) => {
 
     const { currentUsername } = useContext(CurrentUserContext);
     const { showNewTangentModal, setShowNewTangentModal } = useContext(GlobalContext);
     const navigate = useNavigate();
-    console.log("show maodal", showNewTangentModal);
     
     if (window.location.pathname.includes('/tangent/')) {
         children = "tangent";

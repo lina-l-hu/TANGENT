@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
+//Avatar image for message and tangent previews
 const Avatar = ({avatarImgSrc, userLetter, format}) => {
-    
-    //if format large, larger width, use props
     
     return (
         <>

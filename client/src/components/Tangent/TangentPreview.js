@@ -1,25 +1,19 @@
+//Preview component for a Tangent -- shows summary of the latest post for that Tangent
+//used on Feed, MyTangents, Point Details pages
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import Avatar from "../GeneralPageComponents/Avatar";
-// import { useAuth0 } from "@auth0/auth0-react";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import { useContext } from "react";
 
-//should we fetch for username and imgSrc here or be passed?!!! 
-//name not used for profile previews, but used for feed and point pages
-
 const TangentPreview = ({tangentId, text, username, imgSrc, timestamp}) => {
     
-    // const { user, isLoading } = useAuth0();
-
-    //make a class for these and point previews so that they animate on click
-    
-    const { state: {currentUser} } = useContext(CurrentUserContext);
-
-    console.log("imgsrc", imgSrc, username);
+    const { state: {currentUser, currentUserStatus} } = useContext(CurrentUserContext);
 
     return (
         <Wrapper>
+        {(currentUserStatus === "idle") &&
+        <>
             <Stamp>{(username) ? `${(currentUser.username === username) ? "me" : username} • ${timestamp}` : timestamp}</Stamp>
             <Content to={`/tangent/${tangentId}`}>
                 <div>
@@ -34,12 +28,13 @@ const TangentPreview = ({tangentId, text, username, imgSrc, timestamp}) => {
                     <p>{text}</p>
                 </TextDiv>
             </Content>
+            </> 
+        }
         </Wrapper>
     )
 }
 
 const Wrapper = styled.div`
-    /* margin: 20px 0; */
 `;
 
 const Content = styled(NavLink)`

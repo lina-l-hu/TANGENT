@@ -49,10 +49,8 @@ const MyCircle = () => {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log("circle", data);
             if (data.status === 200) {
                 if (data.data[0] == null) {
-                    console.log("null array");
                     dispatch({
                         type: "receive-circle-from-server",
                         circle: []

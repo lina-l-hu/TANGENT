@@ -1,3 +1,4 @@
+//Page that lists all tangents for a user
 import styled from "styled-components";
 import { useContext, useReducer, useEffect } from "react";
 import { NavLink } from "react-router-dom";
@@ -106,7 +107,6 @@ const MyTangents = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                 type: "receive-tangents-data-from-server",
                 tangents: data.data
@@ -142,7 +142,6 @@ const MyTangents = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                 type: "receive-points-data-from-server",
                 points: data.data
@@ -178,7 +177,6 @@ const MyTangents = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                     type: "receive-users-data-from-server",
                     users: data.data
@@ -207,7 +205,6 @@ const MyTangents = () => {
         (async () => {
             if (currentUserStatus === "idle") {
                 const tangents = await fetchLatestTangentPosts();
-                console.log("tangents in async", tangents);
 
                 let pointsReferenced = [];
                 let usersInLatestPosts = [];
@@ -221,10 +218,8 @@ const MyTangents = () => {
                 //get rid of duplicates in both arrays
                 const points = [...new Set(pointsReferenced)];
                 const users = [...new Set(usersInLatestPosts)];
-                console.log("usersin", points, users);
 
                 if (points.length > 0) {
-                    console.log("fetching points");
                     fetchPoints(points);
                 }
                 else {
@@ -234,7 +229,6 @@ const MyTangents = () => {
                 }
 
                 if (users.length > 0) {
-                    console.log("fetching users");
                     fetchUsers(users);
                 }
                 else {
@@ -274,13 +268,12 @@ const MyTangents = () => {
                 else {
                     text = post.text;
                 }
-                console.log("state.users", state.users)
                 const user = state.users.find((user) => user._id === post.userId)
                 return (
                     <Wrapper key={post._id} >
                     <h4>{post.tangentName}</h4>
                         <TangentPreview tangentId={post.tangentId} text={text}
-                        imgSrc={user.avatar} username={user.username} timestamp={post.timestamp}/>
+                        username={user.username} timestamp={post.timestamp}/>
                     </Wrapper>
                 )
             })

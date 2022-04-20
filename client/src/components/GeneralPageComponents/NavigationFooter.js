@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { FaRegComment, FaRegUserCircle, FaSearch, FaRegNewspaper, FaUserFriends } from "react-icons/fa";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 
+//footer with navigation links
 const NavigationFooter = () => {
 
     const { state: {currentUser, currentUserStatus} } = useContext(CurrentUserContext);
@@ -23,9 +24,9 @@ const NavigationFooter = () => {
                 <FaRegComment className={(window.location.pathname === "/tangents") ? "icon selected" : "icon"}/>
             </NavLink>
            
-            <NavLink to="/search">
+            {/* <NavLink to="/search">
                 <FaSearch className={(window.location.pathname === "/search") ? "icon selected" : "icon"}/>
-            </NavLink>
+            </NavLink> */}
 
             {(currentUserStatus === "idle") ? (
                 <NavLink to={`/profile/${currentUser._id}`}>

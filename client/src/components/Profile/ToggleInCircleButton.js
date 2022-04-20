@@ -3,9 +3,9 @@ import { useState, useContext } from "react";
 import { CurrentUserContext } from "./CurrentUserContext";
 import { GlobalContext } from "../GlobalContext";
 
+//Button that toggles adding/removing friend from Circle
 const ToggleInCircleButton = ({circle, friendId, format}) => {
 
-    console.log("circle, firneId", circle, friendId);
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
     const initialFriendStatus = (circle.some((friend) => friend === friendId));
@@ -25,7 +25,6 @@ const ToggleInCircleButton = ({circle, friendId, format}) => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("added friend", data)
               if (data.success === true) {
                 setInCircle(true);
                 setChangeCount(changeCount+1);
@@ -46,7 +45,6 @@ const ToggleInCircleButton = ({circle, friendId, format}) => {
             })
                 .then(res => res.json())
                 .then(data => {
-                    console.log("removed friend", data)
                   if (data.success === true) {
                     setInCircle(false);
                     setChangeCount(changeCount+1);

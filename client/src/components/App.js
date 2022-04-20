@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import GlobalStyles from "./GlobalStyles";
 import LandingPage from "./LandingPage";
@@ -10,24 +10,15 @@ import PointsInTangent from "./PointComponents/PointsInTangent";
 import PointDetails from "./PointComponents/PointDetails";
 import MyCircle from "./MyCircle/MyCircle";
 import MyTangents from "./Tangent/MyTangents";
-import moment from 'moment';
 import Search from "./Search";
 import AddTangentModal from "../components/Tangent/AddTangentModal";
 import UserSignup from "./Login/UserSignup";
-import LoginComponent from "./Login/LoginComponent";
-import SignupComponent from "./Login/SignupComponent";
-import NavigationFooter from "./GeneralPageComponents/NavigationFooter";
 import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
 
 function App() {
 
   const { token, actions: {setToken} } = useContext(CurrentUserContext);
-
-  // if (!token) {
-  //   return 
-  //   <SignupComponent setToken={setToken} />
-  // }
 
   return (
     <Main>

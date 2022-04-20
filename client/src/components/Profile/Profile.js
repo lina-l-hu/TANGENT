@@ -1,6 +1,8 @@
+//Profile page displaying user info
+
 import styled from "styled-components";
 import { useState, useContext, useEffect, useReducer } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import ProfileHeader from "./ProfileHeader";
 import ProfileTabs from "./ProfileTabs";
@@ -79,7 +81,6 @@ const Profile = () => {
 
     const { userId } = useParams();
     const { changeCount } = useContext(GlobalContext);
-    console.log("params", userId)
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     const [ tab, setTab ] = useState("tangents");
@@ -101,7 +102,6 @@ const Profile = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                     type: "receive-profile-data-from-server",
                     profile: data.data
@@ -138,7 +138,6 @@ const Profile = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                     type: "receive-bookmarked-points-from-server",
                     points: data.data
@@ -176,7 +175,6 @@ const Profile = () => {
 
             const data = await response.json();
             if (data.status === 200) {
-                console.log(data)
                 dispatch({
                     type: "receive-tangent-points-from-server",
                     points: data.data
@@ -205,7 +203,6 @@ const Profile = () => {
         (async () => {
            
                 const profile = await fetchProfile();
-                console.log("profile in asyn", profile);
 
                 //create array of Points referenced in the user's last posts
                 let pointsReferenced = [];
@@ -215,15 +212,11 @@ const Profile = () => {
                         pointsReferenced.push(post.pointId);
                     }
                 })
-                console.log(pointsReferenced, "points refed");
 
                 //get rid of duplicates in both arrays
                 const points = [...new Set(pointsReferenced)];
                
-                console.log("points uniqe", points);
-
                 if (points.length > 0) {
-                    console.log("fetching points");
                     fetchLatestPostPoints(points);
                 }
                 else {
@@ -231,7 +224,6 @@ const Profile = () => {
                     type: "receive-tangent-points-from-server", 
                     points: []
                 })
-                console.log("here after dispatch empty")
                 }
 
                 fetchBookmarkedPoints();
@@ -255,7 +247,6 @@ const Profile = () => {
     // let sortedLastPosts = state.profile.lastPosts;
 
     if (currentUserStatus === "loading" || state.profileStatus === "loading" ) {
-        console.log("curuserstat", currentUserStatus, "profilestat", state.profileStatus)
         return <PageWrapper>
             <LoadingComponent/>
         </PageWrapper>
@@ -272,18 +263,16 @@ const Profile = () => {
             {( tab === "tangents") && (state.tangentPointsStatus === "idle") &&
                 <>
                 {state.profile.lastPosts.map((post) => {
-                    console.log("HUKLKO lastposts", state.profile.lastPosts);
                     let text = "";
                     if (Object.keys(post).indexOf("pointId") > -1) {
                         const point = state.tangentPoints.find((item) => item._id === post.pointId);
-                        console.log("point in render", point);
                         text = `POINT: ${point.title} (${point.year}), ${point.by} - ${point.type}`; 
                     }
                     else {
                         text = post.text;
                     }
                     return <TangentPreview key={post._id} tangentId={post.tangentId} text={text}
-                    username={currentUser.username} imgSrc={state.profile.avatar} timestamp={post.timestamp}/>
+                    username={currentUser.username} timestamp={post.timestamp}/>
                 })}
                 </>
             }
@@ -291,7 +280,6 @@ const Profile = () => {
             {( tab === "points" && (state.bookmarkedPointsStatus === "idle") &&
                 <>
                     {state.bookmarkedPoints.map((point) => {
-                        console.log(point.type, "pointype");
                         return (
                             // <a href={`/points/${point._id}`}>
                                 <PointPreview key={point._id} _id={point._id}  

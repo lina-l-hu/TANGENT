@@ -1,6 +1,8 @@
+//Feed page that loads after login
+//Displays popular Point and Tangent previews
+
 import styled from "styled-components";
 import { useContext, useReducer, useEffect } from "react";
-import { NavLink } from "react-router-dom";
 import PageWrapper from "./GeneralPageComponents/PageWrapper"
 import TangentPreview from "./Tangent/TangentPreview";
 import PointPreview from "./PointComponents/PointPreview";
@@ -82,7 +84,6 @@ const FeedPage = () => {
                 return response.json();
             }));
         }).then((data) => {
-            console.log("all fetch data", data);
             dispatch({
                 type: "successfully-fetched-all-data",
                 popularPoint: data[0].data,
@@ -90,7 +91,6 @@ const FeedPage = () => {
                 recentTangents: data[2].data
             })
         }).catch((err) => {
-            console.log(err);
             dispatch({
                 type: "failure-fetching-all-data",
                 error: err
@@ -124,16 +124,17 @@ const FeedPage = () => {
             <MostPopularTangent className="section">
                 <SectionTitle>Major discussions</SectionTitle>
                 <TangentPreview tangentId={state.popularTangent.tangentId} timestamp={state.popularTangent.timestamp} 
-                username={state.popularTangent.username} imgSrc={state.popularTangent.avatar} text={state.popularTangent.text}/>
+                username={state.popularTangent.username} text={state.popularTangent.text}/>
             </MostPopularTangent>
 
             <NewTangents className="section">
                 <SectionTitle>Something to add?</SectionTitle>
-                {state.recentTangents.map((post) => {
-                    console.log("tangentId HERE", post.tangentId);
+                <TangentPreview key={state.recentTangents[0]._id} tangentId={state.recentTangents[0].tangentId} timestamp={state.recentTangents[0].timestamp}
+                    username={state.recentTangents[0].username} text={state.recentTangents[0].text}/>
+                {/* {state.recentTangents.map((post) => {
                     return <TangentPreview key={post._id} tangentId={post.tangentId} timestamp={post.timestamp}
                     username={post.username} imgSrc={post.avatar} text={post.text}/>
-                })}
+                })} */}
             </NewTangents>
 
         <Spacer></Spacer>

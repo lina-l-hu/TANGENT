@@ -2,6 +2,7 @@ import styled from "styled-components";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import SignupComponent from "./SignupComponent";
 
+//Sign up page with Signup component
 const UserSignup = () => {
 
     return (
@@ -13,7 +14,6 @@ const UserSignup = () => {
         </PageWrapper>
     )
 }
-
 
 const Body = styled.div`
     display: flex;

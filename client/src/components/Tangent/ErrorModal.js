@@ -1,3 +1,4 @@
+//Modal that shows error during searching for Points
 import styled from "styled-components";
 import { useRef } from "react";
 

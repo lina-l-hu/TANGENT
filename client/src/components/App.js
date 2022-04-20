@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import styled from "styled-components";
 import GlobalStyles from "./GlobalStyles";
-import Header from "./GeneralPageComponents/Header";
 import LandingPage from "./LandingPage";
 import FeedPage from "./FeedPage";
 import Profile from "./Profile/Profile";
@@ -18,11 +17,12 @@ import UserSignup from "./Login/UserSignup";
 import LoginComponent from "./Login/LoginComponent";
 import SignupComponent from "./Login/SignupComponent";
 import NavigationFooter from "./GeneralPageComponents/NavigationFooter";
+import { CurrentUserContext } from "./Profile/CurrentUserContext";
+
 
 function App() {
 
-  const [currentUser, setCurrentUser] = useState(null);
-  const [token, setToken] = useState();
+  const { token, setToken } = useContext(CurrentUserContext);
 
   // if (!token) {
   //   return 

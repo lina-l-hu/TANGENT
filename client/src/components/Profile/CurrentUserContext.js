@@ -1,6 +1,7 @@
 import { createContext, useEffect, useReducer, useState, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { GlobalContext } from "../GlobalContext";
+import useToken from "../../UseToken.hook";
 
 export const CurrentUserContext = createContext(null);
 
@@ -45,6 +46,8 @@ export const CurrentUserProvider = ({children}) => {
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
     const { changeCount, setChangeCount } = useContext(GlobalContext);
+    const { token, setToken } = useToken("");
+
     useEffect(() => {
         // if (!isLoading) {
 

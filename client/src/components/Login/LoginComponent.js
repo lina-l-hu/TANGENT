@@ -1,8 +1,21 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
-const LoginComponent = ({setSignupMode}) => {
+async function loginUser(credentials) {
+    return fetch('http://localhost:8000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+      .then(data => data.json())
+   }
+
+export default function LoginComponent ({setToken, setSignupMode}) {
+    const navigate = useNavigate();
 
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
@@ -11,10 +24,23 @@ const LoginComponent = ({setSignupMode}) => {
         setSignupMode(true);
     }
 
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = await loginUser({
+          email,
+          password
+        });
+        console.log("toke", token)
+        setToken(token);
+        navigate("/feed");
+
+    }
+
     return (
         <Wrapper>
             <p>please log in</p>
-            <form>
+            <form onSubmit={handleSubmit}>
             <input
               type="email"
               placeholder="email"   
@@ -25,12 +51,16 @@ const LoginComponent = ({setSignupMode}) => {
               placeholder="password"   
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button>join our circle</button>
+            <button>enter</button>
             </form>
             {/* <StyledLink to="/signup">or signup here</StyledLink> */}
             <button className="link" onClick={handleClick}>or signup here</button>
         </Wrapper>
     )
+}
+
+LoginComponent.propTypes = {
+    setToken: PropTypes.func.isRequired
 }
 
 const Wrapper = styled.div`
@@ -65,5 +95,3 @@ const Wrapper = styled.div`
 //     font-size: 14px;
     
 // `;
-
-export default LoginComponent;

@@ -11,6 +11,7 @@ const { getTangent, getPointsInTangent, getMostPopularTangent,
 const { getUser, getMultipleUsers, getUserTangents, getUserPoints, getUserCircle, 
     addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
 const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
+const { authenticateUser } = require("./handlers/authenticationHandler");
 
 //server port
 const PORT = 8000;
@@ -27,6 +28,7 @@ express()
     .use(morgan("tiny"))
     .use(express.json())
     .use(express.static("public"))
+    .use('/login', authenticateUser)
 
     //point endpoints
     .get("/point-suggestions", getPointSuggestions)

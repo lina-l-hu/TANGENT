@@ -64,6 +64,12 @@ const reducer = (state, action) => {
                 error: null, 
             }
         }
+
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 const AddTangentModal = () => {

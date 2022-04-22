@@ -31,7 +31,7 @@ const ToggleInCircleButton = ({circle, friendId, format}) => {
               }
             })
             .catch((err) => {
-                console.log("couldn't add friend");
+                setInCircle(false);
             })
         }
         else {
@@ -51,7 +51,7 @@ const ToggleInCircleButton = ({circle, friendId, format}) => {
                   }
                 })
                 .catch((err) => {
-                    console.log("couldn't remove friend");
+                    setInCircle(true);
                 })
         }
         
@@ -69,7 +69,6 @@ const Wrapper = styled.div`
     margin: 0 auto;
     button {
         font-size: ${props => (props.large) ? "20px" : "14px"};
-        /* border: 2px solid var(--color-secondary); */
         background-color: white;
         color: var(--color-main);
         padding: 5px;

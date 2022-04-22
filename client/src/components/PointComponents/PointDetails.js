@@ -220,6 +220,7 @@ const PointDetails = () => {
 
             const data = await response.json();
             if (data.status === 200) {
+
                 dispatch({
                     type: "receive-users-data-from-server",
                     users: data.data
@@ -278,7 +279,7 @@ const PointDetails = () => {
                 const pointsInPosts = [...new Set(pointsInLatestPosts)];
                 //third fetch to get all the users in the tangents array fetched above
                 if (users.length > 0) {
-                    fetchUsers(users);
+                    await fetchUsers(users);
                 }
                 else {
                     dispatch({
@@ -290,7 +291,7 @@ const PointDetails = () => {
                 //final fetch to get any other points that are mentioned in the tangent posts above
                 //does not need result from users fetch
                 if (pointsInPosts.length > 0) {
-                    fetchPoints(pointsInPosts);
+                    await fetchPoints(pointsInPosts);
                 }
                 else {
                     dispatch({

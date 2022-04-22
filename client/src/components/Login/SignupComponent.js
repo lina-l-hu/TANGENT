@@ -1,7 +1,7 @@
 //signup form component
 
 import styled from "styled-components";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 
 const initialState = {
     username: null, 
@@ -9,7 +9,7 @@ const initialState = {
     email: null, 
     avatar: null, 
     tagline: null, 
-    postToServerStatus: "idle", //sending, success, fail
+    postToServerStatus: "idle", //other statuses: sending, success, fail
     error: null,
 }
 
@@ -93,22 +93,49 @@ const reducer = (state, action) => {
             }
         }
 
+        default : {
+            return {
+                ...state
+            }
+        }
+
     }
 }
 
 const SignupComponent = ({setSignupMode}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    
+    const [ localImage, setLocalImage ] = useState(null);
+
     const handleClick = () => {
         setSignupMode(false);
     }
+    
+    //will implement adding profile images soon
+    // const uploadImage = (e) => {
+    //     e.preventDefault();
+    //     const formData = new FormData();
+    //     formData.append("file", localImage);
+    //     formData.append("upload_preset", "TangentProfileImages");
 
-    const handleSubmit = (e) => {
+    //     fetch("https://api.cloudinary.com/v1_1/lina777/image/upload", {
+    //     method: "POST",
+    //     body: formData
+    //     })
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //         console.log("data", data)
+    //         console.log("data.url", data.url)
+    //         dispatch({
+    //             type: "set-image",
+    //             image: data.url
+    //         })
+    //         return 
+    //     });
+    // }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        
-        //validation
 
         if (state.username.length < 1 || state.name.length < 1 || !state.username || !state.name 
             || state.password.length < 1 || !state.password) {
@@ -136,6 +163,9 @@ const SignupComponent = ({setSignupMode}) => {
             tagline: state.tagline, 
             password: state.password
         }
+
+
+        console.log ("new User before fetch", newUser);
 
         fetch("/users/add-user", {
             method: "POST",
@@ -247,17 +277,16 @@ const SignupComponent = ({setSignupMode}) => {
                 {/* <label>upload profile picture 
                     <input className="file-input"
                     type="file" 
-                    onChange={(e) => { dispatch ({
-                        type: "set-image", 
-                        image: e.target.files[0]
-                    }) 
-                    dispatch ({
-                        type: "reset-error"
-                    })
+                    onChange={(e) => { 
+                        setLocalImage(e.target.files[0])
+                        dispatch ({
+                            type: "reset-error"
+                        })
                 }}
                     />
+                <PhotoUpload onClick={uploadImage}>upload photo</PhotoUpload>
                 </label> */}
-            <button>connect</button>
+            <button >connect</button>
             </form>
             <button className="link" onClick={handleClick}>already in our circle? sign in</button>
             <ErrorMsg><p>{state.error}</p></ErrorMsg>
@@ -293,6 +322,9 @@ const Wrapper = styled.div`
         background-color: transparent;
     }
     
+`;
+
+const PhotoUpload = styled.button`
 `;
 
 const ErrorMsg = styled.div`

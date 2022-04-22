@@ -16,6 +16,8 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
 
     
     const toggleSave = () => {
+        setSaved(!saved);
+
         //save
         if (!saved) {
             fetch(`/users/bookmark-point`, {
@@ -34,6 +36,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                   }
                 })
                 .catch((err) => {
+                    setSaved(false);
                 })
         }
         //unsave
@@ -54,7 +57,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                   }
                 })
                 .catch((err) => {
-                    console.log("couldn't delete bookmark");
+                    setSaved(true);
                 })
         }
     

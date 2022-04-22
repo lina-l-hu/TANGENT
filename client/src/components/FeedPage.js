@@ -1,5 +1,5 @@
 //Feed page that loads after login
-//Displays popular Point and Tangent previews
+//Displays previews of the most popular Point and Tangent, and most recent Tangent
 
 import styled from "styled-components";
 import { useContext, useReducer, useEffect } from "react";
@@ -37,7 +37,13 @@ const reducer = (state, action) => {
                 status: "failed-fetch",
                 error: action.error
             }
-        }    
+        }   
+        
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 
@@ -50,53 +56,54 @@ const FeedPage = () => {
     useEffect(() => {
 
         if (currentUserStatus === "idle") {
-        Promise.all([
+        
+            Promise.all([
 
-            //fetch the most referenced Point in the user's circle
-            fetch("/points/most-popular", {
-                method: "GET", 
-                headers: {
-                    "Content-Type": "application/json",
-                    "_id": `${currentUser._id}`
-                },
-            }),
+                //fetch the most referenced Point in the user's circle
+                fetch("/points/most-popular", {
+                    method: "GET", 
+                    headers: {
+                        "Content-Type": "application/json",
+                        "_id": `${currentUser._id}`
+                    },
+                }),
 
-            //fetch the Tangent with the most posts in the user's circle
-            fetch("/tangents/most-popular-tangent", {
-                method: "GET", 
-                headers: {
-                    "Content-Type": "application/json",
-                    "_id": `${currentUser._id}`
-                },
-            }),
+                //fetch the Tangent with the most posts in the user's circle
+                fetch("/tangents/most-popular-tangent", {
+                    method: "GET", 
+                    headers: {
+                        "Content-Type": "application/json",
+                        "_id": `${currentUser._id}`
+                    },
+                }),
 
-            //fetch the 3 most recently active Tangents in the user's circle
-            fetch("/tangents/most-recent-tangents", {
-                method: "GET", 
-                headers: {
-                    "Content-Type": "application/json",
-                    "_id": `${currentUser._id}`
-                },
-            })
+                //fetch the most recently active Tangents in the user's circle
+                fetch("/tangents/most-recent-tangents", {
+                    method: "GET", 
+                    headers: {
+                        "Content-Type": "application/json",
+                        "_id": `${currentUser._id}`
+                    },
+                })
 
-        ]).then((responses) =>  {
-            return Promise.all(responses.map((response) => {
-                return response.json();
-            }));
-        }).then((data) => {
-            dispatch({
-                type: "successfully-fetched-all-data",
-                popularPoint: data[0].data,
-                popularTangent: data[1].data,
-                recentTangents: data[2].data
-            })
-        }).catch((err) => {
-            dispatch({
-                type: "failure-fetching-all-data",
-                error: err
-            })
-        });
-    }
+            ]).then((responses) =>  {
+                return Promise.all(responses.map((response) => {
+                    return response.json();
+                }));
+            }).then((data) => {
+                dispatch({
+                    type: "successfully-fetched-all-data",
+                    popularPoint: data[0].data,
+                    popularTangent: data[1].data,
+                    recentTangents: data[2].data
+                })
+            }).catch((err) => {
+                dispatch({
+                    type: "failure-fetching-all-data",
+                    error: err
+                })
+            });
+        }
     }, [currentUser, changeCount])
 
     if (state.status === "loading") {

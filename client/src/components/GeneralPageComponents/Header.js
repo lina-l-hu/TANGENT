@@ -77,7 +77,6 @@ const Title = styled.h1`
 `;
 
 const AddTangentDiv = styled.div`
-    /* padding-right: 20px; */
 
     button {
         display: flex;

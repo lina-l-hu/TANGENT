@@ -1,7 +1,7 @@
 //A Tangent, i.e. chat
 
 import styled from "styled-components";
-import { useEffect, useReducer, useContext, useState, useRef } from "react";
+import { useEffect, useReducer, useContext, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import Textbox from "./Textbox";
@@ -40,7 +40,13 @@ const reducer = (state, action) => {
                 status: "failed-fetch",
                 error: action.error
             }
-        }    
+        }   
+        
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 //Each Tangent component is a chat thread
@@ -48,7 +54,7 @@ const Tangent = () => {
 
     const { tangentId } = useParams();
     const { state: { currentUser, currentUserStatus }} = useContext(CurrentUserContext);
-    const { changeCount, setChangeCount } = useContext(GlobalContext);
+    const { changeCount } = useContext(GlobalContext);
     
     const [ state, dispatch ] = useReducer(reducer, initialState);
     const messagesEndRef = useRef(null);
@@ -176,7 +182,6 @@ const LinkDiv = styled.div`
 `;
 const AllPointsLink = styled(NavLink)`
     margin: 0 auto;
-    /* margin-top: 15px; */
     padding: 5px 10px;
     background-color: rgba(255, 255, 255, 0.5);
     color: var(--color-main);

@@ -1,11 +1,14 @@
 import styled from "styled-components";
+import {AdvancedImage} from '@cloudinary/react';
+import {Cloudinary} from "@cloudinary/url-gen";
 
 //Avatar image for message and tangent previews
 const Avatar = ({avatarImgSrc, userLetter, format}) => {
+    var cl = new Cloudinary({cloud_name: "lina777", secure: true});
     
     return (
         <>
-        { avatarImgSrc ? (
+        { (avatarImgSrc) ? (
         <Wrapper large={(format === "large")}>
             <img src={avatarImgSrc} />
         </Wrapper>

@@ -66,19 +66,11 @@ const Message = ({text, userId, username, avatarImgSrc, timestamp}) => {
 const Wrapper = styled.div`
     width: 85%;
     margin: 5px 0;
-    /* width: 85%;
-    display: flex;
-    margin: 15px 0;
-
-    div {
-        margin-top: 3px;
-    } */
 `;
 
 const Content = styled.div`
     width: 100%;
     display: flex;
-    /* margin: 15px 0; */
     justify-content: ${props => (props.thisUser) ? "flex-end" : "flex-start"};
 
     div {
@@ -89,14 +81,12 @@ const Content = styled.div`
 
 const Stamp = styled.div`
     width: 100%;
-    /* margin: 0 auto; */
     padding: ${props => (props.thisUser) ? "0 55px 3px 0" : "0 0 3px 55px"};
     margin-bottom: 5px;
     text-align: ${props => (props.thisUser) ? "right" : "left"};
     font-family: var(--font-subheading);
     font-size: 12px;
     font-style: italic;
-    /* padding: 0 10px; */
     color: white;
 `;
 

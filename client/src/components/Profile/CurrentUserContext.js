@@ -29,6 +29,12 @@ const reducer = (state, action) => {
                 currentUserError: action.error,
             }
         }
+
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 

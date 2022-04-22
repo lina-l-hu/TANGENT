@@ -9,7 +9,6 @@ const options = {
 
 const authenticateUser = async (req, res) => {
     const { email, password } = req.body;
-    console.log("email, password", email, password);
 
     const client = new MongoClient(MONGO_URI, options);
 
@@ -28,7 +27,6 @@ const authenticateUser = async (req, res) => {
         }
         
         if (user.password === password) {
-            console.log("sending token")
             res.send({token: 'tangent123'});
         }
         

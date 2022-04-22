@@ -74,6 +74,12 @@ const reducer = (state, action) => {
                 tangentPointsError: action.error,
             }
         }
+
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 
@@ -217,7 +223,7 @@ const Profile = () => {
                 const points = [...new Set(pointsReferenced)];
                
                 if (points.length > 0) {
-                    fetchLatestPostPoints(points);
+                    await fetchLatestPostPoints(points);
                 }
                 else {
                     dispatch({

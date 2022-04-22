@@ -14,6 +14,7 @@ const { getUser, getMultipleUsers, getUserTangents, getUserPoints, getUserCircle
     addUser, bookmarkPoint, removeBookmarkedPoint, addUserToCircle, removeUserFromCircle} = require("./handlers/userHandlers");
 const { addPointToTangent, addMessageToTangent, addTangent } = require("./handlers/postToTangentHandlers");
 const { authenticateUser } = require("./handlers/authenticationHandler");
+const { searchForPointsAndUsers } = require("./handlers/searchHandler");
 
 //server port
 const PORT = 8000;
@@ -35,19 +36,12 @@ express()
 
     //point endpoints
     .get("/point-suggestions", getPointSuggestions)
-    
-    //T with actual data
     .get("/points/most-popular", getMostPopularPoint)
-
     .get("/points", getPointsByIds)
     
     //tangent endpoints
-
-    // T with actual data
     .get("/tangents/most-popular-tangent", getMostPopularTangent)
-    // T with actual data
     .get("/tangents/most-recent-tangents", getMostRecentTangents)
-    
     .get("/tangents/latest-posts", getLatestPosts)
     .get("/tangents/:tangentId", getTangent)
     .get("/tangent/points", getPointsInTangent) 
@@ -66,9 +60,10 @@ express()
     .patch("/users/remove-bookmarked-point", removeBookmarkedPoint)
     .patch("/users/add-user-to-circle", addUserToCircle)
     .patch("/users/remove-user-from-circle", removeUserFromCircle)
-    
     .post("/users/add-user", addUser)
 
+    //search users and points endpoint
+    .get ("/search", searchForPointsAndUsers)
     //catch all endpoint
     .get("*", (req, res) => {
         res.status(404).json({

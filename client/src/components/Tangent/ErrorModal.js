@@ -30,10 +30,8 @@ const ErrorModal = ({errorMessage, displayErrorModal, displaySuggestionsDropup, 
 }
 
 const Wrapper = styled.div`
-    /* display: block; */
     display: ${props => (props.isDisplay ? 'block' : 'none')};
     position: absolute;
-    /* position: fixed; */
     z-index: 100; 
     bottom: 58px;
     left: 30px;
@@ -47,9 +45,6 @@ const Content = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* border: 3px solid var(--color-highlight); */
-    /* min-width: 100px;
-    min-height: 100px; */
 `;
 
 const CloseDiv = styled.div`

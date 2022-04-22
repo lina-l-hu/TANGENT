@@ -1,7 +1,7 @@
 //Text input component to send message or search for Point used on Tangent page
 
 import styled from "styled-components";
-import { useRef, useReducer, useEffect, useState, useContext } from "react";
+import { useRef, useReducer, useState, useContext } from "react";
 import PointSuggestionDropup from "./PointSuggestionDropup";
 import PointInput from "./PointInput";
 import { GlobalContext } from "../GlobalContext";
@@ -116,8 +116,6 @@ const Textbox = ({currentUserId, currentTangentId}) => {
     //3 modes: text, search, and suggestion
     //default mode is text (i.e. searchMode === false)
     const [ mode, setMode ] = useState("text");
-    // const [ searchMode, setSearchMode ] = useState(false);
-    // const [ suggestionMode, setSuggestionMode ] = useState(false);
     
     const [ displaySuggestionsDropup, setDisplaySuggestionsDropup ] = useState(false);
     const [ displayErrorModal, setDisplayErrorModal ] = useState(false);
@@ -132,7 +130,6 @@ const Textbox = ({currentUserId, currentTangentId}) => {
             text: e.target.value
         })
         if (e.target.value[0] === "#") {
-        // if (textRef.current.value[0] === "#") {
             setMode("search");
         }
         else {
@@ -140,6 +137,7 @@ const Textbox = ({currentUserId, currentTangentId}) => {
         }
     }
 
+    //to handle adding a text to the Tangent
     const handleSendText = () => {
         dispatch ({
             type: "posting-text-msg"
@@ -191,13 +189,15 @@ const Textbox = ({currentUserId, currentTangentId}) => {
             })
     }
 
+    //search for a Point -- function calls a search function that searches both the mongoDB database of existing points
+    //and the imdb and google books APIs for movies and books
     const handleFindPoint = () => {
 
-        //if the searchTerm is not changed from when we last called a search fetch
+        //if the searchTerm is not changed from when we last called a search fetch, display the results from the last search
+        //instead of doing a new search
         if (lastSearchTerm === state.textAreaInput.slice(1).trim() && state.pointSuggestionsFetchStatus !== "error") {
             setDisplayErrorModal(false);
             setDisplaySuggestionsDropup(true);
-            //display the results from the last search
             return;
         }
         
@@ -312,7 +312,6 @@ const Wrapper = styled.div`
 `;
 
 const TextContainer = styled.div`
-    /* border: 2px solid white; */
     position: absolute;
     bottom: 0;
     left: 0;
@@ -324,7 +323,6 @@ const TextContainer = styled.div`
     width: 100%;
     background: rgb(255,255,255);
     background: linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0.7) 100%);
-    /* height: 50px; */
     padding: 12px 5px;
 
     textarea {
@@ -337,7 +335,6 @@ const TextContainer = styled.div`
         font-size: 20px;
         font-family: var(--font-body);
         padding: 10px 5px;
-        color: white;
     }
 
     button {
@@ -348,7 +345,4 @@ const TextContainer = styled.div`
     }
 `;
 
-const Textarea = styled.textarea`
-    color: orange;
-`
 export default Textbox;

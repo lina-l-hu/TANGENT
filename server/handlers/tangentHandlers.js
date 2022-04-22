@@ -17,7 +17,6 @@ const getTangent = async (req, res) => {
     const client = new MongoClient(MONGO_URI, options);
 
     const { tangentId } = req.params;
-    console.log("get Tangent handler", tangentId);
 
     if (!tangentId) {
         return res.status(400).json({status: 400, message: "Bad request - missing Tangent id."});
@@ -28,8 +27,6 @@ const getTangent = async (req, res) => {
         const db = client.db("TANGENTS");
 
         const tangent = await db.collection(tangentId).find().toArray();
-
-        console.log("tang in get TAngent", tangent);
 
         if (tangent.length === 0) {
             return res.status(404).json({status: 404, message: "Tangent not found.", data: tangentId});
@@ -50,8 +47,6 @@ const getTangent = async (req, res) => {
 const getPointsInTangent = async (req, res) => {
     const { _id } = req.headers;
 
-    console.log("tangentId",  _id)
-    
     if (! _id) {
         return res.status(400).json({status: 400, message: "Bad request - missing Tangent id."});
     }
@@ -66,7 +61,6 @@ const getPointsInTangent = async (req, res) => {
         //get the points array in the last inserted post (document) in the Tangent
         const latestPost = await tangentsDb.collection(_id).find().sort({_id:-1}).limit(1).toArray();
 
-        console.log("latestPO", latestPost)
         if (!latestPost) {
             return res.status(404).json({status: 404, message: "Tangent not found.", data: req.headers});
         }
@@ -81,13 +75,12 @@ const getPointsInTangent = async (req, res) => {
         await Promise.all (
             pointsList.map( async (id) => {
                 let type = (id.charAt(0) === "t") ? "film" : "book";
-                console.log('in here', id, type);
                 const point = await pointsDb.collection(type).findOne({_id : id});
                 tangentPoints.push(point);
             })
         )
 
-        console.log("tangentPoints", tangentPoints);
+        console.log("points in tangent", tangentPoints);
 
         (!tangentPoints) ?
             res.status(404).json({status: 404, message: "Could not find Points.", data: _id})
@@ -109,8 +102,6 @@ const getPointsInTangent = async (req, res) => {
 const getUsersInTangent = async (req, res) => {
     const { _id } = req.headers;
 
-    console.log("tangentId",  _id)
-    
     if (! _id) {
         return res.status(400).json({status: 400, message: "Bad request - missing Tangent id."});
     }
@@ -125,7 +116,6 @@ const getUsersInTangent = async (req, res) => {
         //get the users array in the last inserted post (document) in the Tangent
         const latestPost = await tangentsDb.collection(_id).find().sort({_id:-1}).limit(1).toArray();
 
-        console.log("latestPO", latestPost)
         if (!latestPost) {
             return res.status(404).json({status: 404, message: "Tangent not found.", data: req.headers});
         }
@@ -139,13 +129,12 @@ const getUsersInTangent = async (req, res) => {
         const tangentUsers = []; 
         await Promise.all (
             usersList.map( async (id) => {
-                console.log('in here', id);
                 const user = await usersDb.collection("users").findOne({_id : id});
                 tangentUsers.push(user);
             })
         )
 
-        console.log("tangentUSERs", tangentUsers);
+        console.log("users in tangent", tangentUsers);
 
         (!tangentUsers) ?
             res.status(404).json({status: 404, message: "Could not find users in Tangent.", data: _id})
@@ -167,7 +156,6 @@ const getUsersInTangent = async (req, res) => {
 const getMostPopularTangent = async (req, res) => {
     //current user id
     const { _id } = req.headers;
-    console.log ("id", _id);
 
     const usersClient = new MongoClient(MONGO_URI, options);
     const tangentsClient = new MongoClient(MONGO_URI, options);
@@ -175,18 +163,15 @@ const getMostPopularTangent = async (req, res) => {
     try {
         await usersClient.connect();
         const usersDb = usersClient.db("USERS");
-        console.log("connected");
 
         //get the user's circle ids
         const user = await usersDb.collection("users").findOne({_id : _id});
         
-        console.log("user", user);
         if (!user) {
             return res.status(404).json({status: 404, message: "User not found.", data: _id});
         }
 
         const circleIds = user.circle;
-        console.log("circleIds", circleIds);
 
         if (circleIds.length === 0) {
             return res.status(404).json({status: 404, message: "No users in circle.", data: []});
@@ -197,25 +182,20 @@ const getMostPopularTangent = async (req, res) => {
         await Promise.all (
             circleIds.map( async (id) => {
                 const friend = await usersDb.collection("users").findOne({_id : id});
-                console.log("friend", friend)
 
                 if (friend) {
                     const tangentIds = friend.tangents;
-                    console.log("friend tangents", tangentIds)
                     allCircleTangentIds.push(...tangentIds);
                 }
                 
             })
         )
 
-        console.log("all tangets", allCircleTangentIds);
-
         //merge the current user's tangents array into this array as well
         allCircleTangentIds.push(...user.tangents);
 
         //reduce set to only unique tangent ids
         const uniqueTangentIds = [...new Set(allCircleTangentIds)];
-        console.log("unique", uniqueTangentIds);
 
         //get the latest post for each tangent
         await tangentsClient.connect();
@@ -226,33 +206,29 @@ const getMostPopularTangent = async (req, res) => {
             uniqueTangentIds.map( async (id) => {
                 //this is an array so need to access [0]
                 const latestPost = await tangentsDb.collection(id).find().sort({_id:-1}).limit(1).toArray();
-                console.log("latest", latestPost[0]);
 
                 if (latestPost !== undefined ) {
                     latestPostArray.push(latestPost[0]);
                 }
             })
         )
-        console.log("lattest array", latestPostArray);
 
         //sort all the latest posts by descending tangentLength
         let sorted  = latestPostArray.sort((a, b) => {
             return b.tangentLength - a.tangentLength;
         })
 
-        console.log("sorted", sorted);
 
         //take the last post that is not a point post
         const firstMessagePost = sorted.find((post) => (Object.keys(post).indexOf("text") > -1));
-        console.log("first text", firstMessagePost);
 
         //get the user object associated with the post to return
         const postUser = await usersDb.collection("users").findOne({_id : firstMessagePost.userId});
         
         const objectToReturn = {...firstMessagePost, username: postUser.username, avatar: postUser.avatar}
 
-        console.log("postswith users", objectToReturn);
-        
+        console.log("tangent to return", objectToReturn);
+
         //return the post with greatest tangentLength
         (objectToReturn) ? 
             res.status(200).json({status: 200, message: "Successfully retrieved most popular Tangent.", data: objectToReturn})
@@ -273,7 +249,6 @@ const getMostPopularTangent = async (req, res) => {
 const getMostRecentTangents = async (req, res) => {
     //current user id
     const { _id } = req.headers;
-    console.log ("id", _id);
 
     const usersClient = new MongoClient(MONGO_URI, options);
     const tangentsClient = new MongoClient(MONGO_URI, options);
@@ -281,18 +256,15 @@ const getMostRecentTangents = async (req, res) => {
     try {
         await usersClient.connect();
         const usersDb = usersClient.db("USERS");
-        console.log("connected");
 
         //get the user's circle ids
         const user = await usersDb.collection("users").findOne({_id : _id});
         
-        console.log("user", user);
         if (!user) {
             return res.status(404).json({status: 404, message: "User not found.", data: _id});
         }
 
         const circleIds = user.circle;
-        console.log("circleIds", circleIds);
 
         if (circleIds.length === 0) {
             return res.status(404).json({status: 404, message: "No users in circle.", data: []});
@@ -303,25 +275,20 @@ const getMostRecentTangents = async (req, res) => {
         await Promise.all (
             circleIds.map( async (id) => {
                 const friend = await usersDb.collection("users").findOne({_id : id});
-                console.log("friend", friend)
 
                 if (friend) {
                     const tangentIds = friend.tangents;
-                    console.log("friend tangents", tangentIds)
                     allCircleTangentIds.push(...tangentIds);
                 }
                 
             })
         )
 
-        console.log("all tangets", allCircleTangentIds);
-
         //merge the current user's tangents array into this array as well
         allCircleTangentIds.push(...user.tangents);
 
        //reduce set to only unique tangent ids
         const uniqueTangentIds = [...new Set(allCircleTangentIds)];
-        console.log("unique", uniqueTangentIds);
 
         //get the latest post for each tangent
         await tangentsClient.connect();
@@ -332,14 +299,12 @@ const getMostRecentTangents = async (req, res) => {
             uniqueTangentIds.map( async (id) => {
                 //this is an array so need to access [0]
                 const latestPost = await tangentsDb.collection(id).find().sort({_id:-1}).limit(1).toArray();
-                console.log("latest", latestPost[0]);
 
                 if (latestPost !== undefined ) {
                     latestPostArray.push(latestPost[0]);
                 }
             })
         )
-        console.log("lattest array", latestPostArray);
 
         //sort this array by descending timestamp
         let sorted  = latestPostArray.sort((a, b) => {
@@ -350,7 +315,6 @@ const getMostRecentTangents = async (req, res) => {
 
         //find the most recent post that is not a point post
         const firstMessagePost = sorted.find((post) => (Object.keys(post).indexOf("text") > -1));
-        console.log("first text", firstMessagePost);
 
         //will return only the 3 most recent posts that are texts (not Points)
         const latestThreePosts = [firstMessagePost];
@@ -366,23 +330,17 @@ const getMostRecentTangents = async (req, res) => {
             
         }
         
-        console.log("latest3", latestThreePosts);
-
         //get all the user objects associated with each of these posts
         const postUsers = latestThreePosts.map((post) => post.userId);
-        console.log("users in posts", postUsers);
 
         const usersToReturn = [];
     
         await Promise.all (
             postUsers.map( async (id) => {
                 let user = await usersDb.collection("users").findOne({_id : id});
-                console.log("user", user)
                 usersToReturn.push(user);
             })
         )
-
-        console.log("usersTor", usersToReturn);
 
         //add user info to each post
         latestThreePosts.forEach((post, index) => {
@@ -390,8 +348,8 @@ const getMostRecentTangents = async (req, res) => {
             post.avatar = usersToReturn[index].avatar;
         })
 
-        console.log("postswith users", latestThreePosts);
-        
+        console.log("latest posts", latestThreePosts);
+
         //return the 3 latest posts
         (latestThreePosts) ? 
             res.status(200).json({status: 200, message: "Successfully retrieved latest Tangents.", data: latestThreePosts})
@@ -415,8 +373,6 @@ const getLatestPosts = async (req, res) => {
    
     const { tangentids } = req.headers;
 
-    console.log(tangentids, "tangentids");
-
     //array must be sent as a string in the header
     let idArray = [];
     if (tangentids.indexOf(",") === -1) {
@@ -426,7 +382,6 @@ const getLatestPosts = async (req, res) => {
         idArray = tangentids.split(",");
     }
 
-    console.log("idarr", idArray);
 
     if (!tangentids) {
         return res.status(400).json({status: 400, message: "Bad request - no Tangent ids provided."});
@@ -438,20 +393,17 @@ const getLatestPosts = async (req, res) => {
         await client.connect();
         const db = client.db("TANGENTS");
 
-        // console.log("connected")
         const latestPosts = [];
 
         await Promise.all (
             idArray.map( async (tangent) => {
                 const latest = await db.collection(tangent).find().sort({_id:-1}).limit(1).toArray();
-                console.log('latest', latest);
                 if (latest[0]) {
                     latestPosts.push(latest[0]);
                 }
             })
         )
        
-        console.log("latestPO array", latestPosts)
         if (!latestPosts) {
             return res.status(404).json({status: 404, message: "Could not find Tangents.", data: tangentids});
         }
@@ -463,6 +415,8 @@ const getLatestPosts = async (req, res) => {
             return db-da;
         });
  
+        console.log("sorted latest posts", sortedByTime);
+        
         res.status(200).json({status: 200, message: "Latest Tangent posts retrieved successfully.", data: sortedByTime});
     }
 

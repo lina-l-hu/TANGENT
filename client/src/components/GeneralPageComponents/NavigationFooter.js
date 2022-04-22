@@ -24,9 +24,9 @@ const NavigationFooter = () => {
                 <FaRegComment className={(window.location.pathname === "/tangents") ? "icon selected" : "icon"}/>
             </NavLink>
            
-            {/* <NavLink to="/search">
+            <NavLink to="/search">
                 <FaSearch className={(window.location.pathname === "/search") ? "icon selected" : "icon"}/>
-            </NavLink> */}
+            </NavLink>
 
             {(currentUserStatus === "idle") ? (
                 <NavLink to={`/profile/${currentUser._id}`}>

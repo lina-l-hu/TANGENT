@@ -4,7 +4,6 @@ import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import UserPreview from "./UserPreview";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
 import LoadingComponent from "../GeneralPageComponents/LoadingComponent";
-import ButtonLoadingComponent from "../GeneralPageComponents/ButtonLoadingComponent";
 import { GlobalContext } from "../GlobalContext";
 
 const initialState = {
@@ -28,6 +27,12 @@ const reducer = (state, action) => {
                 ...state,
                 status: "failed",
                 error: action.error,
+            }
+        }
+
+        default : {
+            return {
+                ...state
             }
         }
     }
@@ -94,7 +99,8 @@ const MyCircle = () => {
                 ) : (
                     <>
                     {state.circle.map((friend) => 
-                        <UserPreview key={friend._id} circle={currentUser.circle} _id={friend._id} username={friend.username} tagline={friend.tagline} imgSrc={friend.avatar}/>
+                        <UserPreview key={friend._id} circle={currentUser.circle} _id={friend._id} username={friend.username} 
+                        tagline={friend.tagline} imgSrc={friend.avatar}/>
                     )}
                     </>
                 )}

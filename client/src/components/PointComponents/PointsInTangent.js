@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 import { useReducer, useEffect, useContext } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PageWrapper from "../GeneralPageComponents/PageWrapper";
 import PointPreview from "./PointPreview";
 import { CurrentUserContext } from "../Profile/CurrentUserContext";
@@ -30,6 +30,12 @@ const reducer = (state, action) => {
                 ...state,
                 pointsStatus: "failed",
                 pointsError: action.error,
+            }
+        }
+
+        default : {
+            return {
+                ...state
             }
         }
     }
@@ -86,7 +92,6 @@ const PointsInTangent = () => {
     return (
         <PageWrapper>
             <Body>
-            {/* <Header titleSize="smaller">points in tangent</Header> */}
             {state.points.map((point) => {
                 return (
                     <PointDiv key={point._id} >

@@ -4,6 +4,7 @@ import Avatar from "../GeneralPageComponents/Avatar";
 import ToggleInCircleButton from "../Profile/ToggleInCircleButton";
 
 const UserPreview = ({circle, _id, imgSrc, username, tagline}) => {
+
     return (
         <Wrapper>
             <NavLink to={`/profile/${_id}`}>
@@ -20,9 +21,12 @@ const UserPreview = ({circle, _id, imgSrc, username, tagline}) => {
                     <p>{tagline}</p>
                 </Text>
             </NavLink>
-            <ButtonDiv>
-                <ToggleInCircleButton circle={circle} friendId={_id}/>
-            </ButtonDiv>
+
+            {(circle) && 
+                <ButtonDiv>
+                    <ToggleInCircleButton circle={circle} friendId={_id}/>
+                </ButtonDiv>
+            }
         </Wrapper>
     )
 }

@@ -26,10 +26,8 @@ const getFilmsFromAPI = async (searchTerm) => {
 
     const data = await request(options);
     return data.results;
-    // return data.value;
   }
   catch (err) {
-    console.log("error fetching from imdb", err)
     return null;
   }
 }
@@ -56,7 +54,6 @@ const getFilmFromOMDB = async (filmId) => {
     return data;
   }
   catch (err) {
-    console.log("error fetching from omdb", err)
     return null;
   }
 }
@@ -77,7 +74,6 @@ const getBooksFromAPI = async (searchTerm) => {
     return data.items;
   }
   catch (err) {
-    console.log("error fetching from googlebooks", err)
     return null;
   }
 }
@@ -115,16 +111,10 @@ const getPointSuggestions = async (req, res) => {
           pointMatches[key]= await db.collection(key).find(query).project(projection).toArray();
         }
 
-        console.log("pointMatches", pointMatches);
-
         //search APIs for matches
         const filmSuggestions = await getFilmsFromAPI(searchTerm);
         const bookSuggestions = await getBooksFromAPI(searchTerm);
  
-        console.log("filmsug", filmSuggestions);
-        // console.log("bookSuff", bookSuggestions.length);
-        // console.log("bookSuggestions", bookSuggestions);
-
         if (pointMatches["book"].length === 0 && pointMatches["film"].length === 0 && !filmSuggestions && !bookSuggestions) {
             return res.status(404).json({status: 404, message: "No matches -- please try another search term.", data: searchTerm})
         }
@@ -148,10 +138,6 @@ const getPointSuggestions = async (req, res) => {
             else {
               filteredFilmSuggestions = filmSuggestions;
             }
-            
-            // //we will return to the client only the top NUM_MATCHES (3) results
-            // let topFilmSuggestions = filteredFilmSuggestions.slice(0, NUM_MATCHES);
-            // console.log("topFilmsugg", topFilmSuggestions);
 
             //since imdb doesn't provide us all the data we want, we have to request additional data
             //from the omdb for each of the 3 matches we are returning
@@ -160,10 +146,8 @@ const getPointSuggestions = async (req, res) => {
               filteredFilmSuggestions.map(async(suggestion) => {
 
                 let omdbResult = await getFilmFromOMDB(suggestion.id);
-                // console.log("omdb", omdbResult);
 
                 if (omdbResult) {
-                  console.log("omdb positive")
 
                   const film = {
                       _id: suggestion.id,
@@ -176,7 +160,6 @@ const getPointSuggestions = async (req, res) => {
                       link: `https://www.imdb.com/title/${suggestion.id}`,
                   }
 
-                  // console.log("film b4 push", film);
                   detailedFilmSuggestions.push(film);
                   
                 }
@@ -184,8 +167,6 @@ const getPointSuggestions = async (req, res) => {
             )
             //we will return to the client only the top NUM_MATCHES (3) results
             formattedFilmSuggestions = detailedFilmSuggestions.slice(0, NUM_MATCHES);
-            // console.log("formatted film sugg", formattedFilmSuggestions);
-            
         }
         
       
@@ -249,36 +230,24 @@ const getPointSuggestions = async (req, res) => {
 
 //             console.log("unique books", uniqueBookSuggestions);
            
+
             //filter out any suggestions that are already in the Point suggestions
             // let filteredBookSuggestions = bookSuggestions;
             let filteredBookSuggestions = [];
-            console.log("book sugg before loop", bookSuggestions);
-            console.log("pointmatch book", pointMatches["book"]);
 
             if (pointMatches["book"].length > 0) {
 
                 bookSuggestions.forEach((suggestion) => {
                   const notDuplicate = pointMatches["book"].every((book) => book._id !== suggestion.id);
-                    console.log("not duplicate?", notDuplicate)
                     if (notDuplicate) {
                         filteredBookSuggestions.push(suggestion);
-                        console.log("filtered inside", filteredBookSuggestions)
                     }
                 })
-                // filteredBookSuggestions = bookSuggestions.filter((suggestion) => {
-                //     const notDuplicate = pointMatches["book"].every((book) => book._id !== suggestion.volumeInfo.industryIdentifiers[0].identifier);
-                //     console.log("identifier", suggestion.volumeInfo.industryIdentifiers[0].identifier)
-                //     console.log("not duplicate?", notDuplicate)
-                //     if (notDuplicate) {
-                //         return suggestion;
-                //     }
-                // })
                 
             }
             else {
               filteredBookSuggestions = bookSuggestions;
             }
-            console.log("filteredBook outsdie outdie", filteredBookSuggestions);
             //we will return to the client only the top NUM_MATCHES (3) results
             let topBookSuggestions = filteredBookSuggestions.slice(0, NUM_MATCHES);
   
@@ -286,15 +255,11 @@ const getPointSuggestions = async (req, res) => {
 
                 //format authors list
                 const authors = suggestion.volumeInfo.authors.toString();
-                console.log("aturhos", authors);
                 let formattedAuthors = authors.replace(",", ", ");
-                console.log("formated authors", formattedAuthors);
 
-                console.log("kesy", typeof suggestion.volumeInfo.imageLinks.thumbnail);
                 let imgSrc = "";
                 if (Object.keys(suggestion.volumeInfo.imageLinks).indexOf("thumbnail") !== -1) {
                   imgSrc = suggestion.volumeInfo.imageLinks.thumbnail;
-                  console.log("hello why")
                 }
 
                 let description = "";
@@ -302,39 +267,23 @@ const getPointSuggestions = async (req, res) => {
                   description = suggestion.volumeInfo.description;
                 }
                 
-                console.log("_id:", suggestion.volumeInfo.industryIdentifiers[0].identifier);
-                console.log("title:", suggestion.volumeInfo.title);
-                // console.log("coverImgSrc:", suggestion.volumeInfo.imageLinks.thumbnail)
-                console.log("year:", suggestion.volumeInfo.publishedDate.slice(0, 4))
-                console.log("by:", formattedAuthors)
-                // console.log("description:", suggestion.volumeInfo.description)
-                console.log("link", suggestion.volumeInfo.infoLink)
                 const book = {
-                  // _id: suggestion.volumeInfo.industryIdentifiers[0].identifier,
                   _id: suggestion.id,
                   title: suggestion.volumeInfo.title,
                   type: "book", 
                   coverImgSrc: imgSrc,
                   year: (suggestion.volumeInfo.publishedDate) ? suggestion.volumeInfo.publishedDate.slice(0, 4) : "",
                   by: formattedAuthors,
-                  // description: suggestion.searchInfo.textSnippet,
                   description: description,
                   link: suggestion.volumeInfo.infoLink
                 }
-                // console.log("book b4 push", book)
 
                 formattedBookSuggestions.push(book);
             })
           }
-        
-
-        // console.log("hi");
-        // console.log("filmPOint", pointMatches["film"], "bookPoins", pointMatches["book"]);
-        // console.log( "films", formattedFilmSuggestions)
-        // console.log( "books", formattedBookSuggestions);
 
         //return API and point matches to front end to render
-        res.status(200).json({status: 200, message: "Matches found!", 
+        res.status(200).json({status: 200, message: "Matches", 
         data: {filmPoints: pointMatches["film"],
               bookPoints: pointMatches["book"], 
               films: formattedFilmSuggestions, 

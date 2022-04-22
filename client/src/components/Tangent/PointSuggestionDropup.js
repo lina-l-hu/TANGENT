@@ -6,6 +6,7 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
     displaySuggestionsDropup, setDisplaySuggestionsDropup, setMode, mode}) => {
     
     const nodeRef = useRef();
+    
     const handleSelect = (event) => {
 
         //identify which element has been clicked
@@ -42,7 +43,6 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
         
         //turn on suggestion mode
         setMode("suggestion")
-        // searchTermRef.value = "#" + selectedMatch.title + " (" + selectedMatch.type + "), " + selectedMatch.year;
     }
 
     // window.onclick = function(event) {
@@ -53,7 +53,6 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
 
     return (
         <Wrapper ref={nodeRef} isDisplay={(displaySuggestionsDropup)}>
-        {/* <Wrapper ref={nodeRef}> */}
             <Content>
                 <>
                 {(suggestedMatches.filmPoints.length > 0 && 
@@ -137,7 +136,6 @@ const Wrapper = styled.div`
     z-index: 5;
     background-color: white;
     width: 68%;
-    /* position: fixed; */
     position: absolute;
     bottom: 58px;
     left: 11px;
@@ -146,8 +144,6 @@ const Wrapper = styled.div`
 
 const Content = styled.div`
     div {
-        /* border: 1px solid var(--color-main); */
-        /* border-radius: 0px; */
         padding: 7px;
         line-height: 1.3;
 
@@ -157,10 +153,6 @@ const Content = styled.div`
             span {
                 color: white;
             }
-
-            /* .type {
-                border: 1px solid white;
-            } */
         }
     }
 
@@ -171,7 +163,6 @@ const Content = styled.div`
 
 const Title = styled.span`
     font-weight: bold;
-    /* font-family: var(--font-subheading); */
 `;
 
 const By = styled.span`
@@ -181,7 +172,6 @@ const By = styled.span`
 const Type = styled.span`
     margin-left: 10px;
     padding: 1px 3px;
-    /* background-color: var(--color-secondary); */
     border: 1px solid var(--color-main);
     color: white;
     border-radius: 5px;

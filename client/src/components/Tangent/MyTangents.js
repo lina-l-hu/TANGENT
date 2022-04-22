@@ -85,6 +85,12 @@ const reducer = (state, action) => {
                 usersError: action.error,
             }
         }
+
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 //A list of the current user's Tangents
@@ -220,7 +226,7 @@ const MyTangents = () => {
                 const users = [...new Set(usersInLatestPosts)];
 
                 if (points.length > 0) {
-                    fetchPoints(points);
+                    await fetchPoints(points);
                 }
                 else {
                     dispatch({
@@ -229,7 +235,7 @@ const MyTangents = () => {
                 }
 
                 if (users.length > 0) {
-                    fetchUsers(users);
+                    await fetchUsers(users);
                 }
                 else {
                     dispatch({
@@ -257,7 +263,6 @@ const MyTangents = () => {
 
     return (
         <PageWrapper>
-            {/* <Header>my tangents</Header> */}
             <Body>
             {state.tangents.map((post) => {
                 let text = "";

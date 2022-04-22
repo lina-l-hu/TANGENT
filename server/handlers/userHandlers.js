@@ -16,7 +16,6 @@ const getUser = async (req, res) => {
     const client = new MongoClient(MONGO_URI, options);
 
     const { userid, email } = req.headers;
-    console.log("headers and params", userid, email)
 
     if (!userid && !email) {
         return res.status(400).json({status: 400, message: "Bad request - missing identifier for user.", data: {_id: userid, email: email}});
@@ -31,6 +30,8 @@ const getUser = async (req, res) => {
     
         const user2 = await db.collection("users").findOne({email : email});
         
+        console.log("userById", user, "userByEmail", user2);
+
         (!user && !user2) ?
             res.status(404).json({status: 404, message: "User not found.", data: {_id: userid, email: email}})
             : res.status(200).json({status: 200, message: "User retrieved successfully.", data: (!user) ? user2 : user});
@@ -50,7 +51,6 @@ const getMultipleUsers = async (req, res) => {
     const client = new MongoClient(MONGO_URI, options);
 
     const { userids } = req.headers;
-    console.log("userids", userids)
 
     if (!userids) {
         return res.status(400).json({status: 400, message: "Bad request - missing identifier for user.", data: {userids: userids}});
@@ -58,7 +58,6 @@ const getMultipleUsers = async (req, res) => {
 
     //array sent as a string in the header, so convert it back to an array
     const idArray = userids.split(",");
-    console.log("idArray", idArray);
 
     try {
         await client.connect();
@@ -69,14 +68,13 @@ const getMultipleUsers = async (req, res) => {
         await Promise.all (
             idArray.map( async (id) => {
                 let user = await db.collection("users").findOne({_id : id});
-                console.log("user", user)
                 usersToReturn.push(user);
             })
         )
         
-        console.log("users to retrr", usersToReturn);
-
-        (!usersToReturn) ?
+        console.log("users", usersToReturn);
+        
+        (usersToReturn.length < 1) ?
             res.status(404).json({status: 404, message: "Users not found.", data: {userids: userids}})
             : res.status(200).json({status: 200, message: "Users retrieved successfully.", data: usersToReturn});
     }
@@ -92,11 +90,11 @@ const getMultipleUsers = async (req, res) => {
 
 
 //get all the Tangents the given user is a part of 
+//modify this
 const getUserTangents = async (req, res) => {
     const client = new MongoClient(MONGO_URI, options);
 
     const { _id } = req.headers;
-    console.log("_id", _id);
 
     if (!_id) {
         return res.status(400).json({status: 400, message: "Bad request - missing _id for user."});
@@ -107,10 +105,9 @@ const getUserTangents = async (req, res) => {
         const db = client.db("USERS");
 
         const user = await db.collection("users").findOne({_id : _id});
-        //test this! 
-        // const tangents = await db.collection("users").find({_id : _id}, {tangents: 1}).toArray();
+        
+        console.log("user", user);
 
-        // (tangents.length === 0) ?
         !user ?
             res.status(404).json({status: 404, message: "User not found.", data: _id})
             : res.status(200).json({status: 200, message: "User Tangents retrieved successfully.", data: user.tangents});
@@ -159,13 +156,13 @@ const getUserPoints = async (req, res) => {
         await Promise.all (
             pointsList.map( async (id) => {
                 let type = (id.charAt(0) === "t") ? "film" : "book";
-                console.log('in here', id, type);
                 const point = await pointsDb.collection(type).findOne({_id : id});
                 userPoints.push(point);
             })
         )
 
-        console.log("userPoints", userPoints);
+        console.log("bookmarked points", userPoints);
+
         (!userPoints) ? 
             res.status(404).json({status: 404, message: "Could not find Points for user.", data: _id})
         :   res.status(200).json({status: 200, message: "User Points retrieved successfully.", data: userPoints});
@@ -206,15 +203,15 @@ const getUserCircle = async (req, res) => {
         const userCircle = []; 
         await Promise.all (
             circleIds.map( async (id) => {
-                console.log('in here', id);
                 const user = await db.collection("users").findOne({_id : id});
                 userCircle.push(user);
             })
         )
 
-        console.log("userCircls", userCircle);
         //filter out any users not found
         const filteredCircle = userCircle.filter((el) => el !== null);
+
+        console.log("users in Circle", filteredCircle);
 
         !userCircle ?
             res.status(404).json({status: 404, message: "Could not find user Circle.", data: _id})
@@ -230,17 +227,14 @@ const getUserCircle = async (req, res) => {
     }
 }
 
-//add a new user //CHANGE WHEN FIGURE OUT AUTH
-//need password -- figure out how to set up an account!!
-//have to check if username and email already exist
+//add a new user
 const addUser = async (req, res) => {
     
-    const { username, name, email, avatar, tagline } = req.body;
-    console.log("req body", req.body)
+    const { username, name, email, password, avatar, tagline } = req.body;
 
     //if no username and email are provided, we cannot add the user
-    if (!username || !email) {
-        return res.status(400).json({status: 400, message: "Username and email are required to create an account!", data: req.body})
+    if (!username || !email || !password) {
+        return res.status(400).json({status: 400, message: "Username, email and password are required to create an account!", data: req.body})
     }
     
     const client = new MongoClient(MONGO_URI, options);
@@ -248,7 +242,6 @@ const addUser = async (req, res) => {
     try {
         await client.connect();
         
-        console.log("connected");
         const db = client.db("USERS");
         
         //check if email already exists in user database
@@ -273,17 +266,14 @@ const addUser = async (req, res) => {
             email: email, 
             avatar: avatar, 
             tagline: tagline, 
+            password: password,
             tangents: [],
             lastPosts: [],
             points: [],
             circle: []
         }
     
-        console.log("newuser", newUser);
-
         const result = await db.collection("users").insertOne(newUser);
-
-        console.log("result", result);
 
         (result.acknowledged) ?
             res.status(200).json({status: 200, message: "User added successfully.", data: result.insertedId})
@@ -302,8 +292,6 @@ const addUser = async (req, res) => {
 //add a Point to the given user's list of bookmarked Points
 const bookmarkPoint = async (req, res) => {
     const { userId, pointId } = req.body;
-
-    console.log("body", userId, pointId)
 
     if (!userId || !pointId) {
         return res.status(400).json({status: 400, message: "Bad request - user ID or Point ID missing."});
@@ -350,8 +338,6 @@ const bookmarkPoint = async (req, res) => {
 const removeBookmarkedPoint = async (req, res) => {
     const { userId, pointId } = req.body;
 
-    console.log("body", userId, pointId)
-
     if (!userId || !pointId) {
         return res.status(400).json({status: 400, message: "Bad request - user ID or Point ID missing."});
     }
@@ -364,17 +350,13 @@ const removeBookmarkedPoint = async (req, res) => {
 
         const user = await db.collection("users").findOne({_id: userId});
 
-        console.log("user", user)
-
         if (!user) {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
         }
 
         const updatedPoints = user.points.filter((point) => point !== pointId);
-        console.log("updatedPoints", updatedPoints);
 
         const update = await db.collection("users").updateOne({_id: userId}, { $set:{ points: updatedPoints}});
-        console.log("update", update);
         
         if (update.matchedCount !== 1) {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
@@ -400,8 +382,6 @@ const removeBookmarkedPoint = async (req, res) => {
 const addUserToCircle = async (req, res) => {
     const { userId, friendId } = req.body;
 
-    console.log("reqbody", req.body);
-
     if (!userId || !friendId) {
         return res.status(400).json({status: 400, message: "Bad request - user ID or potential friend ID missing."});
     }
@@ -410,7 +390,6 @@ const addUserToCircle = async (req, res) => {
 
     try {
         await client.connect();
-        console.log("connected")
         const db = client.db("USERS");
 
         const user = await db.collection("users").findOne({_id: userId});
@@ -426,11 +405,7 @@ const addUserToCircle = async (req, res) => {
 
         const updatedCircle = [...user.circle, friendId];
 
-        console.log ("updatedCircle", updatedCircle);
-
         const update = await db.collection("users").updateOne({_id: userId} , { $set: {circle: updatedCircle} });
-
-        console.log("update", update);
 
         if (update.matchedCount !== 1) {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
@@ -455,7 +430,6 @@ const addUserToCircle = async (req, res) => {
 //remove a user from the given user's circle (i.e. unfriend)
 const removeUserFromCircle = async (req, res) => {
     const { userId, friendId } = req.body;
-    console.log("user, friend", userId, friendId);
 
     if (!userId || !friendId) {
         return res.status(400).json({status: 400, message: "Bad request - user ID or friend ID missing."});
@@ -478,11 +452,9 @@ const removeUserFromCircle = async (req, res) => {
             return res.status(400).json({status: 400, message: "User already not in Circle!", data: req.body});
         }
 
-        console.log("circle before update", user.circle)
         const updatedCircle = user.circle.filter((friend) => friend !== friendId);
         const update = await db.collection("users").updateOne({_id: userId} , { $set: {circle: updatedCircle} });
-        console.log("updatedCircle", updatedCircle);
-        console.log("update", update);
+        
         if (update.matchedCount !== 1) {
             return res.status(404).json({status: 404, message: "User not found.", data: req.body});
         }

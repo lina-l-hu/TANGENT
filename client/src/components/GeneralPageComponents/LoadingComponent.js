@@ -22,8 +22,6 @@ const Wrapper = styled.div`
     font-size: 10px;
     margin: 50px auto;
     text-indent: -9999em;
-    /* width: 11em;
-    height: 11em; */
     width: ${props => (props.forButton) ? "1.5em" : "5em"};
     height: ${props => (props.forButton) ? "1.5em" : "5em"};
     border-radius: 50%;

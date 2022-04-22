@@ -1,19 +1,11 @@
 import { createGlobalStyle } from "styled-components";
 
-//some colours - navy purple #645986
-//grey with slight violet tinge #DAE0F2
-//pewter blue - #85AAC1
-//light brown - #A99985
-//667761 deep sage
 export default createGlobalStyle`
   :root {
     --color-main: #998FC7; 
     --color-main-transparent: RGBA(153, 143, 199, 0.5);
-    /* --color-secondary: RGBA(122, 166, 242, 0.4);  */
     --color-secondary: RGBA(170, 170, 170);
     --color-secondary-transparent: RGBA(170, 170, 170, 0.4);
-    /* --color-secondary: RGBA(137, 166, 251, 0.4);   */
-    /* --color-secondary: RGB(242, 120, 75); */
     --color-background: #998FC7; 
     --color-text: #FFFFFF; 
     --color-highlight: #B2CAF6;
@@ -93,10 +85,6 @@ export default createGlobalStyle`
       border-radius: 7px;
       transition: 0.1s ease-in-out;
       font-family: var(--font-heading);
-    
-      /* &:hover {
-        transform: scale(1.05);
-    } */
   }
 
   div {

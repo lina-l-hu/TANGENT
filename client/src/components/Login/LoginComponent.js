@@ -43,6 +43,7 @@ export default function LoginComponent ({setSignupMode}) {
         else {
             
             const token = await loginUser({ email, password});
+            console.log("token", token);
             if (token.status) {
                 setError(token.message);
             }
@@ -77,7 +78,6 @@ export default function LoginComponent ({setSignupMode}) {
             />
             <button>enter</button>
             </form>
-            {/* <StyledLink to="/signup">or signup here</StyledLink> */}
             <button className="link" onClick={handleClick}>or signup here</button>
             <ErrorMsg><p>{error}</p></ErrorMsg>
         </Wrapper>

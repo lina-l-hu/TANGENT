@@ -38,16 +38,22 @@ const reducer = (state, action) => {
                 ...initialState
             }
         }
+
+        default : {
+            return {
+                ...state
+            }
+        }
     }
 }
 
 
 const PointInput = ({currentUserId, currentTangentId, selectedMatch, 
-    reset, mode, setMode, setDisplaySuggestionsDropup, setPointPostingError,
-    displayErrorModal, setDisplayErrorModal}) => {
+    reset, setMode, setDisplaySuggestionsDropup, setPointPostingError,
+  setDisplayErrorModal}) => {
 
     const [ state, dispatch ] = useReducer(reducer, initialState);
-    const {changeCount, setChangeCount} = useContext(GlobalContext);
+    const {setChangeCount} = useContext(GlobalContext);
 
     const handleAddPoint = () => {
         //close dropup
@@ -164,11 +170,9 @@ const PointButton = styled.button`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    /* display: inline-block; */
 `;
 
 const TextContainer = styled.div`
-    /* border: 2px solid white; */
     position: absolute;
     bottom: 0;
     left: 0;
@@ -179,7 +183,6 @@ const TextContainer = styled.div`
     border-radius: 0;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.5);
-    /* height: 50px; */
     padding: 12px 5px;
 
     textarea {

@@ -50,11 +50,10 @@ const Tab = styled.div`
 
     &:hover {
         color: var(--color-secondary);
-        /* border-bottom: 4px solid white; */
         cursor: pointer;
     }
     
-    &.active {
+    .active {
         border-bottom: 4px solid white
     } 
 

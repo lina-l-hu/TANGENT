@@ -8,7 +8,7 @@ The front end is built with React V6, and the backend is constructed with Node.j
 </p>
 
 <p align="middle">
-<img width="100" alt="Tangent - full" src="https://user-images.githubusercontent.com/97921549/165363162-7c484991-3ba2-40ef-b955-7d70627c48b5.png">
+<img width="150" alt="Tangent - full" src="https://user-images.githubusercontent.com/97921549/165363162-7c484991-3ba2-40ef-b955-7d70627c48b5.png">
 <img width="288" alt="Tangent - text focus" src="https://user-images.githubusercontent.com/97921549/165365122-e902cb53-1f1a-4711-9c6a-004f467ad792.png">
 </p>
 

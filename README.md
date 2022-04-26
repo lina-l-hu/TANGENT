@@ -1,6 +1,6 @@
 # TANGENT
 
-/
+`/`
 <p>
 TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is based around _Tangents_, which are conversation threads, and _Points_ of interest, which are specific films or books. Friends are referred to as your _Circle_. (For those of you who like math, this naming was very intentional! 🤓) The motivation here is to encourage conversation amongst friends and friends of friends -- across the app, a user can only view Tangents in which at least one of their friends is a member. This is akin to, say, chatting at a party where there is at least one link to the host (or the friend who brought you along!), and this is natural way to get to know new friends (or even finding a new date 😉) through conversation about common interests! 
 
@@ -43,15 +43,13 @@ A user can view all Points mentioned in a Tangent via a link at the top of each 
 /
 **PROFILE**
 
-Users may bookmark a Point for reference later, and a user's list of bookmarked Points is found under the Points tab on the Profile page. A list of the user's latest post in each Tangent they are a member of is shown via Tangents tab on the Profile page.
+Users may bookmark a Point for reference later, and a user's list of bookmarked Points is found under the Points tab on the Profile page. A list of the user's latest post in each Tangent they are a member of is shown via Tangents tab on the Profile page. If a user is not in your Circle, they will not see a detailed version of the Profile page. Profile editing functionality will be included soon. 
+
 <p align="middle">
 <img width="200" alt="Profile - Points Tab" src="https://user-images.githubusercontent.com/97921549/165365559-c5574975-2f90-4bf0-9056-975f4a425de0.png">
   &nbsp;
 <img width="200" alt="Profile - Tangents Tab" src="https://user-images.githubusercontent.com/97921549/165366029-aa4b5161-6e0f-4f00-bbee-885703d95959.png">
-</p>
-
-If a user is not in your Circle, they will not see a detailed version of the Profile page. Profile editing functionality will be included soon. 
-<p align="middle">
+  &nbsp;
 <img width="200" alt="Profile - non-Circle " src="https://user-images.githubusercontent.com/97921549/165366669-282b4090-e30b-4645-9103-80393a3e3961.png">
 </p>
 

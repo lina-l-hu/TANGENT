@@ -42,7 +42,8 @@ export default function LoginComponent ({setSignupMode}) {
         }
         else {
             
-            const token = await loginUser({ email, password});
+            const noCaseEmail = email.toLowerCase();
+            const token = await loginUser({ email: noCaseEmail, password: password});
             console.log("token", token);
             if (token.status) {
                 setError(token.message);

@@ -129,6 +129,7 @@ const Search = () => {
                             </>
                         </Section>
                     }
+
                     {(state.searchResults.points.length > 0) && 
                         <Section>
                             <Title>points</Title>
@@ -138,6 +139,12 @@ const Search = () => {
                                 by={point.by} year={point.year} format="short" userPoints={currentUser.points}/>
                             })}
                             </>
+                        </Section>
+                    }
+
+                    {(state.searchResults.points.length === 0) && (state.searchResults.users.length === 0) &&
+                        <Section>
+                            <NoResults>no users or points found!</NoResults>
                         </Section>
                     }
                 </Results>
@@ -172,7 +179,7 @@ const Body = styled.div`
         border-radius: 15px;
         width: 220px;
         margin-right: 5px;
-        padding: 3px 5px;
+        padding: 6px 9px;
     }
 
     button {
@@ -203,6 +210,12 @@ const Title = styled.h3`
 const Section = styled.div`
     width: 100%;
     margin-bottom: 40px;
+`;
+
+const NoResults = styled.h3`
+    margin: 0 auto;
+    text-align: center;
+    font-style: italic;
 `;
 
 export default Search;

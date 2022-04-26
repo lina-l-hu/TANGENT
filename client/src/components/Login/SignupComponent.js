@@ -158,7 +158,7 @@ const SignupComponent = ({setSignupMode}) => {
         const newUser = {
             username: state.username,
             name: state.name, 
-            email: state.email, 
+            email: state.email.toLowerCase(), 
             avatar: state.avatar, 
             tagline: state.tagline, 
             password: state.password
@@ -185,7 +185,7 @@ const SignupComponent = ({setSignupMode}) => {
                     })
                     dispatch({
                         type: "form-error",
-                        error: "You are all signed up! Please sign in with the above link!"
+                        error: "You are all signed up! Click the above link to log in!"
                     })
 
                 }

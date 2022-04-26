@@ -65,6 +65,12 @@ const reducer = (state, action) => {
             }
         }
 
+        case ("reset") : {
+            return {
+                ...initialState 
+            }
+        }
+
         default : {
             return {
                 ...state
@@ -119,6 +125,10 @@ const AddTangentModal = () => {
                     dispatch ({
                         type: "tangent-successfully-posted"
                     })
+                    dispatch ({
+                        type: "reset"
+                    })
+                    e.target.reset();
                     //go to newly created Tangent
                     navigate(`/tangent/${data.data}`);
                     setShowNewTangentModal(false);
@@ -145,10 +155,13 @@ const AddTangentModal = () => {
     }
 
     // window.onclick = function(event) {
-    //     if (nodeRef.current && !nodeRef.current.contains(event.target)) {
-    //         setShowNewTangentModal(false);
+    //     if (showNewTangentModal === true) {
+    //         if (nodeRef.current && !nodeRef.current.contains(event.target)) {
+    //             setShowNewTangentModal(false);
+    //         }
     //     }
     // }
+       
     
 
     if (currentUserStatus === "loading") {
@@ -253,6 +266,11 @@ const Wrapper = styled.div`
 
     .button {
         background-color: var(--color-main);
+        cursor: pointer;
+        
+        &:hover { 
+            transform: scale(1.05);
+        }
     }
 `;
 

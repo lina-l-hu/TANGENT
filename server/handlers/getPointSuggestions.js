@@ -169,7 +169,6 @@ const getPointSuggestions = async (req, res) => {
             formattedFilmSuggestions = detailedFilmSuggestions.slice(0, NUM_MATCHES);
         }
         
-      
         if (bookSuggestions.length > 0) {
 
             //filter out duplicates in the api suggestions by title and author (very common because of multiple editions, hardcover vs softcover etc)
@@ -248,17 +247,27 @@ const getPointSuggestions = async (req, res) => {
             else {
               filteredBookSuggestions = bookSuggestions;
             }
+
             //we will return to the client only the top NUM_MATCHES (3) results
             let topBookSuggestions = filteredBookSuggestions.slice(0, NUM_MATCHES);
   
+
             topBookSuggestions.forEach((suggestion) => {
 
-                //format authors list
-                const authors = suggestion.volumeInfo.authors.toString();
-                let formattedAuthors = authors.replace(",", ", ");
+                let title = "";
+                if (Object.keys(suggestion.volumeInfo).indexOf("title") !== -1) {
+                  title = suggestion.volumeInfo.title;
+                }
+
+                let formattedAuthors = ""; 
+                if (Object.keys(suggestion.volumeInfo).indexOf("authors") !== -1) {
+                  const authors = suggestion.volumeInfo.authors.toString();
+                  formattedAuthors = authors.replace(",", ", ");
+                }
 
                 let imgSrc = "";
-                if (Object.keys(suggestion.volumeInfo.imageLinks).indexOf("thumbnail") !== -1) {
+                if (Object.keys(suggestion.volumeInfo).indexOf("imageLinks") !== -1) {
+                  if (Object.keys(suggestion.volumeInfo.imageLinks).indexOf("thumbnail") !== -1)
                   imgSrc = suggestion.volumeInfo.imageLinks.thumbnail;
                 }
 
@@ -266,21 +275,32 @@ const getPointSuggestions = async (req, res) => {
                 if (Object.keys(suggestion.volumeInfo).indexOf("description") !== -1) {
                   description = suggestion.volumeInfo.description;
                 }
-                
+
+                let year = ""; 
+                if (Object.keys(suggestion.volumeInfo).indexOf("publishedDate") !== -1) {
+                  year = suggestion.volumeInfo.publishedDate.slice(0, 4);
+                }
+
+                let link = ""; 
+                if (Object.keys(suggestion.volumeInfo).indexOf("infoLink") !== -1) {
+                  link = suggestion.volumeInfo.infoLink;
+                }
+
                 const book = {
                   _id: suggestion.id,
-                  title: suggestion.volumeInfo.title,
+                  title: title,
+                  by: formattedAuthors, 
                   type: "book", 
                   coverImgSrc: imgSrc,
-                  year: (suggestion.volumeInfo.publishedDate) ? suggestion.volumeInfo.publishedDate.slice(0, 4) : "",
-                  by: formattedAuthors,
+                  year: year,
                   description: description,
-                  link: suggestion.volumeInfo.infoLink
+                  link: link
                 }
 
                 formattedBookSuggestions.push(book);
             })
           }
+
 
         //return API and point matches to front end to render
         res.status(200).json({status: 200, message: "Matches", 
@@ -288,7 +308,8 @@ const getPointSuggestions = async (req, res) => {
               bookPoints: pointMatches["book"], 
               films: formattedFilmSuggestions, 
               books: formattedBookSuggestions
-            } });
+        } });
+
     }
 
     catch (err) {

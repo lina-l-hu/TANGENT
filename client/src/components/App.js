@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import styled from "styled-components";
 import GlobalStyles from "./GlobalStyles";
@@ -12,7 +12,6 @@ import MyCircle from "./MyCircle/MyCircle";
 import MyTangents from "./Tangent/MyTangents";
 import Search from "./Search";
 import AddTangentModal from "../components/Tangent/AddTangentModal";
-import UserSignup from "./Login/UserSignup";
 import { CurrentUserContext } from "./Profile/CurrentUserContext";
 
 
@@ -36,9 +35,7 @@ function App() {
 
         <Routes>
 
-          <Route path="/" element={<LandingPage />} />
-
-          <Route path="/signup" element={<UserSignup />} />
+          <Route path="/" element={<Navigate to="/feed" replace />} />
 
           <Route path="/feed" element={<FeedPage />} />
 

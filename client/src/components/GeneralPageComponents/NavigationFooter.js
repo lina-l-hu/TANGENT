@@ -30,7 +30,7 @@ const NavigationFooter = () => {
 
             {(currentUserStatus === "idle") ? (
                 <NavLink to={`/profile/${currentUser._id}`}>
-                    <FaRegUserCircle className="icon"/>
+                    <FaRegUserCircle className={(window.location.pathname === `/profile/${currentUser._id}`) ? "icon selected" : "icon"}/>
                 </NavLink>
             ) : (
                 <FaRegUserCircle className="icon"/>

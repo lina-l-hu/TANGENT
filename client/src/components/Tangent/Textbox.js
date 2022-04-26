@@ -261,7 +261,7 @@ const Textbox = ({currentUserId, currentTangentId}) => {
             
             <ErrorModal errorMessage={state.error} displayErrorModal={displayErrorModal} setDisplayErrorModal={setDisplayErrorModal} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}/>
 
-            {(state.pointSuggestionsFetchStatus === "success" && 
+            {(state.pointSuggestionsFetchStatus === "success" && mode !== "text" &&
                 <PointSuggestionDropup suggestedMatches={state.pointSuggestions} mode={mode} setMode={setMode}
                 selectedMatch={selectedMatch} setSelectedMatch={setSelectedMatch} setDisplaySuggestionsDropup={setDisplaySuggestionsDropup}
                 displaySuggestionsDropup={displaySuggestionsDropup}/>
@@ -334,7 +334,8 @@ const TextContainer = styled.div`
         width: 68%;
         font-size: 20px;
         font-family: var(--font-body);
-        padding: 10px 5px;
+        padding: 10px;
+        color: white;
     }
 
     button {

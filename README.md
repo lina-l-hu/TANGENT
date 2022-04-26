@@ -1,6 +1,6 @@
 # TANGENT
+\
 
-`/`
 <p>
 TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is based around _Tangents_, which are conversation threads, and _Points_ of interest, which are specific films or books. Friends are referred to as your _Circle_. (For those of you who like math, this naming was very intentional! 🤓) The motivation here is to encourage conversation amongst friends and friends of friends -- across the app, a user can only view Tangents in which at least one of their friends is a member. This is akin to, say, chatting at a party where there is at least one link to the host (or the friend who brought you along!), and this is natural way to get to know new friends (or even finding a new date 😉) through conversation about common interests! 
 
@@ -11,7 +11,7 @@ The front end is built with React V6, and the backend is constructed with Node.j
 <img width="250" alt="Tangent - full" src="https://user-images.githubusercontent.com/97921549/165363162-7c484991-3ba2-40ef-b955-7d70627c48b5.png">
 </p>
 
-/
+\
 **TANGENT**
 
 Users can add regular text messages to a conversation, or a film or book Point, which displays a summary of the item. Searching for a Point is triggered by typing "#" in the textarea. The search function surveys both the Points already saved in the database, and the imdb, omdb and Google Books APIs. The top 3 book and film results from the APIs are displayed in a dropup after search, along with any existing Points that match by title in the database. 

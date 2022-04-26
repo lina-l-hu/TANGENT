@@ -1,7 +1,7 @@
 # TANGENT
 
 <p>
-TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is based around _Tangents_, which are conversation threads, and _Points_ of interest, which are specific films or books. Friends are referred to as your _Circle_. (For those of you who like math, this naming was very intentional! 🤓) The motivation here is to encourage conversation amongst friends and friends of friends -- across the app, a user can only view Tangents in which at least one of their friends is a member. This is akin to, say, chatting at a party where there is at least one link to the host (or the friend who brought you along!), and this is natural way to get to know new friends (or even finding a new date 😉) through conversation about common interests! 
+TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is based around -Tangents-, which are conversation threads, and -Points- of interest, which are specific films or books. Friends are referred to as your -Circle-. (For those of you who like math, this naming was very intentional!) The motivation here is to encourage conversation amongst friends and friends of friends -- across the app, a user can only view Tangents in which at least one of their friends is a member. This is akin to, say, chatting at a party where there is at least one link to the host (or the friend who brought you along!), and this is natural way to get to know new friends (or even finding a new date!) through conversation about common interests! 
 
 The front end is built with React V6, and the backend is constructed with Node.js / express, with data stored in MongoDB. 
 </p>

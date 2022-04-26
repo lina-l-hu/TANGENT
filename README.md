@@ -1,24 +1,28 @@
 # TANGENT
 
-
+<p float="left">
 <img width="292" alt="Tangent - full" src="https://user-images.githubusercontent.com/97921549/165363162-7c484991-3ba2-40ef-b955-7d70627c48b5.png">
 
 TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is based around Tangents, which are conversation threads, and Points of interest, which are specific films or books. Friends are referred to as your Circle. For those of you who like math, this naming was very intentional 🤓) The motivation here is to encourage conversation amongst friends and friends of friends -- across the app, a user can only view Tangents in which at least one of their friends is a member. This is akin to, say, chatting at a party where there is at least one link to the host, and this is natural way to get to know new friends (or even finding a new date 😉) through conversation about common interests! 
 
 The front end is built with React V6, and the backend is constructed with Node.js/express, with data stored in MongoDB. 
-
+</p>
 
 TANGENT
 
 Users can add regular text messages to a conversation, or a film or book Point, which displays a summary of the item. Searching for a Point is triggered by typing "#" in the textarea. The search function surveys both the Points already saved in the database, and the imdb, omdb and Google Books APIs. The top 3 book and film results from the APIs are displayed in a dropup after search, along with any existing Points that match by title in the database. 
 
+<p float="left">
 <img width="288" alt="Tangent - text focus" src="https://user-images.githubusercontent.com/97921549/165365122-e902cb53-1f1a-4711-9c6a-004f467ad792.png">
 <img width="293" alt="Tangent - Initiate Find Point" src="https://user-images.githubusercontent.com/97921549/165363420-49873231-54e4-41ba-9430-4a515d421212.png">
 <img width="291" alt="Tangent - Find Point" src="https://user-images.githubusercontent.com/97921549/165364083-03599ca7-83fa-48bc-a366-c05d252987c7.png">
 <img width="290" alt="Tangent - Select Point" src="https://user-images.githubusercontent.com/97921549/165364115-dc32f9e4-0af8-4eaa-95ee-f3f9c9b1a11d.png">
+</p>
 
+<p float="left">
 A selected Point is added to the database with this same interface for a seamless user experience. 
 <img width="292" alt="Tangent - Add Point" src="https://user-images.githubusercontent.com/97921549/165364124-fb6e495a-3262-4e88-9878-d0b235170f7c.png">
+</p>
 
 
 POINTS

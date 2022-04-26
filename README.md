@@ -18,11 +18,11 @@ The front end is built with React V6, and the backend is constructed with Node.j
 Users can add regular text messages to a conversation, or a film or book Point, which displays a summary of the item. Searching for a Point is triggered by typing "#" in the textarea. The search function surveys both the Points already saved in the database, and the imdb, omdb and Google Books APIs. The top 3 book and film results from the APIs are displayed in a dropup after search, along with any existing Points that match by title in the database. 
 
 <p align="middle">
-<img width="288" alt="Tangent - text focus" src="https://user-images.githubusercontent.com/97921549/165378917-853a7a57-6a5d-487f-bd92-601a6e916230.png">
+<img width="200" alt="Tangent - text focus" src="https://user-images.githubusercontent.com/97921549/165378917-853a7a57-6a5d-487f-bd92-601a6e916230.png">
  &nbsp;
 <img width="200" alt="Tangent - Initiate Find Point" src="https://user-images.githubusercontent.com/97921549/165363420-49873231-54e4-41ba-9430-4a515d421212.png">
  &nbsp;
-<img width="290" alt="Tangent - Select Point" src="https://user-images.githubusercontent.com/97921549/165378985-ca61937c-63a7-4385-84db-716bb471c2c8.png">
+<img width="200" alt="Tangent - Select Point" src="https://user-images.githubusercontent.com/97921549/165378985-ca61937c-63a7-4385-84db-716bb471c2c8.png">
  &nbsp;
 <img width="200" alt="Tangent - Add Point" src="https://user-images.githubusercontent.com/97921549/165364124-fb6e495a-3262-4e88-9878-d0b235170f7c.png">
 </p>

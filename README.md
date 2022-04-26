@@ -87,7 +87,7 @@ The Feed page displays 3 featured posts:
 
 Users may search for other users by name, and Points by title via the Search page. I will be adding additional search indices to the database soon to search by other fields, as well to search for Tangent conversation results.
 <p align="middle">
-<img width="200" alt="Search" src="https://user-images.githubusercontent.com/97921549/165368455-e8dda64e-6378-4f17-9585-fbdf5e65c672.png">
+<img width="200" alt="Search" src="https://user-images.githubusercontent.com/97921549/165382208-ac1a0b0a-7b70-4970-9a22-5ba5a384f853.png"> 
 </p>
 
 \

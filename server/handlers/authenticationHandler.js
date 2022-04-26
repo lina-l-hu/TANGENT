@@ -10,6 +10,8 @@ const options = {
 const authenticateUser = async (req, res) => {
     const { email, password } = req.body;
 
+    console.log("email", email);
+
     const client = new MongoClient(MONGO_URI, options);
 
     if (!password && !email) {
@@ -21,6 +23,8 @@ const authenticateUser = async (req, res) => {
         const db = client.db("USERS");
     
         const user = await db.collection("users").findOne({email : email});
+        const all = await db.collection("users").find().toArray();
+        console.log("user", all);
 
         if (!user) {
             return res.status(404).json({status: 404, message: "User email not found. Would you like to sign up?", data: {email: email}});

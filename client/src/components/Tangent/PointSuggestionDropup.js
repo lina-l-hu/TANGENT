@@ -45,6 +45,7 @@ const PointSuggestionDropup = ({suggestedMatches, selectedMatch, setSelectedMatc
         setMode("suggestion")
     }
 
+    // //close suggestion dropup if user clicks outside of it
     // window.onclick = function(event) {
     //     if (nodeRef.current && !nodeRef.current.contains(event.target)) {
     //         setDisplaySuggestionsDropup(false);

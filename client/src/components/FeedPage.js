@@ -121,28 +121,30 @@ const FeedPage = () => {
     return (
     <PageWrapper>
         <Body>
-            <MostPopularPoint className="section">
+            <Section>
                 <SectionTitle>Talk of the day</SectionTitle>
                     <PointPreview _id={state.popularPoint._id} coverImgSrc={state.popularPoint.coverImgSrc} 
                     title={state.popularPoint.title} by={state.popularPoint.by} year={state.popularPoint.year} 
                     format="short" userPoints={currentUser.points}/>
-            </MostPopularPoint>
+            </Section>
 
-            <MostPopularTangent className="section">
+            <Section>
                 <SectionTitle>Major discussions</SectionTitle>
+                <TangentTitle>{state.popularTangent.tangentName}</TangentTitle>
                 <TangentPreview tangentId={state.popularTangent.tangentId} timestamp={state.popularTangent.timestamp} 
                 username={state.popularTangent.username} text={state.popularTangent.text}/>
-            </MostPopularTangent>
+            </Section>
 
-            <NewTangents className="section">
+            <Section>
                 <SectionTitle>Something to add?</SectionTitle>
+                <TangentTitle>{state.recentTangents[0].tangentName}</TangentTitle>
                 <TangentPreview key={state.recentTangents[0]._id} tangentId={state.recentTangents[0].tangentId} timestamp={state.recentTangents[0].timestamp}
                     username={state.recentTangents[0].username} text={state.recentTangents[0].text}/>
                 {/* {state.recentTangents.map((post) => {
                     return <TangentPreview key={post._id} tangentId={post.tangentId} timestamp={post.timestamp}
                     username={post.username} imgSrc={post.avatar} text={post.text}/>
                 })} */}
-            </NewTangents>
+            </Section>
 
         <Spacer></Spacer>
         </Body>
@@ -164,11 +166,6 @@ const NoFriends = styled.div`
 
 const Body = styled.div`
     overflow: scroll;
-
-    .section {
-        margin: 30px 0;
-        color: white;
-    }
 `;
 
 const Spacer = styled.div`
@@ -178,16 +175,16 @@ const Spacer = styled.div`
 const SectionTitle = styled.h3`
     text-align: center;
     font-style: italic;
+    margin-bottom: 15px;
 `;
 
-const MostPopularPoint = styled.div`
+const Section = styled.div`
+    margin: 30px 0;
+    color: white;
 `;
 
-const MostPopularTangent = styled.div`
-
-`;
-
-const NewTangents = styled.div`
-`;
+const TangentTitle = styled.h4`
+    margin-left: 25px;
+`
 
 export default FeedPage;

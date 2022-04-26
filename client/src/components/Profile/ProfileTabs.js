@@ -28,6 +28,10 @@ const Wrapper = styled.div`
     margin: 0 auto;
     margin-bottom: 10px;
     width: 85%;
+
+    .active {
+        border-bottom: 4px solid white;
+    } 
 `;
 
 const Tab = styled.div`
@@ -52,11 +56,6 @@ const Tab = styled.div`
         color: var(--color-secondary);
         cursor: pointer;
     }
-    
-    .active {
-        border-bottom: 4px solid white
-    } 
-
 `;
 
 export default ProfileTabs;

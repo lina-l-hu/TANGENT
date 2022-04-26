@@ -257,7 +257,7 @@ const MyTangents = () => {
 
     if (!state.tangents) {
         return <PageWrapper>
-            <NoFriends>Add friends to your circle to see some action!</NoFriends>
+            <NoFriends>No Tangents yet! Click + to start a conversation!</NoFriends>
             </PageWrapper>
     }
 

@@ -18,13 +18,11 @@ The front end is built with React V6, and the backend is constructed with Node.j
 Users can add regular text messages to a conversation, or a film or book Point, which displays a summary of the item. Searching for a Point is triggered by typing "#" in the textarea. The search function surveys both the Points already saved in the database, and the imdb, omdb and Google Books APIs. The top 3 book and film results from the APIs are displayed in a dropup after search, along with any existing Points that match by title in the database. 
 
 <p align="middle">
-<img width="200" alt="Tangent - text focus" src="https://user-images.githubusercontent.com/97921549/165365122-e902cb53-1f1a-4711-9c6a-004f467ad792.png">
+<img width="288" alt="Tangent - text focus" src="https://user-images.githubusercontent.com/97921549/165378917-853a7a57-6a5d-487f-bd92-601a6e916230.png">
  &nbsp;
 <img width="200" alt="Tangent - Initiate Find Point" src="https://user-images.githubusercontent.com/97921549/165363420-49873231-54e4-41ba-9430-4a515d421212.png">
  &nbsp;
-<img width="200" alt="Tangent - Find Point" src="https://user-images.githubusercontent.com/97921549/165364083-03599ca7-83fa-48bc-a366-c05d252987c7.png">
- &nbsp;
-<img width="200" alt="Tangent - Select Point" src="https://user-images.githubusercontent.com/97921549/165364115-dc32f9e4-0af8-4eaa-95ee-f3f9c9b1a11d.png">
+<img width="290" alt="Tangent - Select Point" src="https://user-images.githubusercontent.com/97921549/165378985-ca61937c-63a7-4385-84db-716bb471c2c8.png">
  &nbsp;
 <img width="200" alt="Tangent - Add Point" src="https://user-images.githubusercontent.com/97921549/165364124-fb6e495a-3262-4e88-9878-d0b235170f7c.png">
 </p>
@@ -49,6 +47,7 @@ A user can view all Points mentioned in a Tangent via a link at the top of each 
 Users may bookmark a Point for reference later, and a user's list of bookmarked Points is found under the Points tab on the Profile page. A list of the user's latest post in each Tangent they are a member of is shown via Tangents tab on the Profile page.
 <p align="middle">
 <img width="200" alt="Profile - Points Tab" src="https://user-images.githubusercontent.com/97921549/165365559-c5574975-2f90-4bf0-9056-975f4a425de0.png">
+  &nbsp;
 <img width="200" alt="Profile - Tangents Tab" src="https://user-images.githubusercontent.com/97921549/165366029-aa4b5161-6e0f-4f00-bbee-885703d95959.png">
 </p>
 
@@ -71,6 +70,7 @@ The user can view a list of friends in their Circle on this page, and also remov
 The Tangents page lists the name and latest post of all the Tangents the current user's active chats. A new Tangent may be added via a modal triggered by a link in the header. A name for the Tangent thread and a first text post is required. 
 <p align="middle">
 <img width="200" alt="My Tangents" src="https://user-images.githubusercontent.com/97921549/165367087-396a5242-8bce-4380-84cf-dfbb0582ec24.png">
+  &nbsp;
 <img width="200" alt="Add Tangent Modal" src="https://user-images.githubusercontent.com/97921549/165365423-23d50089-d5fe-425e-8621-33ae74b5d920.png">
 </p>
 
@@ -100,6 +100,7 @@ Users may search for other users by name, and Points by title via the Search pag
 Currently sign-in is accomplished via retrieving a token from the backend with no encryption, but I will be updating this with a custom Auth0 UI. As well, I will be incorporating Cloudinary to add profile pictures to user accounts.
 <p align="middle">
 <img width="200" alt="Sign-in" src="https://user-images.githubusercontent.com/97921549/165371404-654f0cff-3105-4112-bbfc-45a2ac2cc0cc.png">
+  &nbsp;
 <img width="200" alt="Signup" src="https://user-images.githubusercontent.com/97921549/165371425-352d3641-20d7-48b6-a160-04be6e6c558f.png">
 </p>
 

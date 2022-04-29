@@ -285,7 +285,7 @@ const getMostRecentTangents = async (req, res) => {
         )
 
         //merge the current user's tangents array into this array as well
-        allCircleTangentIds.push(...user.tangents);
+        // allCircleTangentIds.push(...user.tangents);
 
        //reduce set to only unique tangent ids
         const uniqueTangentIds = [...new Set(allCircleTangentIds)];

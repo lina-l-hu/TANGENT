@@ -16,7 +16,6 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
 
     
     const toggleSave = () => {
-        setSaved(!saved);
 
         //save
         if (!saved) {
@@ -33,6 +32,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                   if (data.success === true) {
                     setSaved(true);
                     setChangeCount(changeCount+1);
+                    console.log("saved");
                   }
                 })
                 .catch((err) => {
@@ -60,7 +60,7 @@ const PointPreview = ({_id, coverImgSrc, title, type, by, year, description, lin
                     setSaved(true);
                 })
         }
-    
+        window.location.reload();
     }
 
     //two previews, one for short, one for details

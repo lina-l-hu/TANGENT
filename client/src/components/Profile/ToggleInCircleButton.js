@@ -12,7 +12,6 @@ const ToggleInCircleButton = ({circle, friendId, format}) => {
     const [ inCircle, setInCircle ] = useState(initialFriendStatus);
     
     const toggleInCircle = () => {
-        setInCircle(!inCircle);
         
         if (!inCircle) {
             fetch(`/users/add-user-to-circle`, {
@@ -54,6 +53,7 @@ const ToggleInCircleButton = ({circle, friendId, format}) => {
                     setInCircle(true);
                 })
         }
+        window.location.reload();
         
     }
 

@@ -103,4 +103,4 @@ Currently sign-in is accomplished via retrieving a token from the backend with n
 \
 **SOON...**
 
-Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io. As well, the add friend/remove friend from Circle and add bookmarked Point/remove bookmarked Point functionality is not updating properly until the app is refreshed, and this will be addressed shortly. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 
+Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 

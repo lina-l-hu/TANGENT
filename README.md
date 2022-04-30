@@ -103,4 +103,4 @@ Currently sign-in is accomplished via retrieving a token from the backend with n
 \
 **SOON...**
 
-Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io, and also implement a private chat as well. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 
+Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io, and also implement a private chat feature. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 

@@ -1,9 +1,9 @@
 # TANGENT
 
-(React / Node.js / express / MongoDB)
+(React / Node.js / Express / MongoDB)
 
 <p>
-TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is centered on Tangents, which are conversation threads, and Points of interest, which are specific films or books. Friends are referred to as your Circle. (For those of you who like math, this naming was very intentional 🤓 ) The motivation here is to encourage conversation amongst friends and friends of friends -- across the app, a user can only view Tangents in which at least one of their friends is a member. This is akin to say, chatting at a party where there is at least one link to the host (or the friend who brought you along!), and thus is natural way to get to know new friends (or even finding a new date 🙃) through conversation about common interests! 
+TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is centered on Tangents, which are conversation threads, and Points of interest, which are specific film/book summary objects users can refer to within a thread and also bookmark for future reference. A user is encouraged to expand their social network by sharing interests with those connected to their Circle. (For those of you who like math, the Tangent, Point and Circle naming is very intentional!) As a user can only view Tangents in which at least one of their friends is a member, they have at least one degree of connection to anyone they interact with on the app, akin to say, meeting people at a party -- and since there is already a topic being discussed, you may already have something in common!
 </p>
 
 <p align="middle">
@@ -103,4 +103,4 @@ Currently sign-in is accomplished via retrieving a token from the backend with n
 \
 **SOON...**
 
-Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 
+Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io, and also implement a private chat as well. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 

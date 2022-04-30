@@ -3,7 +3,7 @@
 (React / Node.js / Express / MongoDB)
 
 <p>
-TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is centered on Tangents, which are conversation threads, and Points of interest, which are specific film/book summary objects users can refer to within a thread and also bookmark for future reference. A user is encouraged to expand their social network by sharing interests with those connected to their Circle. (For those of you who like math, the Tangent, Point and Circle naming is very intentional!) As a user can only view Tangents in which at least one of their friends is a member, they have at least one degree of connection to anyone they interact with on the app, akin to say, meeting people at a party -- and since there is already a topic being discussed, you may already have something in common!
+TANGENT is a topic-based social app, created for my final project at the Concordia Web Dev Bootcamp. The experience is centered on Tangents, which are conversation threads, and Points of interest, which are specific film/book summary objects users can refer to within a thread and also bookmark for future reference. A user is encouraged to expand their social network by sharing interests with those connected to their Circle. (For those of you who like math, the Tangent, Point and Circle naming is very intentional!) As a user can only view Tangents in which at least one of their friends is a member, they have at least one degree of connection to anyone they interact with on the app, akin to say, meeting people at a party -- and since there is already a topic being discussed, you may already have something else in common too!
 </p>
 
 <p align="middle">

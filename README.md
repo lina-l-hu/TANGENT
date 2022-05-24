@@ -104,3 +104,88 @@ Currently sign-in is accomplished via retrieving a token from the backend with n
 **SOON...**
 
 Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io, and also implement a private chat feature. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 
+
+
+## Available Scripts
+
+In the client directory, run 
+
+### `yarn start`
+
+to start client in development mode at [http://localhost:3000](http://localhost:3000).
+
+
+## File Structure
+
+```
+├── client
+│   ├── public
+│   │   ├── index.html
+│   ├── src
+│   │   ├── assets
+│   │   ├── components
+│   │   │   ├── GeneralPageComponents
+│   │   │   │   ├── Avatar.js
+│   │   │   │   ├── ButtonLoadingComponent.js
+│   │   │   │   ├── Header.js
+│   │   │   │   ├── LoadingComponent.js
+│   │   │   │   ├── NavigationFooter.js
+│   │   │   │   ├── PageWrapper.js
+│   │   │   ├── Login
+│   │   │   │   ├── LoginComponent.js
+│   │   │   │   ├── SignupComponent.js
+│   │   │   │   ├── UserSignup.js
+│   │   │   ├── MyCircle
+│   │   │   │   ├── index.js
+│   │   │   │   ├── MyCircle.js
+│   │   │   │   ├── UserPreview.js
+│   │   │   ├── PointComponents
+│   │   │   │   ├── PointDetails.js
+│   │   │   │   ├── PointPreview.js
+│   │   │   │   ├── PointsInTangent.js
+│   │   │   ├── Profile
+│   │   │   │   ├── CurrentUserContext.js
+│   │   │   │   ├── index.js
+│   │   │   │   ├── Profile.js
+│   │   │   │   ├── ProfileHeader.js
+│   │   │   │   ├── ProfileTabs.js
+│   │   │   │   ├── ToggleInCircleButton.js
+│   │   │   ├── Tangent
+│   │   │   │   ├── AddTangentModal.js
+│   │   │   │   ├── ErrorModal.js
+│   │   │   │   ├── index.js
+│   │   │   │   ├── Message.js
+│   │   │   │   ├── MyTangents.js
+│   │   │   │   ├── PointInput.js
+│   │   │   │   ├── PointSuggestionDropup.js
+│   │   │   │   ├── Tangent.js
+│   │   │   │   ├── TangentPreview.js
+│   │   │   │   ├── Textbox.js
+│   │   │   ├── App.js
+│   │   │   ├── FeedPage.js
+│   │   │   ├── GlobalContext.js
+│   │   │   ├── GlobalStyles.js
+│   │   │   ├── LandingPage.js
+│   │   │   ├── Search.js
+│   │   ├── index.js
+│   │   ├── usePersistedState.hook.js
+│   ├── .gitignore
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── yarn.lock
+├── server
+│   ├── handlers
+│   │   ├── authenticationHandler.js
+│   │   ├── getPointSuggestions.js
+│   │   ├── pointHandlers.js
+│   │   ├── postToTangentHandler.js
+│   │   ├── searchHandler.js
+│   │   ├── tangentHandler.js
+│   │   ├── userHandler.js
+│   ├── index.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── yarn.lock
+├── .gitignore
+├── README.md
+```

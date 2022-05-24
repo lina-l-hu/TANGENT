@@ -106,16 +106,17 @@ Currently sign-in is accomplished via retrieving a token from the backend with n
 Currently, Tangent conversations are not live chats -- I hope to add this functionality via socket.io, and also implement a private chat feature. When Tangent is ready, I will be deploying it via Netlify. Follow to see future updates! 
 
 
-## Available Scripts
+### Available Scripts
 
 In the client directory, run 
 
-### `yarn start`
+#### `yarn start`
 
-to start client in development mode at [http://localhost:3000](http://localhost:3000).
+to start client in development mode at [http://localhost:3000](http://localhost:3000) and 
+to start server in development mode at [http://localhost:8000](http://localhost:8000).
 
 
-## File Structure
+### File Structure
 
 ```
 ├── client
